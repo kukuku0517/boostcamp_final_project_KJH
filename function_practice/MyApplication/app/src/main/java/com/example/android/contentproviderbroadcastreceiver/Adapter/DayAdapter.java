@@ -37,15 +37,15 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
         View view;
         switch(viewType){
             case 0:
-                layoutIdForListItem = R.layout.day_item;
+                layoutIdForListItem = R.layout.call_item;
                 view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHCall(view);
             case 1:
-                layoutIdForListItem = R.layout.day_item;
+                layoutIdForListItem = R.layout.photo_item;
                 view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHPhoto(view);
             case 2:
-                layoutIdForListItem = R.layout.day_item;
+                layoutIdForListItem = R.layout.sms_item;
                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHSms(view);
 

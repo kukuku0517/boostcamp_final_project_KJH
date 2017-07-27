@@ -11,7 +11,14 @@ public class PhotoData extends RealmObject implements MyRealmObject{
     long date;
     String lat;
     String lng;
+    public long id;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;}
     public long getDate() {
         return date;
     }

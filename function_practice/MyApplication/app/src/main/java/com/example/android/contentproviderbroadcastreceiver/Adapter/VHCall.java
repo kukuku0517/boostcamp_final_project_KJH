@@ -2,11 +2,17 @@ package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
 import android.telecom.Call;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.R;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,6 +22,19 @@ import butterknife.ButterKnife;
  */
 
 public class VHCall extends DayViewHolder {
+    @BindView(R.id.call_iv)
+    ImageView iv;
+    @BindView(R.id.call_date)
+    TextView date;
+    @BindView(R.id.call_person)
+    TextView person;
+    @BindView(R.id.call_duration)
+    TextView duration;
+    @BindView(R.id.call_number)
+    TextView number;
+    @BindView(R.id.call_button)
+    Button button;
+
 
     public VHCall(View view) {
         super(view);
@@ -26,11 +45,16 @@ public class VHCall extends DayViewHolder {
     @Override
     public void bindType(MyRealmObject item) {
         CallData callData = (CallData) item;
-        tv2.setText(String.valueOf(callData.getDate()));
-        tv3.setText(callData.getPerson());
-        tv4.setText(callData.getDuration());
-        tv5.setText(callData.getNumber());
-        iv.setImageResource(R.drawable.ic_call_black_24dp);
+
+
+        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
+        Date d = new Date(callData.getDate());
+        String tempDate = sdFormat.format(d);
+        date.setText(tempDate);
+        person.setText(callData.getPerson());
+        duration.setText(callData.getDuration());
+       number .setText(callData.getNumber());
+
 
     }
 }

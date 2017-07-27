@@ -16,16 +16,7 @@ import butterknife.ButterKnife;
  */
 
 public abstract class DayViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.textView2)
-    TextView tv2;
-    @BindView(R.id.textView3)
-    TextView tv3;
-    @BindView(R.id.textView4)
-    TextView tv4;
-    @BindView(R.id.textView5)
-    TextView tv5;
-    @BindView(R.id.imageView)
-    ImageView iv;
+
 
     public DayViewHolder(View itemView) {
         super(itemView);

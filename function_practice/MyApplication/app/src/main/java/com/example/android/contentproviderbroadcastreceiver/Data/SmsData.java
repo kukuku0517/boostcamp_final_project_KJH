@@ -34,7 +34,14 @@ public class SmsData extends RealmObject implements MyRealmObject {
 
     public long date;
     public String content,person;
+    public long id;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;}
 
     @Override
     public int getType() {

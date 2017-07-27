@@ -1,9 +1,6 @@
 package com.example.android.contentproviderbroadcastreceiver.Data;
 
-import android.widget.SeekBar;
-
 import io.realm.RealmObject;
-import io.realm.annotations.RealmClass;
 
 /**
  * Created by samsung on 2017-07-26.
@@ -14,7 +11,15 @@ public class CallData extends RealmObject implements MyRealmObject {
     public long date;
     public String duration;
     public String person;
+    public long id;
+    public int a;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;}
     public String getNumber() {
         return number;
     }

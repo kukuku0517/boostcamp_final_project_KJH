@@ -54,7 +54,7 @@ TODO>
 
 **SMS**
 
--	0: _id
+-	0: (\_\_\__)id
 -	1: thread_id
 -	2: address
 -	3: person
@@ -88,3 +88,62 @@ https://medium.com/@ruut_j/a-recyclerview-with-multiple-item-types-bce7fbd1d30e
 2.	viewholder의 parent class는 bindtype메소드로 각각 bindViewholder시 item을 넘겨받아 data를 반영
 
 expandable layout
+
+#170727
+
+TODO>
+
+-	Realm, DB 구조 설계
+-	broadcast : 메신저(카카오톡, LINE, instagram 알람 등)
+
+-	SNS 기록 가져오기 : facebook, instagram
+
+-	UI다시보기 //
+
+-	DB정책 정하기
+
+-	content observer
+
+-	broadcast
+
+-	sns
+
+-	realm & firebase
+
+| 배터리의 상태가 바뀔 때                                             | ACTION_BATTERY_CHANGED      | android.intent.action.BATTERY_CHANGED      |
+|---------------------------------------------------------------------|-----------------------------|--------------------------------------------|
+| 배터리의 잔여 용량이 낮을 때                                        | ACTION_BATTERY_LOW          | android.intent.action.BATTERY_LOW          |
+| 배터리의 낮은 용량으로부터 벗어날 때                                | ACTION_BATTERY_OKAY         | android.intent.action.BATTERY_OKAY         |
+| 부팅이 완료될 때                                                    | ACTION_BOOT_COMPLETED       | android.intent.action.BOOT_COMPLETED       |
+| 날짜가 바뀔 때                                                      | ACTION_DATE_CHANGED         | android.intent.action.DATE_CHANGED         |
+| 시스템이 dreaming을 시작할 때                                       | ACTION_DREAMING_STARTED     | android.intent.action.DREAMING_STARTED     |
+| 시스템이 dreaming을 멈출 때                                         | ACTION_DREAMING_STOPPED     | android.intent.action.DREAMING_STOPPED     |
+| 지역 설정이 바뀔 때                                                 | ACTION_LOCALE_CHANGED       | android.intent.action.LOCALE_CHANGED       |
+| 미디어 버튼을 누를 때                                               | ACTION_MEDIA_BUTTON         | android.intent.action.MEDIA_BUTTON         |
+| 통화를 발신하려고 할 때                                             | ACTION_NEW_OUTGOING_CALL    | android.intent.action.NEW_OUTGOING_CALL    |
+| 앱이 처음 시작할 때                                                 | ACTION_PACKAGE_FIRST_LAUNCH | android.intent.action.PACKAGE_FIRST_LAUNCH |
+| 사용자가 패키지를 재시작하고, 그것의 프로세스의 모든 것이 종료될 때 | ACTION_PACKAGE_RESTARTED    | android.intent.action.PACKAGE_RESTARTED    |
+| 화면이 꺼질 때                                                      | ACTION_SCREEN_OFF           | android.intent.action.SCREEN_OFF           |
+| 화면이 켜질 때                                                      | ACTION_SCREEN_ON            | android.intent.action.SCREEN_ON            |
+
+###**data update 방식**
+
+앱 최초 실행시 : 현재까지의 모든 데이터 가져오기
+
+앱 이후 실행시 : 가장 최근 업데이트 시간을 저장해두고, 그때부터 현재까지의 데이터를 가져오기
+
+앱 실행중 : observer를 통해 데이터 추가 알림
+
+--> 수정
+
+앱 최초 실행시 : 현재까지의 모든 데이터 가져오기
+
+앱 이후 실행시 : boot 시 service on. notify, ContentObserver
+
+앱 실행중 : observer를 통해 데이터 추가 알림
+
+issue :
+
+content observer 여러번 call하는 현상
+
+realm notification 관련 데이터는 남기고싶은데.. migration 관리하는법
