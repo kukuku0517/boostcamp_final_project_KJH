@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Telephony;
+import android.service.notification.NotificationListenerService;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -43,6 +44,8 @@ public class DataUpdateService extends Service {
     long sms = -1;
     long call = -1;
     long photo = -1;
+    ContentResolver cr;
+    ContentObserver callObserver, photoObserver, smsObserver;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -62,12 +65,10 @@ public class DataUpdateService extends Service {
 
         startForeground(1, notification);
 
-
-        final ContentResolver cr = getApplicationContext().getContentResolver();
+        cr = getApplicationContext().getContentResolver();
         final Uri allMessage = Uri.parse("content://sms");
         Handler mHandler = new Handler(Looper.getMainLooper());
-
-        ContentObserver smsObserver = new ContentObserver(mHandler) {
+        smsObserver = new ContentObserver(mHandler) {
 
             @Override
             public boolean deliverSelfNotifications() {
@@ -95,7 +96,7 @@ public class DataUpdateService extends Service {
                 }
             }
         };
-        ContentObserver photoObserver = new ContentObserver(mHandler) {
+        photoObserver = new ContentObserver(mHandler) {
 
             @Override
             public boolean deliverSelfNotifications() {
@@ -131,6 +132,8 @@ public class DataUpdateService extends Service {
                         String filePath = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
                         Uri imageUri = Uri.parse(filePath);
                         long id = c.getLong(c.getColumnIndex(MediaStore.Images.Media._ID));
+                        Log.d("photo uri", String.valueOf(imageUri));
+                        Log.d("photo id", String.valueOf(id));
                         if (call != id) {
                             call = id;
 
@@ -140,7 +143,7 @@ public class DataUpdateService extends Service {
                 }
             }
         };
-        ContentObserver callObserver = new ContentObserver(mHandler) {
+        callObserver = new ContentObserver(mHandler) {
 
             @Override
             public boolean deliverSelfNotifications() {
@@ -191,6 +194,9 @@ public class DataUpdateService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        cr.unregisterContentObserver(callObserver);
+        cr.unregisterContentObserver(photoObserver);
+        cr.unregisterContentObserver(smsObserver);
 
         Log.d("service", "off");
     }

@@ -2,6 +2,7 @@ package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +47,13 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
                 return new VHPhoto(view);
             case 2:
                 layoutIdForListItem = R.layout.sms_item;
-               view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHSms(view);
+            case 3:
+                Log.d("Notification","layout");
+                layoutIdForListItem = R.layout.notify_item;
+                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                return new VHNotify(view);
 
             default:
                 return null;
@@ -59,7 +65,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
 
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
-       MyRealmObject item=items.get(position);
+        MyRealmObject item=items.get(position);
         holder.bindType(item);
     }
 

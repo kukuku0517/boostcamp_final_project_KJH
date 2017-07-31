@@ -1,5 +1,6 @@
 package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,9 +17,9 @@ import butterknife.ButterKnife;
  */
 
 public abstract class DayViewHolder extends RecyclerView.ViewHolder {
+Context context;
 
-
-    public DayViewHolder(View itemView) {
+    public DayViewHolder(View itemView,Context context) {
         super(itemView);
         ButterKnife.bind(this,itemView);
     }

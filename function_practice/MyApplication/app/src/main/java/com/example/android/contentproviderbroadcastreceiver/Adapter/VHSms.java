@@ -1,8 +1,14 @@
 package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
+import android.animation.ObjectAnimator;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
@@ -14,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import butterknife.BindView;
+import butterknife.OnClick;
+
+import static android.R.attr.button;
 
 /**
  * Created by samsung on 2017-07-26.
@@ -30,8 +39,12 @@ public class VHSms extends DayViewHolder {
     @BindView(R.id.sms_content)
     TextView content;
 
-    @BindView(R.id.sms_button)
-    Button button;
+    //    @BindView(R.id.sms_button)
+//    Button button;
+    @OnClick(R.id.sms_button)
+    void onClick() {
+        onClickButton();
+    }
 
     public VHSms(View view) {
         super(view);
@@ -49,5 +62,31 @@ public class VHSms extends DayViewHolder {
         person.setText(callData.getPerson());
         content.setText(String.valueOf(callData.getContent()));
         number.setText(String.valueOf(callData.getId()));
+        Log.d("####", "on");
+    }
+
+    private void onClickButton() {
+
+        //Simply set View to Gone if not expanded
+        //Not necessary but I put simple rotation on button layout
+        if (content.getVisibility() == View.VISIBLE) {
+            Log.d("smsAni", "on");
+            createRotateAnimator(content, 180f, 0f).start();
+            content.setVisibility(View.GONE);
+//            expandState.put(i, false);
+        } else {
+            Log.d("smsAni", "off");
+            createRotateAnimator(content, 0f, 180f).start();
+            content.setVisibility(View.VISIBLE);
+//            expandState.put(i, true);
+        }
+    }
+
+    //Code to rotate button
+    private ObjectAnimator createRotateAnimator(final View target, final float from, final float to) {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(target, "rotation", from, to);
+        animator.setDuration(300);
+        animator.setInterpolator(new LinearInterpolator());
+        return animator;
     }
 }

@@ -144,6 +144,47 @@ TODO>
 
 issue :
 
-content observer 여러번 call하는 현상
+#170728
 
-realm notification 관련 데이터는 남기고싶은데.. migration 관리하는법
+1.	content observer 여러번 call하는 현상
+	-	id로 해결하긴 했는데 근본적인 원인?
+2.	realm notification 관련 데이터는 남기고싶은데.. migration 관리하는법
+3.	notificationListenerService
+
+notification fields
+
+https://developer.android.com/reference/android/app/Notification.html
+
+String EXTRA_BIG_TEXT extras key: this is the longer text shown in the big form of a Notification.BigTextStyle notification, as supplied to bigText(CharSequence).
+
+String EXTRA_CHANNEL_ID Optional extra for INTENT_CATEGORY_NOTIFICATION_PREFERENCES.
+
+String EXTRA_CONVERSATION_TITLE extras key: a CharSequence to be displayed as the title to a conversation represented by a Notification.MessagingStyle String EXTRA_INFO_TEXT extras key: this is a small piece of additional text as supplied to setContentInfo(CharSequence). String EXTRA_LARGE_ICON This constant was deprecated in API level 26. Use getLargeIcon(), which supports a wider variety of icon sources. String EXTRA_LARGE_ICON_BIG extras key: this is a bitmap to be used instead of the one from setLargeIcon(android.graphics.Bitmap) when the notification is shown in its expanded form, as supplied to bigLargeIcon(android.graphics.Bitmap).
+
+String EXTRA_MESSAGES extras key: an array of Notification.MessagingStyle.Message bundles provided by a Notification.MessagingStyle notification.
+
+String EXTRA_PEOPLE extras key: A String array containing the people that this notification relates to, each of which was supplied to addPerson(String).
+
+String EXTRA_PICTURE extras key: this is a bitmap to be shown in Notification.BigPictureStyle expanded notifications, supplied to bigPicture(android.graphics.Bitmap).
+
+String EXTRA_SELF_DISPLAY_NAME extras key: the username to be displayed for all messages sent by the user including direct replies Notification.MessagingStyle notification.
+
+String EXTRA_SHOW_WHEN extras key: whether when should be shown, as supplied to setShowWhen(boolean). String EXTRA_SMALL_ICON This constant was deprecated in API level 26. Use getSmallIcon(), which supports a wider variety of icon sources. String EXTRA_SUB_TEXT extras key: this is a third line of text, as supplied to setSubText(CharSequence). String EXTRA_SUMMARY_TEXT extras key: this is a line of summary information intended to be shown alongside expanded notifications, as supplied to (e.g.) setSummaryText(CharSequence).
+
+String EXTRA_TEXT extras key: this is the main text payload, as supplied to setContentText(CharSequence). String EXTRA_TEXT_LINES extras key: An array of CharSequences to show in Notification.InboxStyle expanded notifications, each of which was supplied to addLine(CharSequence). String EXTRA_TITLE extras key: this is the title of the notification, as supplied to setContentTitle(CharSequence). String EXTRA_TITLE_BIG
+
+visible_private/public
+
+#170729
+
+1.	data 추합
+2.	calendar view
+3.	daily activity expandable view
+
+https://github.com/SundeepK/CompactCalendarView
+
+기능 아이디어
+
+-	이벤트 검색
+-	태그
+-

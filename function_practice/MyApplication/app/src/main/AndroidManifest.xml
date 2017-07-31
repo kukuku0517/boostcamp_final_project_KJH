@@ -32,6 +32,17 @@
             android:name=".Background.DataUpdateService"
             android:enabled="true"
             android:exported="true"></service>
+        <service
+            android:name=".Background.SNSNotificationService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"></action>
+            </intent-filter>
+        </service>
+
+        <activity android:name=".NotifyActivity"></activity>
     </application>
 
 </manifest>
