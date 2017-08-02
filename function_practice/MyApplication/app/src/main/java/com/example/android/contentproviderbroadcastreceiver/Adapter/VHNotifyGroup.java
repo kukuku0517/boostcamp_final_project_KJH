@@ -1,8 +1,6 @@
 package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -15,8 +13,6 @@ import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.Notif
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyUnitData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.NotifyData;
-import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
-import com.example.android.contentproviderbroadcastreceiver.NotifyActivity;
 import com.example.android.contentproviderbroadcastreceiver.R;
 
 import java.text.DateFormat;
@@ -26,13 +22,11 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static android.R.attr.start;
-
 /**
  * Created by samsung on 2017-07-29.
  */
 
-public class VHNotify extends DayViewHolder {
+public class VHNotifyGroup extends DayViewHolder {
     @BindView(R.id.sns_date)
     TextView date;
     @BindView(R.id.sns_person)
@@ -53,14 +47,14 @@ public class VHNotify extends DayViewHolder {
         onClickButton();
     }
 
-    public VHNotify(View view, Context context) {
-        super(view,context);
+    public VHNotifyGroup(View view) {
+        super(view);
 
 
     }
 
     @Override
-    public void bindType(MyRealmObject item) {
+    public void bindType(final MyRealmObject item) {
 //        NotifyData callData = (NotifyData) item;
 //        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
 //        Date d = new Date(callData.getDate());
@@ -77,17 +71,16 @@ public class VHNotify extends DayViewHolder {
         date.setText(tempDate);
 
         for (NotifyUnitData ud : ((NotifyGroupData) item).getUnits()) {
-            Log.d("grouping ud:", ud.getName()+"\n");
+            Log.d("grouping ud:", ud.getName() + "\n");
             for (NotifyData nd : ud.getNotifys()) {
-                Log.d("grouping nd:", "\t"+nd.getPerson() +" : "+nd.getContent()+"\n");
+                Log.d("grouping nd:", "\t" + nd.getPerson() + " : " + nd.getContent() + "\n");
             }
         }
 
-        cv.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, NotifyActivity.class);
-
+                mListener.onNotifyItemClick(item);
             }
         });
 
@@ -126,4 +119,6 @@ public class VHNotify extends DayViewHolder {
         animator.setInterpolator(new LinearInterpolator());
         return animator;
     }
+
+
 }

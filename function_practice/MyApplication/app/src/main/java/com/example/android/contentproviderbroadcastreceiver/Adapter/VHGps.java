@@ -1,13 +1,11 @@
 package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
+import com.example.android.contentproviderbroadcastreceiver.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
-import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
 import com.example.android.contentproviderbroadcastreceiver.R;
 
 import java.text.DateFormat;
@@ -17,37 +15,36 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.R.attr.duration;
+
 /**
- * Created by samsung on 2017-07-26.
+ * Created by samsung on 2017-08-02.
  */
 
-public class VHPhoto extends DayViewHolder {
-    @BindView(R.id.photo_iv)
-    ImageView iv;
-    @BindView(R.id.photo_date)
+public class VHGps extends DayViewHolder {
+    @BindView(R.id.gps_date)
     TextView date;
-    @BindView(R.id.photo_location)
-    TextView location;
+    @BindView(R.id.gps_place)
+    TextView place;
 
-    @BindView(R.id.photo_button)
-    Button button;
-
-
-    public VHPhoto(View view) {
+    public VHGps(View view) {
         super(view);
-
+        ButterKnife.bind(this, view); //없애고 돌려보기
 
     }
 
     @Override
     public void bindType(MyRealmObject item) {
-       PhotoData callData = (PhotoData) item;
+
+
+        GpsData gpsData = (GpsData)item;
         DateFormat sdFormat = new SimpleDateFormat("hh : mm");
-        Date d = new Date(callData.getDate());
+        Date d = new Date(gpsData.getDate());
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);
-        location.setText(callData.getPlace());
+        place.setText(gpsData.getPlace());
 
-        iv.setImageResource(R.drawable.ic_image_black_24dp);
+
+
     }
 }

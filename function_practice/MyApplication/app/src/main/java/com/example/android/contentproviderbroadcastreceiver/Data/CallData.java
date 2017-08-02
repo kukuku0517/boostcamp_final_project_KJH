@@ -1,25 +1,22 @@
 package com.example.android.contentproviderbroadcastreceiver.Data;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by samsung on 2017-07-26.
  */
 
 public class CallData extends RealmObject implements MyRealmObject {
+    @PrimaryKey
+    long id;
 
     public long date;
     public String duration;
     public String person;
-    public long id;
+
     public int a;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;}
     public String getNumber() {
         return number;
     }
@@ -32,6 +29,11 @@ public class CallData extends RealmObject implements MyRealmObject {
 
     public long getDate() {
         return date;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 
     public void setDate(long date) {

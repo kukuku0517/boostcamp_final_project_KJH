@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.Data;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
 
 /**
@@ -31,20 +32,29 @@ public class SmsData extends RealmObject implements MyRealmObject {
     public void setPerson(String person) {
         this.person = person;
     }
+    @PrimaryKey
+    long id;
 
     public long date;
-    public String content,person;
-    public long id;
+    public String content;
+    public String person;
 
+    public String getAddress() {
+        return address;
+    }
+
+    public String address;
+
+    @Override
     public long getId() {
         return id;
     }
-
-    public void setId(long id) {
-        this.id = id;}
-
     @Override
     public int getType() {
-        return 2;
+        return 1;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

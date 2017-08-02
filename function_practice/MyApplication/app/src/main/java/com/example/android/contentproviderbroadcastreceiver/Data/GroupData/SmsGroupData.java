@@ -4,23 +4,20 @@ import android.util.Log;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by samsung on 2017-07-31.
+ * Created by samsung on 2017-08-01.
  */
 
-public class NotifyGroupData extends RealmObject implements MyRealmObject{
-   public RealmList<NotifyUnitData> units;
+public class SmsGroupData extends RealmObject implements MyRealmObject {
+    public RealmList<SmsUnitData> units;
     long start,end;
 
     @PrimaryKey
-    long  id;
+   long id;
 
 
     public long getStart() {
@@ -39,11 +36,11 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject{
         this.end = end;
     }
 
-    public RealmList<NotifyUnitData> getUnits() {
+    public RealmList<SmsUnitData> getUnits() {
         return units;
     }
 
-    public void setUnits(RealmList<NotifyUnitData> units) {
+    public void setUnits(RealmList<SmsUnitData> units) {
         this.units = units;
     }
 
@@ -52,9 +49,9 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject{
 
         for(int i=0;i<units.size();i++){
             Log.d("grouping",units.get(i).getName() + " : "+s);
-           if(units.get(i).getName().equals(s)){
-               return i;
-           }
+            if(units.get(i).getName().equals(s)){
+                return i;
+            }
         }
         return -1;
     }
@@ -66,15 +63,16 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject{
 
     @Override
     public int getType() {
-        return 3;
+        return 4;
     }
 
     @Override
     public long getDate() {
-        return start;
+        return getEnd();
     }
+
     @Override
-    public long  getId() {
+    public long getId() {
         return id;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.Data;
 
 import io.realm.RealmObject;
-import io.realm.annotations.RealmClass;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by samsung on 2017-07-26.
@@ -9,16 +9,23 @@ import io.realm.annotations.RealmClass;
 
 public class PhotoData extends RealmObject implements MyRealmObject{
     long date;
-    String lat;
-    String lng;
-    public long id;
+    double lat;
+    double lng;
+    String place;
+    @PrimaryKey
+    long id;
 
-    public long getId() {
-        return id;
+    public String getPlace() {
+        return place;
     }
 
-    public void setId(long id) {
-        this.id = id;}
+    public void setPlace(String place) {
+        this.place = place;
+    }
+    @Override
+    public long  getId() {
+        return id;
+    }
     public long getDate() {
         return date;
     }
@@ -27,19 +34,19 @@ public class PhotoData extends RealmObject implements MyRealmObject{
         this.date = date;
     }
 
-    public String getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(String lat) {
+    public void setLat( double lat) {
         this.lat = lat;
     }
 
-    public String getLng() {
+    public double getLng() {
         return lng;
     }
 
-    public void setLng(String lng) {
+    public void setLng( double lng) {
         this.lng = lng;
     }
 
@@ -55,6 +62,6 @@ public class PhotoData extends RealmObject implements MyRealmObject{
 
     @Override
     public int getType() {
-        return 1;
+        return 2;
     }
 }

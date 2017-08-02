@@ -186,5 +186,10 @@ https://github.com/SundeepK/CompactCalendarView
 기능 아이디어
 
 -	이벤트 검색
--	태그
--
+-	태그 -
+
+#170801
+
+https://stackoverflow.com/questions/32860101/how-to-implement-gps-status-change-listener
+
+https://stackoverflow.com/questions/29891355/android-location-service-battery-usage

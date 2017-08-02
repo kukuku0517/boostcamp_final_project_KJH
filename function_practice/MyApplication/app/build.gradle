@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
@@ -35,4 +36,14 @@ dependencies {
     compile 'com.github.sundeepk:compact-calendar-view:2.0.2.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
+
+
+    compile 'com.google.android.gms:play-services-location:11.0.4'
+    compile 'com.google.android.gms:play-services-places:11.0.4'
+
+    compile ('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.10.6@aar'){
+        transitive=true
+    }
 }
+
+//apply plugin: 'com.google.gms.google-services'

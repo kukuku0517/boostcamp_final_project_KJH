@@ -34,6 +34,9 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
+import static android.R.attr.id;
+import static android.R.attr.type;
+import static android.bluetooth.BluetoothClass.Service.TELEPHONY;
 import static com.example.android.contentproviderbroadcastreceiver.R.string.month;
 import static com.example.android.contentproviderbroadcastreceiver.R.string.year;
 
@@ -79,16 +82,42 @@ public class DataUpdateService extends Service {
             public void onChange(boolean selfChange, Uri uri) {
                 super.onChange(selfChange, uri);
 
-                String[] projection = {"_id", "person", "date", "body"};
+//                0: (\_\_\__)id
+//                        -	1: thread_id
+//                        -	2: address
+//                        -	3: person
+//                        -	4: date
+//                        -	5: protocol
+//                        -	6: read
+//                        -	7: status
+//                        -	8: type
+//                        -	9: reply_path_present
+//                        -	10: subject
+//                        -	11: body
+//                        -	12: service_center
+//                        -	13: locked
+                String[] projection = {"_id", "person", "date", "body","address","type","status","subject"};
                 String sortOrder = "date DESC";
                 if (!String.valueOf(uri).equals("content://sms/raw")) {
                     Cursor c = cr.query(uri, projection, null, null, sortOrder);
                     if (c.moveToNext()) {
                         long id = c.getLong(0);
-                        Log.d("smsid", String.valueOf(id));
+                        String person = c.getString(1);
+                        long date = c.getLong(2);
+                        String body = c.getString(3);
+                        String address = c.getString(4);
+                        String type = c.getString(5);
+
+                        String status = c.getString(6);
+                        String subject = c.getString(7);
+
+
+
+
                         if (sms != id) {
                             sms = id;
-                            RealmHelper.smsDataSave(c);
+
+                            new RealmHelper(getApplicationContext()).smsDataSave(c);
 
                         }
 
@@ -127,7 +156,7 @@ public class DataUpdateService extends Service {
                             null,       // 모든 개체 출력
                             null,
                             null);
-                    if (c.moveToNext()) {
+                    if (c!=null && c.moveToNext()) {
 
                         String filePath = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
                         Uri imageUri = Uri.parse(filePath);

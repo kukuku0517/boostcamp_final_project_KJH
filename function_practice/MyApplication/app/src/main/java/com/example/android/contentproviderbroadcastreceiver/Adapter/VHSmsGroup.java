@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.R;
@@ -28,58 +29,66 @@ import static android.R.attr.button;
  * Created by samsung on 2017-07-26.
  */
 
-public class VHSms extends DayViewHolder {
+public class VHSmsGroup extends DayViewHolder {
 
-    @BindView(R.id.sms_date)
+    @BindView(R.id.sms_group_date)
     TextView date;
-    @BindView(R.id.sms_person)
+    @BindView(R.id.sms_group_person)
     TextView person;
-    @BindView(R.id.sms_number)
+    @BindView(R.id.sms_group_number)
     TextView number;
-    @BindView(R.id.sms_content)
+    @BindView(R.id.sms_group_content)
     TextView content;
 
     //    @BindView(R.id.sms_button)
 //    Button button;
-    @OnClick(R.id.sms_button)
-    void onClick() {
-        onClickButton();
-    }
+    @BindView(R.id.sms_group_button)
+Button button;
 
-    public VHSms(View view) {
+
+    public VHSmsGroup(View view) {
         super(view);
 
 
     }
 
     @Override
-    public void bindType(MyRealmObject item) {
-        SmsData callData = (SmsData) item;
+    public void bindType(final MyRealmObject item) {
+        SmsGroupData callData = (SmsGroupData) item;
         DateFormat sdFormat = new SimpleDateFormat("hh : mm");
         Date d = new Date(callData.getDate());
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);
-        person.setText(callData.getPerson());
-        content.setText(String.valueOf(callData.getContent()));
+//        person.setText(callData.getPerson());
+//        content.setText(String.valueOf(callData.getContent()));
         number.setText(String.valueOf(callData.getId()));
         Log.d("####", "on");
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onSmsItemClick(item);
+            }
+        });
     }
 
     private void onClickButton() {
 
         //Simply set View to Gone if not expanded
         //Not necessary but I put simple rotation on button layout
-        if (content.getVisibility() == View.VISIBLE) {
-            Log.d("smsAni", "on");
-            createRotateAnimator(content, 180f, 0f).start();
-            content.setVisibility(View.GONE);
-//            expandState.put(i, false);
-        } else {
-            Log.d("smsAni", "off");
-            createRotateAnimator(content, 0f, 180f).start();
-            content.setVisibility(View.VISIBLE);
-//            expandState.put(i, true);
-        }
+//        if (content.getVisibility() == View.VISIBLE) {
+//            Log.d("smsAni", "on");
+//            createRotateAnimator(content, 180f, 0f).start();
+//            content.setVisibility(View.GONE);
+////            expandState.put(i, false);
+//        } else {
+//            Log.d("smsAni", "off");
+//            createRotateAnimator(content, 0f, 180f).start();
+//            content.setVisibility(View.VISIBLE);
+////            expandState.put(i, true);
+//        }
+
+
     }
 
     //Code to rotate button

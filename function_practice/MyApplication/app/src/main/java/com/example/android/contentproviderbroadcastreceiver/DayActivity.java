@@ -16,13 +16,15 @@ import android.widget.ProgressBar;
 import com.example.android.contentproviderbroadcastreceiver.Adapter.DayAdapter;
 import com.example.android.contentproviderbroadcastreceiver.Background.ContentProviderData;
 import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
+import com.example.android.contentproviderbroadcastreceiver.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
-import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyUnitData;
+import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.NotifyData;
 import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
 import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
+import com.example.android.contentproviderbroadcastreceiver.Interface.CardItemClickListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,14 +36,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 
-import static android.R.attr.start;
 import static android.media.CamcorderProfile.get;
 
-public class DayActivity extends AppCompatActivity {
+public class DayActivity extends AppCompatActivity implements CardItemClickListener {
 
     @BindView(R.id.rv_day)
     RecyclerView rv;
@@ -90,21 +89,26 @@ public class DayActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         adapter = new DayAdapter(this, realm);
 
+
         pb.setVisibility(View.VISIBLE);
 
 
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         getSharedPreferences("setting", Activity.MODE_PRIVATE);
-//        mPref.edit().putBoolean("init", true).commit();
+//       mPref.edit().putBoolean("init", true).commit();
 
         if (!mPref.contains("init")) {
             Log.d("pref", "0");
 
-            new RealmAsync().execute();
+            new RealmAsync().execute(0);
+            new RealmAsync().execute(1);
+            new RealmAsync().execute(2);
+
         } else if (!mPref.getBoolean("init", false)) {
             Log.d("pref", "1");
-
-            new RealmAsync().execute();
+            new RealmAsync().execute(0);
+            new RealmAsync().execute(1);
+            new RealmAsync().execute(2);
         } else {
             Log.d("pref", "2");
 
@@ -113,17 +117,42 @@ public class DayActivity extends AppCompatActivity {
 
     }
 
-    private class RealmAsync extends AsyncTask<Void, Void, Void> {
+    @Override
+    public void onNotifyItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class",0);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onSmsItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class",1);
+        startActivity(intent);
+    }
+
+    private class RealmAsync extends AsyncTask<Integer, Void, Void> {
         Realm realmAsync;
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Integer... params) {
             realmAsync = Realm.getDefaultInstance();
 
             ContentProviderData cp = new ContentProviderData(getApplicationContext(), startMillis, endMillis, realmAsync);
-            cp.readSMSMessage();
-            cp.readCallLogs();
-            cp.readImages();
+            switch (params[0]) {
+                case 0:
+                    cp.readSMSMessage();
+                    break;
+                case 1:
+                    cp.readCallLogs();
+                    break;
+                case 2:
+                    cp.readImages();
+                    break;
+            }
+
 
             return null;
         }
@@ -160,18 +189,22 @@ public class DayActivity extends AppCompatActivity {
         RealmResults<SmsData> mData = RealmHelper.smsDataLoad("date", startMillis, endMillis);
         RealmResults<PhotoData> pData = RealmHelper.photoDataLoad("date", startMillis, endMillis);
 
-        RealmResults<NotifyData> nData = RealmHelper.notifyDataLoad("date", startMillis, endMillis);
+//        RealmResults<NotifyData> nData = RealmHelper.notifyDataLoad("date", startMillis, endMillis);
         //between("date",startMillis,endMillis).
+RealmResults<GpsData>gData = RealmHelper.gpsDataLoad("date",startMillis,endMillis);
+        for(GpsData g: gData){
 
+            items.add(g);
+        }
         for (CallData c : cData) {
             items.add(c);
             Log.d("call", String.valueOf(c));
         }
-        for (SmsData m : mData) {
-            items.add(m);
-
-            Log.d("sms", String.valueOf(m));
-        }
+//        for (SmsData m : mData) {
+//            items.add(m);
+//
+//            Log.d("sms", String.valueOf(m));
+//        }
         for (PhotoData p : pData) {
             items.add(p);
 
@@ -180,7 +213,13 @@ public class DayActivity extends AppCompatActivity {
 
 
         //get today group datas
-        RealmResults<NotifyGroupData> ngDatas = RealmHelper.notifyGroupDataLoad("date", startMillis, endMillis);
+        RealmResults<NotifyGroupData> ngDatas = RealmHelper.notifyGroupDataLoad("end", startMillis, endMillis);
+        RealmResults<SmsGroupData> smsGroupDatas = RealmHelper.smsGroupDataLoad("date", startMillis, endMillis);
+        for (SmsGroupData m : smsGroupDatas) {
+            items.add(m);
+
+            Log.d("sms", String.valueOf(m));
+        }
 //
 //        //if first, make new
 //        if (ngDatas.size() == 0) {
@@ -251,8 +290,8 @@ public class DayActivity extends AppCompatActivity {
 //
 //        }
 
-        int j=0;
-        for(NotifyGroupData nn:ngDatas){
+        int j = 0;
+        for (NotifyGroupData nn : ngDatas) {
             items.add(nn);
             Log.d("grouping", String.valueOf(j++));
         }

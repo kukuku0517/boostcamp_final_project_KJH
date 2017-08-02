@@ -7,7 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
+import com.example.android.contentproviderbroadcastreceiver.Interface.CardItemClickListener;
 import com.example.android.contentproviderbroadcastreceiver.R;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,11 +19,15 @@ import butterknife.ButterKnife;
  */
 
 public abstract class DayViewHolder extends RecyclerView.ViewHolder {
-Context context;
+    public CardItemClickListener mListener;
 
-    public DayViewHolder(View itemView,Context context) {
+    public DayViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
+    }
+
+    void setmListener(Context context){
+        mListener = (CardItemClickListener) context;
     }
     public abstract void bindType(MyRealmObject item);
 

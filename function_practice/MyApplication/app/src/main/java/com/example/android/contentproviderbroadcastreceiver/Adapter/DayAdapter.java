@@ -20,7 +20,7 @@ import static android.media.CamcorderProfile.get;
  * Created by samsung on 2017-07-26.
  */
 
-public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
+public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
 
     private ArrayList<MyRealmObject> items;
@@ -29,32 +29,43 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
 
     public DayAdapter(Context context, Realm realm) {
         this.context = context;
-        this.realm=realm;
+        this.realm = realm;
     }
+
     @Override
     public DayViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         int layoutIdForListItem;
         View view;
-        switch(viewType){
-            case 0:
+        switch (viewType) {
+            case 0: //call
                 layoutIdForListItem = R.layout.call_item;
-                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHCall(view);
-            case 1:
-                layoutIdForListItem = R.layout.photo_item;
-                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHPhoto(view);
-            case 2:
-                layoutIdForListItem = R.layout.sms_item;
-                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHSms(view);
-            case 3:
-                Log.d("Notification","layout");
-                layoutIdForListItem = R.layout.notify_item;
-                view =  LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHNotify(view);
+            case 1: //gps
+                layoutIdForListItem = R.layout.gps_item;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                return new VHGps(view);
+            case 2: //photo
 
+                layoutIdForListItem = R.layout.photo_item;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                return new VHPhoto(view);
+            case 3: //notigroup
+                Log.d("Notification", "layout");
+                layoutIdForListItem = R.layout.notify_item;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+
+                DayViewHolder holder = new VHNotifyGroup(view);
+                holder.setmListener(context);
+                return holder;
+            case 4: //sms group
+                layoutIdForListItem = R.layout.sms_group_item;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+
+                DayViewHolder smsHolder = new VHSmsGroup(view);
+                smsHolder.setmListener(context);
+                return smsHolder;
             default:
                 return null;
 
@@ -65,13 +76,13 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
 
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
-        MyRealmObject item=items.get(position);
+        MyRealmObject item = items.get(position);
         holder.bindType(item);
     }
 
     @Override
     public int getItemCount() {
-      return items.size();
+        return items.size();
     }
 
     @Override
@@ -83,7 +94,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder>{
         this.items = item;
         notifyDataSetChanged();
     }
-
 
 
 }

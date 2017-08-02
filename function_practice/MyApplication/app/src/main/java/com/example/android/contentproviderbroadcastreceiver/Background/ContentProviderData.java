@@ -69,14 +69,14 @@ Context context;
 
         Uri allMessage = Uri.parse("content://sms");
         ContentResolver cr = context.getContentResolver();
-        String[] projection = {"_id", "person", "date", "body"};
+        String[] projection = {"_id", "person", "date", "body","address"};
 
         String sortOrder = "date DESC";
         String selection = null;
         Cursor c = cr.query(allMessage, projection, selection, null, sortOrder);
 
         while (c.moveToNext()) {
-            RealmHelper.smsDataSave(c);
+            new RealmHelper(context).smsDataSave(c);
 
         }
 
@@ -90,8 +90,8 @@ Context context;
 
         PhotoData photo = new PhotoData();
         String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.DATE_TAKEN};
-        String selection = null;
-//        String selection = MediaStore.Images.Media.DATE_ADDED + ">" + start/1000 + " and " + MediaStore.Images.Media.DATE_ADDED + "<" + end/1000;
+//        String selection = null;
+        String selection = MediaStore.Images.Media.DATE_ADDED + ">" + start/1000 + " and " + MediaStore.Images.Media.DATE_ADDED + "<" + end/1000;
         Cursor imageCursor = context.getApplicationContext().getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // 이미지 컨텐트 테이블
                 projection, // DATA를 출력

@@ -2,10 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.contentproviderbroadcastreceiver">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
 
     <application
         android:allowBackup="true"
@@ -14,6 +19,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAo_J4f3vtkym15KAt1LOidBQMCByxRhl4" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,18 +40,27 @@
         <service
             android:name=".Background.DataUpdateService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".Background.SNSNotificationService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService"></action>
+                <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
 
-        <activity android:name=".NotifyActivity"></activity>
+        <activity android:name=".DetailActivity" />
+
+        <service
+            android:name=".Background.LocationUpdateService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".Background.GoogleLocationService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

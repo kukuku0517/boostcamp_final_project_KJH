@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.Data;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by samsung on 2017-07-28.
@@ -33,17 +34,16 @@ public class NotifyData extends RealmObject implements MyRealmObject {
 
     public long date;
     public String content,person;
-    public long id;
+    @PrimaryKey
+    long  id;
 
-    public long getId() {
+    public long  getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;}
 
     @Override
     public int getType() {
-        return 3;
+        return 0;
     }
 }

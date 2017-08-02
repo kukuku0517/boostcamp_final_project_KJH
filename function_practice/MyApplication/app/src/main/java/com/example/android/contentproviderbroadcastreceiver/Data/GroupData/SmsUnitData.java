@@ -2,21 +2,30 @@ package com.example.android.contentproviderbroadcastreceiver.Data.GroupData;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.NotifyData;
+import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by samsung on 2017-07-31.
+ * Created by samsung on 2017-08-01.
  */
 
-public class NotifyUnitData extends RealmObject implements MyRealmObject{
-   int count;
-    public  long start,end;
-    public String name;
+public class SmsUnitData extends RealmObject implements MyRealmObject {
     @PrimaryKey
     long id;
+
+    int count;
+    public  long start,end;
+    public String name;
+    String content ="";
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String address;
 
     public String getName() {
         return name;
@@ -26,7 +35,19 @@ public class NotifyUnitData extends RealmObject implements MyRealmObject{
         this.name = name;
     }
 
+    @Override
+    public int getType() {
+        return 0;
+    }
 
+    @Override
+    public long getDate() {
+        return start;
+    }
+    @Override
+    public long getId() {
+        return id;
+    }
     public int getCount() {
         return count;
     }
@@ -51,32 +72,21 @@ public class NotifyUnitData extends RealmObject implements MyRealmObject{
         this.end = this.end<end?end:this.end;
     }
 
-    public RealmList<NotifyData> getNotifys() {
-        return notifys;
+    public RealmList<SmsData> getSmss() {
+        return smss;
     }
 
-    public void setNotifys(RealmList<NotifyData> notifys) {
-        this.notifys = notifys;
+    public void setSmss(RealmList<SmsData> smss) {
+        this.smss = smss;
     }
 
-    RealmList<NotifyData> notifys;
-String content="";
+    RealmList<SmsData> smss;
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getContent() {
         return content;
-    }
-
-    @Override
-    public int getType() {
-        return 0;
-    }
-
-    @Override
-    public long getDate() {
-        return start;
-    }
-
-    @Override
-    public long getId() {
-        return id;
     }
 }
