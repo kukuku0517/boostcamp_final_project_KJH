@@ -23,11 +23,9 @@ import io.realm.Realm;
 
 public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNotifyChild> {
 
-
     private NotifyGroupData items;
     private Context context;
     private Realm realm;
-
 
     public NotifyAdapter(Context context, Realm realm) {
         setHasStableIds(true);
@@ -39,6 +37,7 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
     {
         this.items=items;
     }
+
     @Override
     public int getGroupCount() {
         return items.getUnits().size();
@@ -61,28 +60,20 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public VHNotify onCreateGroupViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.sms_item, parent, false);
+        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.notify_item, parent, false);
         return new VHNotify(v);
-
-
-
     }
 
     @Override
     public VHNotifyChild onCreateChildViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sms_child_item, parent, false);
         return new VHNotifyChild(v);
-
-
     }
 
     @Override
     public void onBindGroupViewHolder(VHNotify holder, int groupPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-
-
         NotifyUnitData unitdata =items.getUnits().get(groupPosition);
         holder.bindType(unitdata);
-
     }
 
     @Override

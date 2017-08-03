@@ -62,6 +62,6 @@ public class PhotoData extends RealmObject implements MyRealmObject{
 
     @Override
     public int getType() {
-        return 2;
+        return 5;
     }
 }

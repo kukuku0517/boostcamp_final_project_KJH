@@ -14,13 +14,14 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.R.attr.name;
+
 /**
  * Created by samsung on 2017-08-02.
  */
 
 public class VHSmsChild extends AbstractExpandableItemViewHolder {
-    @BindView(R.id.sms_child_name)
-    TextView name;
+
     @BindView(R.id.sms_child_content)
     TextView content;
     @BindView(R.id.sms_child_time)
@@ -32,9 +33,9 @@ public class VHSmsChild extends AbstractExpandableItemViewHolder {
     }
 
     public void bindType(SmsData child) {
-        name.setText(child.getPerson());
+
         content.setText(child.getContent());
-        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
+        DateFormat sdFormat = new SimpleDateFormat("HH:mm");
         Date d = new Date(child.getDate());
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);

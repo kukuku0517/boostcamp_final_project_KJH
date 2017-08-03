@@ -10,10 +10,12 @@ import android.util.Log;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyUnitData;
+import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsUnitData;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
 
@@ -34,42 +36,83 @@ import static io.realm.Realm.getDefaultInstance;
 
 public class RealmHelper {
     static Context context;
+
     public RealmHelper(Context context) {
-        this.context =context;
+        this.context = context;
     }
 
     static final long quarter = 21600000;
 
-    public static long[] getDate() {
-        Calendar today = Calendar.getInstance();
+    public static long[] getDate(long millis) {
+        Date date = new Date(millis);
+        GregorianCalendar today = new GregorianCalendar();
+        today.setTime(date);
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
         today.set(Calendar.MILLISECOND, 0);
-
-
         long start = today.getTimeInMillis();
         today.add(Calendar.DATE, 1);
         long end = today.getTimeInMillis();
-
         return new long[]{start, end};
-
     }
+
+    public static DayData getDayObject(Realm realm, long millis) {
+        final long[] today = getDate(millis);
+        final DayData[] dayData = new DayData[1];
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                dayData[0] = realm.where(DayData.class).equalTo("start", today[0]).findFirst();
+                if (dayData[0] == null) {
+                    Log.d("photogroup", "new today");
+                    dayData[0] = realm.createObject(DayData.class, nextId(DayData.class, realm));
+                    dayData[0].setStart(today[0]);
+                    dayData[0].setEnd(today[1]);
+                } else {
+                    Log.d("photogroup", "old today");
+                }
+
+            }
+        });
+        return dayData[0];
+    }
+
+//    public static void updateDay(Realm realm){
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                DayData dayData = getDayObject(realm);
+//                dayData.setPhotoLast(0);
+//                dayData.setCallNew(0);
+//                dayData.setGpsNew(0);
+//            }
+//        });
+//    }
 
     public static void callDataSave(final Cursor c) {
 
         Realm realm = Realm.getDefaultInstance();
+
+
+        final String phone = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
+
+        final long duration = c.getLong(c.getColumnIndex(CallLog.Calls.DURATION));
+        final long datetimeMillis = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
+        long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
+//
+
+        final DayData dayData = getDayObject(realm, datetimeMillis);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                CallData callData = realm.createObject(CallData.class,  nextId(CallData.class,realm));
 
-                String name = c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME));
-                String phone = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
-                String duration = c.getString(c.getColumnIndex(CallLog.Calls.DURATION));
-                long datetimeMillis = c.getLong(c.getColumnIndex(CallLog.Calls.DATE));
-                long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
-//
+                dayData.setPhotoLast(0);
+                dayData.setGpsNew(0);
+                Log.d("photogroup", "photonew by call");
+                CallData callData = realm.createObject(CallData.class, nextId(CallData.class, realm));
+                String name = getContactName(phone);
                 callData.setPerson(name);
                 callData.setDate(datetimeMillis);
                 callData.setDuration(duration);
@@ -83,40 +126,68 @@ public class RealmHelper {
 
     public static void photoDataSave(final Cursor imageCursor) {
         Realm realm = Realm.getDefaultInstance();
+
+        final String filePath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        Uri imageUri = Uri.parse(filePath);
+        final long date = imageCursor.getLong(imageCursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED)) * 1000;
+        long id = imageCursor.getLong(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
+
+        final double[] lat = {imageCursor.getDouble(imageCursor.getColumnIndex(MediaStore.Images.Media.LATITUDE))};
+        final double[] lng = {imageCursor.getDouble(imageCursor.getColumnIndex(MediaStore.Images.Media.LONGITUDE))};
+        final String[] place = {""};
+        Log.d("photolatbefore", String.valueOf(lat[0]));
+        final DayData dayData = getDayObject(realm, date);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
 
-                PhotoData photo = realm.createObject(PhotoData.class,  nextId(PhotoData.class,realm));
 
-                String filePath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                Uri imageUri = Uri.parse(filePath);
-                long date = imageCursor.getLong(imageCursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED)) * 1000;
-                long id = imageCursor.getLong(imageCursor.getColumnIndex(MediaStore.Images.Media._ID));
+                PhotoData photo = realm.createObject(PhotoData.class, nextId(PhotoData.class, realm));
 
-                double lat = imageCursor.getDouble(imageCursor.getColumnIndex(MediaStore.Images.Media.LATITUDE));
-                double lng = imageCursor.getDouble(imageCursor.getColumnIndex(MediaStore.Images.Media.LONGITUDE));
-                String place = "";
-                Log.d("photolatbefore", String.valueOf(lat));
-                if (lat == 0.0) {
+                if (lat[0] == 0.0) {
                     RealmResults<GpsData> gpsDatas = realm.where(GpsData.class).findAll();
                     if (gpsDatas.size() != 0) {
                         GpsData last = gpsDatas.last();
-                        lat = last.getLat();
-                        lng = last.getLng();
-                        place = last.getPlace();
+                        lat[0] = last.getLat();
+                        lng[0] = last.getLng();
+                        place[0] = last.getPlace();
                     }
 
                 }
-                Log.d("photolatafter", String.valueOf(lat));
+                Log.d("photolatafter", String.valueOf(lat[0]));
 
                 Log.d("photo", String.valueOf(date));
 
                 photo.setDate(date);
-                photo.setLat(lat);
-                photo.setLng(lng);
+                photo.setLat(lat[0]);
+                photo.setLng(lng[0]);
                 photo.setPath(filePath);
-                photo.setPlace(place);
+                photo.setPlace(place[0]);
+
+
+                long photoLast = dayData.getPhotoLast();
+                PhotoGroupData photoGroupData;
+                if (photoLast == 0 || photoLast + 3600000 < date) {
+                    photoGroupData = realm.createObject(PhotoGroupData.class, nextId(PhotoGroupData.class, realm));
+                    photoGroupData.setPlace(place[0]);
+                    photoGroupData.setStart(date);
+                    photoGroupData.setEnd(date);
+                    photoGroupData.setCount(1);
+                    photoGroupData.getPhotoss().add(photo);
+                    dayData.setPhotoLast(date);
+
+
+                    Log.d("photogroup", "new group photo");
+                } else {
+                    photoGroupData = realm.where(PhotoGroupData.class).findAll().last();
+                    photoGroupData.setEnd(date);
+                    photoGroupData.setCount(photoGroupData.getCount() + 1);
+                    photoGroupData.getPhotoss().add(photo);
+
+                    Log.d("photogroup", "old group photo");
+                }
+                dayData.setCallNew(0);
+                dayData.setGpsNew(0);
 
 
             }
@@ -128,43 +199,51 @@ public class RealmHelper {
     public static void gpsDataSave(final long date, final double lat, final double lng, final int change, final String place) {
 
         Realm realm = Realm.getDefaultInstance();
+        final DayData dayData = getDayObject(realm, date);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                GpsData gd = realm.createObject(GpsData.class, nextId(GpsData.class,realm));
+
+                GpsData gd = realm.createObject(GpsData.class, nextId(GpsData.class, realm));
                 gd.setDate(date);
                 gd.setLat(lat);
                 gd.setLng(lng);
                 gd.setChange(change);
                 gd.setPlace(place);
+
+                if (change == 1) {
+
+                    Log.d("photogroup", "gpsChange");
+
+                    dayData.setPhotoLast(0);
+                }
             }
         });
     }
 
-public static int nextId(Class c, Realm realm){
-    Number currentIdNum = realm.where(c).max("id");
-    int nextId;
-    if(currentIdNum == null) {
-        nextId = 1;
-    } else {
-        nextId = currentIdNum.intValue() + 1;
+    public static int nextId(Class c, Realm realm) {
+        Number currentIdNum = realm.where(c).max("id");
+        int nextId;
+        if (currentIdNum == null) {
+            nextId = 1;
+        } else {
+            nextId = currentIdNum.intValue() + 1;
+        }
+        return nextId;
     }
-    return nextId;
-}
 
-    public static String getContactName(final String phoneNumber)
-    {
-        Uri uri=Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,Uri.encode(phoneNumber));
+    public static String getContactName(final String phoneNumber) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
 
         String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
 
-        String contactName="";
-        Cursor cursor= context.getContentResolver().query(uri,projection,null,null,null);
+        String contactName = "모르는 번호";
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
-        if (cursor != null) {
-            if(cursor.moveToFirst()) {
-                contactName=cursor.getString(0);
-            }
+        if (cursor.moveToNext()) {
+
+                contactName = cursor.getString(0);
+
             cursor.close();
         }
 
@@ -178,12 +257,12 @@ public static int nextId(Class c, Realm realm){
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                SmsData smsData = realm.createObject(SmsData.class, nextId(SmsData.class,realm));
+                SmsData smsData = realm.createObject(SmsData.class, nextId(SmsData.class, realm));
                 long messageId = c.getLong(0);
                 long timestamp = c.getLong(2);
                 String body = c.getString(3);
                 String address = c.getString(4);
-String person = getContactName(address);
+                String person = getContactName(address);
 //
 //                Log.d("messageLog",c.getString(5)+""+c.getString(6)+""+c.getString(7)+""+c.getString(8)+"\n");
 
@@ -200,25 +279,23 @@ String person = getContactName(address);
 //                notifyData.setDate(when);
 //                notifyData.setContent(text);
 //                notifyData.setPerson(title);
-                long[] today = getDate();
+                long[] today = getDate(timestamp);
                 long start = today[0];
                 long end = today[1];
 
-                RealmResults<SmsGroupData> smsDatas = smsGroupDataLoad("date", start, end);
+                RealmResults<SmsGroupData> smsDatas = smsGroupDataLoad("start", start, end);
                 if (smsDatas.size() == 0) {
-                    SmsGroupData ngData1 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class,realm));
-                    SmsGroupData ngData2 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class,realm));
-                    SmsGroupData ngData3 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class,realm));
-                    SmsGroupData ngData4 = realm.createObject(SmsGroupData.class,  nextId(SmsGroupData.class,realm));
+                    SmsGroupData ngData1 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+                    SmsGroupData ngData2 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+                    SmsGroupData ngData3 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+                    SmsGroupData ngData4 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
                     ngData1.setTime(start, start + quarter);
                     ngData2.setTime(start + quarter, start + quarter * 2);
                     ngData3.setTime(start + quarter * 2, start + quarter * 3);
                     ngData4.setTime(start + quarter * 3, start + quarter * 4);
 
-                    smsDatas = RealmHelper.smsGroupDataLoad("date", start, end);
+                    smsDatas = RealmHelper.smsGroupDataLoad("start", start, end);
                 }
-
-
 
 
                 int index;
@@ -243,7 +320,7 @@ String person = getContactName(address);
                     nuData.setEnd(smsData.getDate());
                     nuData.getSmss().add(smsData);
                 } else {
-                    SmsUnitData nuData = realm.createObject(SmsUnitData.class,  nextId(SmsUnitData.class,realm));
+                    SmsUnitData nuData = realm.createObject(SmsUnitData.class, nextId(SmsUnitData.class, realm));
                     nuData.setCount(1);
                     nuData.setStart(smsData.getDate());
                     nuData.setEnd(smsData.getDate());
@@ -265,28 +342,28 @@ String person = getContactName(address);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                NotifyData notifyData = realm.createObject(NotifyData.class,  nextId(NotifyData.class,realm));
+                NotifyData notifyData = realm.createObject(NotifyData.class, nextId(NotifyData.class, realm));
 
                 notifyData.setDate(when);
                 notifyData.setContent(text);
                 notifyData.setPerson(title);
-                long[] today = getDate();
+                long[] today = getDate(when);
                 long start = today[0];
                 long end = today[1];
 
-                RealmResults<RealmObject> ngDatas = DataLoad(NotifyGroupData.class, "end", start, end);
+                RealmResults<RealmObject> ngDatas = DataLoad(NotifyGroupData.class, "start", start, end);
 
                 if (ngDatas.size() == 0) {
-                    NotifyGroupData ngData1 = realm.createObject(NotifyGroupData.class,  nextId(NotifyGroupData.class,realm));
-                    NotifyGroupData ngData2 = realm.createObject(NotifyGroupData.class,  nextId(NotifyGroupData.class,realm));
-                    NotifyGroupData ngData3 = realm.createObject(NotifyGroupData.class,  nextId(NotifyGroupData.class,realm));
-                    NotifyGroupData ngData4 = realm.createObject(NotifyGroupData.class,  nextId(NotifyGroupData.class,realm));
+                    NotifyGroupData ngData1 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+                    NotifyGroupData ngData2 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+                    NotifyGroupData ngData3 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+                    NotifyGroupData ngData4 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
                     ngData1.setTime(start, start + quarter);
                     ngData2.setTime(start + quarter, start + quarter * 2);
                     ngData3.setTime(start + quarter * 2, start + quarter * 3);
                     ngData4.setTime(start + quarter * 3, start + quarter * 4);
 
-                    ngDatas = RealmHelper.DataLoad(NotifyGroupData.class, "end", start, end);
+//                    ngDatas = RealmHelper.DataLoad(NotifyGroupData.class, "start", start, end);
                 }
                 int index;
                 if (notifyData.getDate() < start + quarter) {
@@ -300,9 +377,12 @@ String person = getContactName(address);
                 }
 
                 NotifyGroupData ngData = (NotifyGroupData) ngDatas.get(index);
-
+                if (notifyData.getPerson() == null) {
+                    return;
+                }
                 int i = ngData.checkName(notifyData.getPerson());
                 Log.d("grouping int i ", String.valueOf(i));
+
                 if (i != -1) {
                     NotifyUnitData nuData = ngData.getUnits().get(i);
                     nuData.setCount(nuData.getCount() + 1);
@@ -310,7 +390,7 @@ String person = getContactName(address);
                     nuData.setEnd(notifyData.getDate());
                     nuData.getNotifys().add(notifyData);
                 } else {
-                    NotifyUnitData nuData = realm.createObject(NotifyUnitData.class,  nextId(NotifyUnitData.class,realm));
+                    NotifyUnitData nuData = realm.createObject(NotifyUnitData.class, nextId(NotifyUnitData.class, realm));
                     nuData.setCount(1);
                     nuData.setStart(notifyData.getDate());
                     nuData.setEnd(notifyData.getDate());
@@ -334,7 +414,7 @@ String person = getContactName(address);
 
     public static RealmResults<GpsData> gpsDataLoad(String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<GpsData> gData = realm.where(GpsData.class).between(query, start, end).equalTo("change",1).findAll();
+        RealmResults<GpsData> gData = realm.where(GpsData.class).between(query, start, end).equalTo("change", 1).findAll();
         return gData;
     }
 

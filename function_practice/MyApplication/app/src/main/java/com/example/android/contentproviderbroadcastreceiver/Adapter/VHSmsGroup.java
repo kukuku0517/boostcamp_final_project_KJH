@@ -35,34 +35,32 @@ public class VHSmsGroup extends DayViewHolder {
     TextView date;
     @BindView(R.id.sms_group_person)
     TextView person;
-    @BindView(R.id.sms_group_number)
-    TextView number;
+//    @BindView(R.id.sms_group_number)
+//    TextView number;
     @BindView(R.id.sms_group_content)
     TextView content;
-
-    //    @BindView(R.id.sms_button)
-//    Button button;
     @BindView(R.id.sms_group_button)
-Button button;
-
+    Button button;
 
     public VHSmsGroup(View view) {
         super(view);
-
-
     }
 
     @Override
     public void bindType(final MyRealmObject item) {
         SmsGroupData callData = (SmsGroupData) item;
-        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
+        DateFormat sdFormat = new SimpleDateFormat("HH : mm");
         Date d = new Date(callData.getDate());
         String tempDate = sdFormat.format(d);
-        date.setText(tempDate);
-//        person.setText(callData.getPerson());
-//        content.setText(String.valueOf(callData.getContent()));
-        number.setText(String.valueOf(callData.getId()));
-        Log.d("####", "on");
+        date.setText("~"+tempDate);
+
+        int size = callData.getUnits().size();
+        if(size!=0){
+            int count = callData.getUnits().size()-1;
+            String name = callData.getUnits().get(0).getName();
+            person.setText(name+" 외 "+count+"명");
+        }
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,32 +68,5 @@ Button button;
                 mListener.onSmsItemClick(item);
             }
         });
-    }
-
-    private void onClickButton() {
-
-        //Simply set View to Gone if not expanded
-        //Not necessary but I put simple rotation on button layout
-//        if (content.getVisibility() == View.VISIBLE) {
-//            Log.d("smsAni", "on");
-//            createRotateAnimator(content, 180f, 0f).start();
-//            content.setVisibility(View.GONE);
-////            expandState.put(i, false);
-//        } else {
-//            Log.d("smsAni", "off");
-//            createRotateAnimator(content, 0f, 180f).start();
-//            content.setVisibility(View.VISIBLE);
-////            expandState.put(i, true);
-//        }
-
-
-    }
-
-    //Code to rotate button
-    private ObjectAnimator createRotateAnimator(final View target, final float from, final float to) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(target, "rotation", from, to);
-        animator.setDuration(300);
-        animator.setInterpolator(new LinearInterpolator());
-        return animator;
     }
 }

@@ -18,6 +18,7 @@ import com.example.android.contentproviderbroadcastreceiver.Background.ContentPr
 import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
+import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.NotifyData;
 import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
@@ -36,6 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 import static android.media.CamcorderProfile.get;
@@ -44,7 +46,6 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
     @BindView(R.id.rv_day)
     RecyclerView rv;
-
     @BindView(R.id.progressBar)
     ProgressBar pb;
 
@@ -72,26 +73,17 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         endMillis = end.getTimeInMillis();
         quarter = (endMillis - startMillis) / 4;
 
-
         Realm.init(this);
-
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-
 //        Realm.deleteRealm(Realm.getDefaultConfiguration());
 
-
         realm = Realm.getDefaultInstance();
-
-
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         adapter = new DayAdapter(this, realm);
-
-
         pb.setVisibility(View.VISIBLE);
-
 
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         getSharedPreferences("setting", Activity.MODE_PRIVATE);
@@ -99,11 +91,9 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
         if (!mPref.contains("init")) {
             Log.d("pref", "0");
-
             new RealmAsync().execute(0);
             new RealmAsync().execute(1);
             new RealmAsync().execute(2);
-
         } else if (!mPref.getBoolean("init", false)) {
             Log.d("pref", "1");
             new RealmAsync().execute(0);
@@ -111,17 +101,15 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
             new RealmAsync().execute(2);
         } else {
             Log.d("pref", "2");
-
             displayRecyclerView();
         }
-
     }
 
     @Override
     public void onNotifyItemClick(MyRealmObject item) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("id", item.getId());
-        intent.putExtra("class",0);
+        intent.putExtra("class", 0);
         startActivity(intent);
     }
 
@@ -129,7 +117,15 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
     public void onSmsItemClick(MyRealmObject item) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("id", item.getId());
-        intent.putExtra("class",1);
+        intent.putExtra("class", 1);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onPhotoItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, PhotoActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class", 2);
         startActivity(intent);
     }
 
@@ -139,7 +135,6 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         @Override
         protected Void doInBackground(Integer... params) {
             realmAsync = Realm.getDefaultInstance();
-
             ContentProviderData cp = new ContentProviderData(getApplicationContext(), startMillis, endMillis, realmAsync);
             switch (params[0]) {
                 case 0:
@@ -152,155 +147,63 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
                     cp.readImages();
                     break;
             }
-
-
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
             super.onPostExecute(aVoid);
 //            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 //            mPref.edit().putBoolean("init", true).commit();
-
             displayRecyclerView();
         }
     }
 
     void displayRecyclerView() {
-
         pb.setVisibility(View.GONE);
-
         items.clear();
-        getItemFromRealm(realm);
+        getItemFromRealm();
         adapter.updateItem(items);
-
         rv.setHasFixedSize(true);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
     }
 
-    private void getItemFromRealm(Realm realmAsync) {
-
-        realmAsync = Realm.getDefaultInstance();
-
+    private void getItemFromRealm() {
         RealmResults<CallData> cData = RealmHelper.callDataLoad("date", startMillis, endMillis);
-        RealmResults<SmsData> mData = RealmHelper.smsDataLoad("date", startMillis, endMillis);
-        RealmResults<PhotoData> pData = RealmHelper.photoDataLoad("date", startMillis, endMillis);
+//        RealmResults<PhotoData> pData = RealmHelper.photoDataLoad("date", startMillis, endMillis);
 
-//        RealmResults<NotifyData> nData = RealmHelper.notifyDataLoad("date", startMillis, endMillis);
-        //between("date",startMillis,endMillis).
-RealmResults<GpsData>gData = RealmHelper.gpsDataLoad("date",startMillis,endMillis);
-        for(GpsData g: gData){
+        RealmResults<RealmObject> pgData = RealmHelper.DataLoad(PhotoGroupData.class, "start", startMillis, endMillis);
 
+        RealmResults<GpsData> gData = RealmHelper.gpsDataLoad("date", startMillis, endMillis);
+        RealmResults<NotifyGroupData> ngDatas = RealmHelper.notifyGroupDataLoad("end", startMillis, endMillis);
+        RealmResults<SmsGroupData> smsGroupDatas = RealmHelper.smsGroupDataLoad("date", startMillis, endMillis);
+        for (GpsData g : gData) {
             items.add(g);
         }
         for (CallData c : cData) {
             items.add(c);
             Log.d("call", String.valueOf(c));
         }
-//        for (SmsData m : mData) {
-//            items.add(m);
-//
-//            Log.d("sms", String.valueOf(m));
+//        for (PhotoData p : pData) {
+//            items.add(p);
 //        }
-        for (PhotoData p : pData) {
-            items.add(p);
-
-
+        for(RealmObject pg :pgData ){
+            items.add((PhotoGroupData)pg);
         }
 
 
-        //get today group datas
-        RealmResults<NotifyGroupData> ngDatas = RealmHelper.notifyGroupDataLoad("end", startMillis, endMillis);
-        RealmResults<SmsGroupData> smsGroupDatas = RealmHelper.smsGroupDataLoad("date", startMillis, endMillis);
         for (SmsGroupData m : smsGroupDatas) {
             items.add(m);
 
             Log.d("sms", String.valueOf(m));
         }
-//
-//        //if first, make new
-//        if (ngDatas.size() == 0) {
-//            realmAsync.beginTransaction();
-//            NotifyGroupData ngData1 = new NotifyGroupData();
-//            NotifyGroupData ngData2 = new NotifyGroupData();
-//            NotifyGroupData ngData3 = new NotifyGroupData();
-//            NotifyGroupData ngData4 = new NotifyGroupData();
-//
-//            ngData1.setTime(startMillis, startMillis + quarter);
-//            ngData2.setTime(startMillis + quarter, startMillis + quarter * 2);
-//            ngData3.setTime(startMillis + quarter * 2, startMillis + quarter * 3);
-//            ngData4.setTime(startMillis + quarter * 3, startMillis + quarter * 4);
-//
-//            realmAsync.copyToRealm(ngData1);
-//            realmAsync.copyToRealm(ngData2);
-//            realmAsync.copyToRealm(ngData3);
-//            realmAsync.copyToRealm(ngData4);
-//            realmAsync.commitTransaction();
-//            ngDatas = RealmHelper.notifyGroupDataLoad("date", startMillis, endMillis);
-//
-//        }
-//
-//
-//        for (NotifyData n : nData) {
-//            //get a group by time
-//            realmAsync.beginTransaction();
-//            int index;
-//            if (n.getDate() < startMillis + quarter) {
-//                index = 0;
-//            } else if (n.getDate() < startMillis + quarter * 2) {
-//                index = 1;
-//            } else if (n.getDate() < startMillis + quarter * 3) {
-//                index = 2;
-//            } else {
-//                index = 3;
-//            }
-//            NotifyGroupData ngData = ngDatas.get(index);
-//
-//            //get a unit by name, if exist add n to the unit else create one and put it in group
-//            int i = ngData.checkName(n.getPerson());
-//Log.d("grouping int i ", String.valueOf(i));
-//            if (i != -1) {
-//                NotifyUnitData nuData =  ngData.getUnits().get(i);
-//                nuData.setCount(nuData.getCount()+1);
-//                nuData.setStart(n.getDate());
-//                nuData.setEnd(n.getDate());
-//                nuData.getNotifys().add(n);
-//
-//            } else {
-//                NotifyUnitData nuData=new NotifyUnitData();
-//                nuData.setCount(1);
-//                nuData.setStart(n.getDate());
-//                nuData.setEnd(n.getDate());
-//                nuData.setName(n.getPerson());
-//                RealmList<NotifyData> notiList= new RealmList<>();
-//                notiList.add(n);
-//                nuData.setNotifys(notiList);
-//
-//                ngData.getUnits().add(nuData);
-//
-//            }
-//
-//            realmAsync.commitTransaction();
-//            ngDatas = RealmHelper.notifyGroupDataLoad("date", startMillis, endMillis);
-//
-//
-//
-//        }
-
-        int j = 0;
         for (NotifyGroupData nn : ngDatas) {
             items.add(nn);
-            Log.d("grouping", String.valueOf(j++));
         }
-        Log.d("photo", String.valueOf(startMillis));
 
-        Log.d("photo", String.valueOf(endMillis));
 
         Collections.sort(items, new Comparator<MyRealmObject>()
-
         {
             @Override
             public int compare(MyRealmObject o1, MyRealmObject o2) {
@@ -312,9 +215,5 @@ RealmResults<GpsData>gData = RealmHelper.gpsDataLoad("date",startMillis,endMilli
                 return false;
             }
         });
-        Log.d("item", String.valueOf(items));
-
     }
-
-
 }

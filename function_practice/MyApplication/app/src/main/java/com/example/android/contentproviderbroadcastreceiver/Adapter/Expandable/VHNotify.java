@@ -17,13 +17,13 @@ import butterknife.ButterKnife;
  */
 
 public class VHNotify extends AbstractExpandableItemViewHolder {
-    @BindView(R.id.sms_person)
+    @BindView(R.id.notify_person)
     TextView person;
-    @BindView(R.id.sms_number)
+    @BindView(R.id.notify_number)
     TextView number;
-    @BindView(R.id.sms_content)
+    @BindView(R.id.notify_content)
     TextView content;
-    @BindView(R.id.sms_write)
+    @BindView(R.id.notify_write)
     Button button;
 
     public VHNotify(View itemView) {
@@ -36,8 +36,5 @@ public class VHNotify extends AbstractExpandableItemViewHolder {
         person.setText(notifyUnitData.getName());
         number.setText(notifyUnitData.getName());
         content.setText(notifyUnitData.getContent());
-
-
-
     }
 }

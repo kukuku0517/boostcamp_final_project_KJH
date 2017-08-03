@@ -11,5 +11,7 @@ import io.realm.RealmObject;
 public interface CardItemClickListener {
     void onNotifyItemClick(MyRealmObject item);
     void onSmsItemClick(MyRealmObject item);
+    void onPhotoItemClick(MyRealmObject item);
+
 
 }

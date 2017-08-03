@@ -24,7 +24,7 @@
             <ImageView
                 android:id="@+id/photo_iv"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="128dp"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_image_black_24dp" />
@@ -37,12 +37,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
             <TextView
                 android:id="@+id/photo_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
                 android:text="TextView" />
 
 
@@ -51,7 +54,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:layout_toRightOf="@id/photo_date"
+                android:layout_below="@id/photo_date"
+
+                android:text="TextView" />
+            <TextView
+                android:id="@+id/photo_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@id/photo_location"
 
                 android:text="TextView" />
 
@@ -60,6 +71,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/holo_orange_light"
+                android:textStyle="bold"
                 android:text="Button"
                 />
 

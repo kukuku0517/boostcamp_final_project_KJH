@@ -35,26 +35,26 @@ public class VHCall extends DayViewHolder {
     @BindView(R.id.call_button)
     Button button;
 
-
     public VHCall(View view) {
         super(view);
         ButterKnife.bind(this, view); //없애고 돌려보기
-
     }
 
     @Override
     public void bindType(MyRealmObject item) {
         CallData callData = (CallData) item;
-
-
         DateFormat sdFormat = new SimpleDateFormat("hh : mm");
         Date d = new Date(callData.getDate());
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);
         person.setText(callData.getPerson());
-        duration.setText(callData.getDuration());
-       number .setText(callData.getNumber());
 
+      long dur = callData.getDuration();
+        int hour = (int) (dur/60/60);
+        int min = (int) (dur/60%60);
+        int sec = (int) (dur%60);
+        duration.setText(hour+"시간 "+min+"분 "+sec+"초");
+        number.setText(callData.getNumber());
 
     }
 }

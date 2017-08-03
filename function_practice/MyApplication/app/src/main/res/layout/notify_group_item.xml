@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    android:padding="0dp"
+    android:id="@+id/notify_cv"
 
     >
 
@@ -18,14 +20,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:background="@android:color/holo_orange_light">
+            android:background="@android:color/holo_blue_light">
 
             <ImageView
-                android:id="@+id/sms_group_iv"
+                android:id="@+id/group_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_email_black_24dp" />
+                android:src="@drawable/ic_message_black_24dp" />
 
         </RelativeLayout>
 
@@ -38,7 +40,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/sms_group_date"
+                android:id="@+id/notify_group_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/darker_gray"
@@ -46,26 +48,26 @@
                 android:text="TextView" />
 
             <TextView
-                android:id="@+id/sms_group_person"
+                android:id="@+id/notify_group_person"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sms_group_date"
+                android:layout_below="@id/notify_group_date"
                 android:text="TextView" />
 
             <!--<TextView-->
-                <!--android:id="@+id/sms_group_number"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/sms_group_number"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
 
-                <!--android:layout_below="@id/sms_group_person"-->
+            <!--android:layout_below="@id/sms_group_person"-->
 
-                <!--android:text="TextView" />-->
+            <!--android:text="TextView" />-->
 
             <TextView
-                android:id="@+id/sms_group_content"
+                android:id="@+id/notify_group_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sms_group_person"
+                android:layout_below="@id/notify_group_person"
                 android:layout_marginTop="10dp"
                 android:text="댓글을 입력하세요"
 
@@ -73,13 +75,13 @@
 
 
             <Button
-                android:id="@+id/sms_group_button"
+                android:id="@+id/notify_group_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
-                android:textColor="@android:color/holo_orange_light"
+                android:textColor="@android:color/holo_blue_light"
                 android:textStyle="bold"
                 android:text="Button" />
 

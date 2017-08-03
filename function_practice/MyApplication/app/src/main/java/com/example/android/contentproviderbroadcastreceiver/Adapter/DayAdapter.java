@@ -22,7 +22,6 @@ import static android.media.CamcorderProfile.get;
 
 public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
-
     private ArrayList<MyRealmObject> items;
     private Context context;
     private Realm realm;
@@ -37,6 +36,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
         Context context = parent.getContext();
         int layoutIdForListItem;
         View view;
+        DayViewHolder holder;
         switch (viewType) {
             case 0: //call
                 layoutIdForListItem = R.layout.call_item;
@@ -46,30 +46,33 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
                 layoutIdForListItem = R.layout.gps_item;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHGps(view);
-            case 2: //photo
-
+            case 2: //photo group
                 layoutIdForListItem = R.layout.photo_item;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHPhoto(view);
+                holder = new VHPhotoGroup(view);
+                holder.setmListener(context);
+                return holder;
             case 3: //notigroup
                 Log.d("Notification", "layout");
-                layoutIdForListItem = R.layout.notify_item;
+                layoutIdForListItem = R.layout.notify_group_item;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-
-                DayViewHolder holder = new VHNotifyGroup(view);
+                holder = new VHNotifyGroup(view);
                 holder.setmListener(context);
                 return holder;
             case 4: //sms group
                 layoutIdForListItem = R.layout.sms_group_item;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-
-                DayViewHolder smsHolder = new VHSmsGroup(view);
-                smsHolder.setmListener(context);
-                return smsHolder;
+                holder = new VHSmsGroup(view);
+                holder.setmListener(context);
+                return holder;
+            case 5: //photo
+                layoutIdForListItem = R.layout.photo_item;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                holder = new VHPhoto(view ,context);
+//                holder.setmListener(context);
+                return holder;
             default:
                 return null;
-
-
         }
 
     }

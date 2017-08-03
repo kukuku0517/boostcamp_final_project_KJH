@@ -56,25 +56,9 @@ public class MainActivity extends AppCompatActivity {
             tv.append(gpsData.getLat()+""+gpsData.getLng()+"\n");
         }
 
-//
-//        cv = (CalendarView) findViewById(R.id.calendarView);
-//        cv.setDate(System.currentTimeMillis());
-//
-//        cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-//            @Override
-//            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-//                Intent intent = new Intent(MainActivity.this, DayActivity.class);
-//                intent.putExtra(getString(R.string.year), year);
-//                intent.putExtra(getString(R.string.month), month);
-//                intent.putExtra(getString(R.string.dayofmonth), dayOfMonth);
-//                startActivity(intent);
-//            }
-//        });
         final String TAG = "calendarView";
         final CompactCalendarView compactCalendar = (CompactCalendarView) findViewById(R.id.calendarView);
-        // Set first day of week to Monday, defaults to Monday so calling setFirstDayOfWeek is not necessary
-        // Use constants provided by Java Calendar class
-        compactCalendar.setFirstDayOfWeek(Calendar.MONDAY);
+      compactCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         // Add event 1 on Sun, 07 Jun 2015 18:20:51 GMT
         Event ev1 = new Event(Color.GREEN, 1433701251000L, "Some extra data that I want to store.");
@@ -102,9 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 int month = c.get(Calendar.MONTH);
                 int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
 
-
-//                List<Event> events = compactCalendar.getEvents(dateClicked);
-//                Log.d(TAG, "Day was clicked: " + dateClicked + " with events " + events);
                 Intent intent = new Intent(MainActivity.this, DayActivity.class);
                 intent.putExtra(getString(R.string.year), year);
                 intent.putExtra(getString(R.string.month), month);
@@ -115,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
-
             }
         });
     }

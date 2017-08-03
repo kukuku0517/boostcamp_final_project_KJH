@@ -41,8 +41,6 @@ import static com.example.android.contentproviderbroadcastreceiver.R.string.mont
 import static com.example.android.contentproviderbroadcastreceiver.R.string.year;
 
 public class DataUpdateService extends Service {
-    public DataUpdateService() {
-    }
 
     long sms = -1;
     long call = -1;
@@ -58,19 +56,17 @@ public class DataUpdateService extends Service {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-        Realm realm = Realm.getDefaultInstance();
-
         Notification notification = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setAutoCancel(true)
                 .setWhen(0)
                 .setTicker("").build();
-
         startForeground(1, notification);
 
         cr = getApplicationContext().getContentResolver();
         final Uri allMessage = Uri.parse("content://sms");
         Handler mHandler = new Handler(Looper.getMainLooper());
+
         smsObserver = new ContentObserver(mHandler) {
 
             @Override
@@ -81,50 +77,21 @@ public class DataUpdateService extends Service {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
                 super.onChange(selfChange, uri);
-
-//                0: (\_\_\__)id
-//                        -	1: thread_id
-//                        -	2: address
-//                        -	3: person
-//                        -	4: date
-//                        -	5: protocol
-//                        -	6: read
-//                        -	7: status
-//                        -	8: type
-//                        -	9: reply_path_present
-//                        -	10: subject
-//                        -	11: body
-//                        -	12: service_center
-//                        -	13: locked
-                String[] projection = {"_id", "person", "date", "body","address","type","status","subject"};
+                String[] projection = {"_id", "person", "date", "body", "address", "type", "status", "subject"};
                 String sortOrder = "date DESC";
                 if (!String.valueOf(uri).equals("content://sms/raw")) {
                     Cursor c = cr.query(uri, projection, null, null, sortOrder);
                     if (c.moveToNext()) {
                         long id = c.getLong(0);
-                        String person = c.getString(1);
-                        long date = c.getLong(2);
-                        String body = c.getString(3);
-                        String address = c.getString(4);
-                        String type = c.getString(5);
-
-                        String status = c.getString(6);
-                        String subject = c.getString(7);
-
-
-
-
                         if (sms != id) {
                             sms = id;
-
                             new RealmHelper(getApplicationContext()).smsDataSave(c);
-
                         }
-
                     }
                 }
             }
         };
+
         photoObserver = new ContentObserver(mHandler) {
 
             @Override
@@ -135,29 +102,15 @@ public class DataUpdateService extends Service {
             @Override
             public void onChange(boolean selfChange, Uri uri) {
                 super.onChange(selfChange, uri);
-
-//                Calendar start =Calendar.getInstance();
-//                start.set(Calendar.HOUR_OF_DAY,0);
-//                start.set(Calendar.MINUTE,0);
-//                start.set(Calendar.SECOND,0);
-//                long startMillis = start.getTimeInMillis();
-//                start.add(Calendar.DATE,1);
-//                long endMillis = start.getTimeInMillis();
-
-//                RealmResults<PhotoData> pData = RealmHelper.photoDataLoad("date",startMillis,endMillis);
-
                 String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.DATE_TAKEN};
-
                 if (!String.valueOf(uri).equals("content://sms/raw")) {
-
                     Cursor c = cr.query(
                             uri, // 이미지 컨텐트 테이블
                             projection, // DATA를 출력
                             null,       // 모든 개체 출력
                             null,
                             null);
-                    if (c!=null && c.moveToNext()) {
-
+                    if (c != null && c.moveToNext()) {
                         String filePath = c.getString(c.getColumnIndex(MediaStore.Images.Media.DATA));
                         Uri imageUri = Uri.parse(filePath);
                         long id = c.getLong(c.getColumnIndex(MediaStore.Images.Media._ID));
@@ -165,7 +118,6 @@ public class DataUpdateService extends Service {
                         Log.d("photo id", String.valueOf(id));
                         if (call != id) {
                             call = id;
-
                             RealmHelper.photoDataSave(c);
                         }
                     }
@@ -187,7 +139,6 @@ public class DataUpdateService extends Service {
 //        String selection = CallLog.Calls.DATE + " < " + end + " and " + CallLog.Calls.DATE + ">" + start;
                 String selection = null;
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-
                     return;
                 }
                 Log.d("callobs", String.valueOf(uri));
@@ -199,8 +150,7 @@ public class DataUpdateService extends Service {
                         long id = c.getLong(c.getColumnIndex(CallLog.Calls._ID));
                         if (photo != id) {
                             photo = id;
-                            RealmHelper.callDataSave(c);
-
+                           new RealmHelper(getApplicationContext()).callDataSave(c);
                         }
                     }
                 }

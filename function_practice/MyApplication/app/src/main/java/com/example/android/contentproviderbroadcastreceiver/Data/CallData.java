@@ -12,7 +12,7 @@ public class CallData extends RealmObject implements MyRealmObject {
     long id;
 
     public long date;
-    public String duration;
+    public long duration;
     public String person;
 
     public int a;
@@ -40,11 +40,11 @@ public class CallData extends RealmObject implements MyRealmObject {
         this.date = date;
     }
 
-    public String getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

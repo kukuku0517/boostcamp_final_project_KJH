@@ -193,3 +193,21 @@ https://github.com/SundeepK/CompactCalendarView
 https://stackoverflow.com/questions/32860101/how-to-implement-gps-status-change-listener
 
 https://stackoverflow.com/questions/29891355/android-location-service-battery-usage
+
+#170803
+
+query nested realm object
+
+https://stackoverflow.com/questions/39966099/realm-query-which-also-filters-custom-object-data-nested-in-another-realmobject
+
+1.	Day(RealmObject)를 만들어서 하루 관련 정보 기록
+	-	gps 연속 : 직전이 "의미있는" gps면
+	-	call 연속 : 직전이 gps제외 call이면
+	-	photo 연속 : gps이동시 reset
+	-	photo 최종 시간 : 1시간 경과시 reset
+	-	highlight
+	-	etc
+2.	query는 결국 parentObject안되고 각각 class마다 돌릴것
+	-	class <-> String 가능. query마다 가능, 불가능 class 구별
+	-	3단계 class (notify, sms)는 child > unit > group 순으로 parent의 id를 갖고있게 한다
+	-	장소, 사람, 시간, comment, (tag)

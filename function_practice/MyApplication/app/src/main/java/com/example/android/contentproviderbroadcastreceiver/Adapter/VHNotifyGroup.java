@@ -27,54 +27,37 @@ import butterknife.OnClick;
  */
 
 public class VHNotifyGroup extends DayViewHolder {
-    @BindView(R.id.sns_date)
+    @BindView(R.id.notify_group_date)
     TextView date;
-    @BindView(R.id.sns_person)
+    @BindView(R.id.notify_group_person)
     TextView person;
-    @BindView(R.id.sns_content)
+    @BindView(R.id.notify_group_content)
     TextView content;
-    @BindView(R.id.sns_iv)
-    ImageView iv;
-
-    @BindView(R.id.sns_button)
+    @BindView(R.id.notify_group_button)
     Button button;
-
     @BindView(R.id.notify_cv)
     CardView cv;
 
-    @OnClick(R.id.sns_date)
-    void onClick() {
-        onClickButton();
-    }
-
     public VHNotifyGroup(View view) {
         super(view);
-
-
     }
 
     @Override
     public void bindType(final MyRealmObject item) {
-//        NotifyData callData = (NotifyData) item;
-//        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
-//        Date d = new Date(callData.getDate());
-//        String tempDate = sdFormat.format(d);
-//        date.setText(tempDate);
-//        person.setText(callData.getPerson());
-//        content.setText(String.valueOf(callData.getContent()));
-//        Log.d("smsAni", "on");
-
         NotifyGroupData notifyData = (NotifyGroupData) item;
-        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
+        DateFormat sdFormat = new SimpleDateFormat("HH : mm");
         Date d = new Date(notifyData.getDate());
         String tempDate = sdFormat.format(d);
-        date.setText(tempDate);
 
-        for (NotifyUnitData ud : ((NotifyGroupData) item).getUnits()) {
-            Log.d("grouping ud:", ud.getName() + "\n");
-            for (NotifyData nd : ud.getNotifys()) {
-                Log.d("grouping nd:", "\t" + nd.getPerson() + " : " + nd.getContent() + "\n");
-            }
+        date.setText("~"+tempDate);
+
+        int size = notifyData.getUnits().size();
+        if(size!=0){
+            int count =  notifyData.getUnits().size()-1;
+            String name =  notifyData.getUnits().get(0).getName();
+            person.setText(name+" 외 "+count+"명");
+        }else{
+            person.setText("");
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -83,34 +66,30 @@ public class VHNotifyGroup extends DayViewHolder {
                 mListener.onNotifyItemClick(item);
             }
         });
-
-
     }
-
-    private void onClickButton() {
-
-        //Simply set View to Gone if not expanded
-        //Not necessary but I put simple rotation on button layout
-        if (content.getVisibility() == View.VISIBLE) {
-            Log.d("smsAni", "on");
-            createRotateAnimator(content, 1f, 0f).start();
-            createRotateAnimator(iv, 1f, 0f).start();
-            createRotateAnimator(button, 1f, 0f).start();
-            content.setVisibility(View.GONE);
-            iv.setVisibility(View.GONE);
-            button.setVisibility(View.GONE);
-//            expandState.put(i, false);
-        } else {
-            Log.d("smsAni", "off");
-            createRotateAnimator(content, 0f, 1f).start();
-            createRotateAnimator(iv, 0f, 1f).start();
-            createRotateAnimator(button, 0f, 1f).start();
-            content.setVisibility(View.VISIBLE);
-            iv.setVisibility(View.VISIBLE);
-            button.setVisibility(View.VISIBLE);
-//            expandState.put(i, true);
-        }
-    }
+//
+//    private void onClickButton() {
+//
+//        if (content.getVisibility() == View.VISIBLE) {
+//            Log.d("smsAni", "on");
+//            createRotateAnimator(content, 1f, 0f).start();
+//            createRotateAnimator(iv, 1f, 0f).start();
+//            createRotateAnimator(button, 1f, 0f).start();
+//            content.setVisibility(View.GONE);
+//            iv.setVisibility(View.GONE);
+//            button.setVisibility(View.GONE);
+////            expandState.put(i, false);
+//        } else {
+//            Log.d("smsAni", "off");
+//            createRotateAnimator(content, 0f, 1f).start();
+//            createRotateAnimator(iv, 0f, 1f).start();
+//            createRotateAnimator(button, 0f, 1f).start();
+//            content.setVisibility(View.VISIBLE);
+//            iv.setVisibility(View.VISIBLE);
+//            button.setVisibility(View.VISIBLE);
+////            expandState.put(i, true);
+//        }
+//    }
 
     //Code to rotate button
     private ObjectAnimator createRotateAnimator(final View target, final float from, final float to) {
@@ -119,6 +98,4 @@ public class VHNotifyGroup extends DayViewHolder {
         animator.setInterpolator(new LinearInterpolator());
         return animator;
     }
-
-
 }

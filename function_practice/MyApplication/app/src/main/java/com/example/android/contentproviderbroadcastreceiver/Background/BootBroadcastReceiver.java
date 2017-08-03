@@ -27,8 +27,6 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
 
                 Log.d("###notify","off");
             }
-
-
             Intent updateIntent = new Intent(context, DataUpdateService.class);
             context.startService(updateIntent);
         }

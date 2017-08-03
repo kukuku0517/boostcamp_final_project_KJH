@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 
 import com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable.NotifyAdapter;
 import com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable.SmsAdapter;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
+import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 
@@ -50,8 +52,8 @@ public class DetailActivity extends AppCompatActivity {
                     smsAdapter.setItems(sgData.get(0));
                     recyclerView.setAdapter(expMgr.createWrappedAdapter(smsAdapter));
                     break;
-            }
 
+            }
 
             // NOTE: need to disable change animations to ripple effect work properly
             ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);

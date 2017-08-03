@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="4dp"
+    android:orientation="vertical"
 
     >
 
@@ -12,28 +15,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#FFEB3B">
+        >
 
 
-        <TextView
-            android:id="@+id/sms_child_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+        <!--<TextView-->
+            <!--android:id="@+id/sms_child_name"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="TextView" />-->
 
         <TextView
             android:id="@+id/sms_child_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
+            android:text="Tdddddddddddddddddddddddddddddddd"
+            android:maxWidth="300dp"
+            android:background="@drawable/chat"
+            />
         <TextView
             android:id="@+id/sms_child_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:paddingLeft="4dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="10dp"
             android:text="TextView" />
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</LinearLayout>

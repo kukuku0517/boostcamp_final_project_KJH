@@ -35,16 +35,11 @@ public class VHGps extends DayViewHolder {
 
     @Override
     public void bindType(MyRealmObject item) {
-
-
         GpsData gpsData = (GpsData)item;
-        DateFormat sdFormat = new SimpleDateFormat("hh : mm");
+        DateFormat sdFormat = new SimpleDateFormat("HH : mm");
         Date d = new Date(gpsData.getDate());
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);
-        place.setText(gpsData.getPlace());
-
-
-
+        place.setText(gpsData.getPlace()+" 도착");
     }
 }

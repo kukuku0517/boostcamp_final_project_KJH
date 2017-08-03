@@ -15,13 +15,13 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-07-31.
  */
 
-public class NotifyGroupData extends RealmObject implements MyRealmObject{
-   public RealmList<NotifyUnitData> units;
-    long start,end;
+public class NotifyGroupData extends RealmObject implements MyRealmObject {
 
     @PrimaryKey
-    long  id;
-
+    long id;
+    public RealmList<NotifyUnitData> units;
+    long start, end;
+int a;
 
     public long getStart() {
         return start;
@@ -48,18 +48,18 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject{
     }
 
     //custom
-    public int checkName(String s){
+    public int checkName(String s) {
 
-        for(int i=0;i<units.size();i++){
-            Log.d("grouping",units.get(i).getName() + " : "+s);
-           if(units.get(i).getName().equals(s)){
-               return i;
-           }
+        for (int i = 0; i < units.size(); i++) {
+            Log.d("asdfasdf", ":::" + units.get(i).getName());
+           if (units.get(i).getName() != null && units.get(i).getName().equals(s)) {
+                return i;
+            }
         }
         return -1;
     }
 
-    public void setTime(long start, long end){
+    public void setTime(long start, long end) {
         setStart(start);
         setEnd(end);
     }
@@ -71,10 +71,11 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject{
 
     @Override
     public long getDate() {
-        return start;
+        return end;
     }
+
     @Override
-    public long  getId() {
+    public long getId() {
         return id;
     }
 }

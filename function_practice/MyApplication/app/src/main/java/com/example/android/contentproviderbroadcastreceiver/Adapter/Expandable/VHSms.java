@@ -33,12 +33,8 @@ public class VHSms extends AbstractExpandableItemViewHolder {
 
     public void bindType(MyRealmObject item) {
         SmsUnitData smsUnitData = (SmsUnitData) item;
-
         person.setText(smsUnitData.getName());
         number.setText(smsUnitData.getAddress());
         content.setText(smsUnitData.getContent());
-
-
-
     }
 }
