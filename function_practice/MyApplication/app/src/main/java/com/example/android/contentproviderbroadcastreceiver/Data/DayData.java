@@ -16,13 +16,12 @@ public class DayData extends RealmObject {
 //	-	highlight
 //	-	etc
     @PrimaryKey
-    long id;
+    private  long id;
 
+    private  long start, end;
+    private  int gpsNew=0;
+    private  int callNew =0;
 
-    long start, end;
-    int gpsNew=0;
-    int callNew =0;
-//    int photoNew=0;
 
     public long getId() {
         return id;

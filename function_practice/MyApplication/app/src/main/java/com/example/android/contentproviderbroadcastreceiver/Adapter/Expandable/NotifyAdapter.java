@@ -2,16 +2,17 @@ package com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable;
 
 import android.content.Context;
 import android.support.annotation.IntRange;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyUnitData;
-import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
-import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsUnitData;
+import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.NotifyData;
-import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
+import com.example.android.contentproviderbroadcastreceiver.Interface.CommentBtnClickListener;
+import com.example.android.contentproviderbroadcastreceiver.Main.UnitActivity;
 import com.example.android.contentproviderbroadcastreceiver.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
 
@@ -21,11 +22,12 @@ import io.realm.Realm;
  * Created by samsung on 2017-08-02.
  */
 
-public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNotifyChild> {
+public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNotifyChild> implements CommentBtnClickListener {
 
     private NotifyGroupData items;
     private Context context;
     private Realm realm;
+
 
     public NotifyAdapter(Context context, Realm realm) {
         setHasStableIds(true);
@@ -61,7 +63,8 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
     @Override
     public VHNotify onCreateGroupViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
         View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.notify_item, parent, false);
-        return new VHNotify(v);
+
+        return new VHNotify(v,this,context);
     }
 
     @Override
@@ -95,5 +98,27 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
     @Override
     public boolean onCheckCanExpandOrCollapseGroup(VHNotify holder, int groupPosition, int x, int y, boolean expand) {
         return true;
+    }
+
+
+    @Override
+    public void onClick(final Class c, final MyRealmObject item, final String text) {
+        Log.d("comments","onClick");
+        UnitActivity detail =  (UnitActivity)context;
+        detail.setEditTextVisibility(View.VISIBLE);
+
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                MyRealmObject result = (MyRealmObject) realm.where(c).equalTo("id",item.getId()).findFirst();
+                if(result!=null){
+                    Log.d("comments","result");
+
+                    result.setComment(text);
+
+                }
+            }
+        });
     }
 }

@@ -13,11 +13,12 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class SmsGroupData extends RealmObject implements MyRealmObject {
-    public RealmList<SmsUnitData> units;
-    long start,end;
-
     @PrimaryKey
-   long id;
+    private  long id;
+
+    private  RealmList<SmsUnitData> units;
+    private long start,end;
+
 
 
     public long getStart() {
@@ -74,5 +75,10 @@ public class SmsGroupData extends RealmObject implements MyRealmObject {
     @Override
     public long getId() {
         return id;
+    }
+
+    @Override
+    public void setComment(String hello) {
+
     }
 }

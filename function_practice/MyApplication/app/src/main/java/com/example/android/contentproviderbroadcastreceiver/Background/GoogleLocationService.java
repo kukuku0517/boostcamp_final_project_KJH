@@ -1,8 +1,10 @@
 package com.example.android.contentproviderbroadcastreceiver.Background;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,25 +17,46 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.android.contentproviderbroadcastreceiver.BuildConfig;
 import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.fence.AwarenessFence;
+import com.google.android.gms.awareness.fence.DetectedActivityFence;
+import com.google.android.gms.awareness.fence.FenceQueryRequest;
+import com.google.android.gms.awareness.fence.FenceQueryResult;
+import com.google.android.gms.awareness.fence.FenceState;
+import com.google.android.gms.awareness.fence.FenceStateMap;
+import com.google.android.gms.awareness.fence.FenceUpdateRequest;
+import com.google.android.gms.awareness.fence.HeadphoneFence;
+import com.google.android.gms.awareness.fence.LocationFence;
+import com.google.android.gms.awareness.snapshot.DetectedActivityResult;
+import com.google.android.gms.awareness.snapshot.LocationResult;
+import com.google.android.gms.awareness.state.HeadphoneState;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 
+import java.sql.Date;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.annotations.Required;
 
 import static android.R.attr.start;
+import static android.provider.Settings.System.DATE_FORMAT;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 
 
@@ -43,12 +66,19 @@ public class GoogleLocationService extends Service implements GoogleApiClient.Co
     GoogleApiClient locationClient;
     Location lastLocation;
 
+    // The fence key is how callback code determines which fence fired.
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+
+
         locationClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
+                .addApi(Awareness.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build();
 
@@ -60,9 +90,13 @@ public class GoogleLocationService extends Service implements GoogleApiClient.Co
         return Service.START_STICKY;
     }
 
+
+
     @Override
     public void onConnected(Bundle bundle) {
         Location last = LocationServices.FusedLocationApi.getLastLocation(locationClient);
+
+
 
         if (last != null) {
             lastLocation = last;
@@ -112,10 +146,11 @@ public class GoogleLocationService extends Service implements GoogleApiClient.Co
                 if (distance > 50) {
                     lastLocation = location;
                     RealmHelper.gpsDataSave(location.getTime(), location.getLatitude(), location.getLongitude(), 1,
-                            (String) likelyPlaces.get(0).getPlace().getName());
+                            (String) likelyPlaces.get(0).getPlace().getName(),0);
 
                 } else {
-                    RealmHelper.gpsDataSave(location.getTime(), location.getLatitude(), location.getLongitude(), 0, (String) likelyPlaces.get(0).getPlace().getName());
+                    RealmHelper.gpsDataSave(location.getTime(), location.getLatitude(),
+                            location.getLongitude(), 0, (String) likelyPlaces.get(0).getPlace().getName(),0);
 
                 }
                 Log.d("googleLoc now", String.valueOf(location.getLatitude()));

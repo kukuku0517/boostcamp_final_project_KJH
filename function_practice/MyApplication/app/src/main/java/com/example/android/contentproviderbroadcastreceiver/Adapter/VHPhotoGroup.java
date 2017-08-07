@@ -30,21 +30,25 @@ import butterknife.OnClick;
  * Created by samsung on 2017-08-03.
  */
 
-public class VHPhotoGroup  extends DayViewHolder {
-    @BindView(R.id.photo_iv)
+public class VHPhotoGroup extends DayViewHolder {
+    @BindView(R.id.photo_group_iv)
     ImageView iv;
-    @BindView(R.id.photo_date)
+    @BindView(R.id.photo_group_date)
     TextView date;
-    @BindView(R.id.photo_number)
+    @BindView(R.id.photo_group_number)
     TextView number;
 
-    @BindView(R.id.photo_location)
+    @BindView(R.id.photo_group_location)
     TextView location;
-    @BindView(R.id.photo_button)
+    @BindView(R.id.photo_group_button)
     Button button;
+    @BindView(R.id.photo_group_cv)
+    View view;
 
-    public VHPhotoGroup(View view) {
+
+    public VHPhotoGroup(View view, Context context) {
         super(view);
+        setmListener(context);
     }
 
     @Override
@@ -56,14 +60,14 @@ public class VHPhotoGroup  extends DayViewHolder {
         date.setText(tempDate);
         location.setText(callData.getPlace());
         int photoNum = callData.getPhotoss().size();
-        number.setText(String.valueOf(photoNum)+"장");
+        number.setText(String.valueOf(photoNum) + "장");
 //        iv.setImageResource(R.drawable.ic_image_black_24dp);
-        button.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onPhotoItemClick(item);
+                mListener.onPhotoGroupItemClick(item);
             }
         });
-        Glide.with((Context)mListener).load(callData.getPhotoss().get(0).getPath()).into(iv);
+        Glide.with((Context) mListener).load(callData.getPhotoss().get(0).getPath()).into(iv);
     }
 }

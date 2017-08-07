@@ -13,14 +13,14 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class PhotoGroupData extends RealmObject implements MyRealmObject {
-    int count;
-    public  long start,end;
-    public String place;
-
-    RealmList<PhotoData> photoss;
-    String content="";
     @PrimaryKey
-    long id;
+    private long id;
+    private int count;
+    private long start, end;
+    private String place,comment;
+    private RealmList<PhotoData> photoss;
+    private String content = "";
+
 
     public int getCount() {
         return count;
@@ -87,5 +87,10 @@ public class PhotoGroupData extends RealmObject implements MyRealmObject {
     @Override
     public long getId() {
         return id;
+    }
+
+    @Override
+    public void setComment(String comment) {
+this.comment = comment;
     }
 }

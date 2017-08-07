@@ -36,7 +36,7 @@ public class ContentProviderData {
     }
 
     public void readCallLogs() {
-        String[] projection = {CallLog.Calls._ID, CallLog.Calls.CACHED_NAME, CallLog.Calls.NUMBER, CallLog.Calls.DATE, CallLog.Calls.DURATION};
+        String[] projection = {CallLog.Calls._ID, CallLog.Calls.CACHED_NAME, CallLog.Calls.NUMBER, CallLog.Calls.DATE, CallLog.Calls.DURATION, CallLog.Calls.TYPE};
         String selection = null;
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -54,7 +54,7 @@ public class ContentProviderData {
         }
         Uri allMessage = Uri.parse("content://sms");
         ContentResolver cr = context.getContentResolver();
-        String[] projection = {"_id", "person", "date", "body", "address"};
+        String[] projection = {"_id", "person", "date", "body", "address","type"};
         String sortOrder = "date DESC";
         String selection = null;
         Cursor c = cr.query(allMessage, projection, selection, null, sortOrder);
@@ -67,12 +67,12 @@ public class ContentProviderData {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.DATE_TAKEN};
+        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_ADDED, MediaStore.Images.Media.LATITUDE, MediaStore.Images.Media.LONGITUDE};
         String selection = MediaStore.Images.Media.DATE_ADDED + ">" + start / 1000 + " and " + MediaStore.Images.Media.DATE_ADDED + "<" + end / 1000;
         Cursor imageCursor = context.getApplicationContext().getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // 이미지 컨텐트 테이블
                 projection, // DATA를 출력
-                selection,       // 모든 개체 출력
+                null,       // 모든 개체 출력
                 null,
                 null);      // 정렬 안 함
         while (imageCursor.moveToNext()) {

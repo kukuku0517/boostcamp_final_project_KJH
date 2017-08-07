@@ -1,32 +1,50 @@
-package com.example.android.contentproviderbroadcastreceiver;
+package com.example.android.contentproviderbroadcastreceiver.Main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable.NotifyAdapter;
 import com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable.SmsAdapter;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
-import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
+import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
+import com.example.android.contentproviderbroadcastreceiver.Interface.PhotoItemClickListener;
+import com.example.android.contentproviderbroadcastreceiver.R;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-import static android.R.attr.start;
+public class UnitActivity extends AppCompatActivity {
 
-public class DetailActivity extends AppCompatActivity {
+    @BindView(R.id.detail_comment)
+    EditText etDetail;
+
+    public void setEditTextVisibility(int visibility){
+        etDetail.setVisibility(visibility);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_unit);
+        ButterKnife.bind(this);
 
+        etDetail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    v.setVisibility(View.GONE);
+                }
+            }
+        });
         Long id = getIntent().getLongExtra("id", -1);
         int type = getIntent().getIntExtra("class", -1);
 
@@ -61,4 +79,6 @@ public class DetailActivity extends AppCompatActivity {
             expMgr.attachRecyclerView(recyclerView);
         }
     }
+
+
 }

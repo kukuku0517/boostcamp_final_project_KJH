@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -20,16 +21,19 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAo_J4f3vtkym15KAt1LOidBQMCByxRhl4" />
+            android:value="AIzaSyArg9huEcpEGWcDvpXQbRaMoCkCruKWqQk" />
+        <meta-data
+            android:name="com.google.android.awareness.API_KEY"
+            android:value="AIzaSyArg9huEcpEGWcDvpXQbRaMoCkCruKWqQk" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".Main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DayActivity" />
+        <activity android:name=".Main.DayActivity" />
 
         <receiver
             android:name=".Background.BootBroadcastReceiver"
@@ -50,7 +54,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".DetailActivity" />
+        <activity android:name=".Main.UnitActivity" />
 
         <service
             android:name=".Background.LocationUpdateService"
@@ -61,7 +65,35 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".PhotoActivity"></activity>
+        <activity android:name=".Main.PhotoActivity" />
+
+        <service
+            android:name=".Background.GoogleAwarenessService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".Background.GoogleAwarenessReceivers.GoogleStillReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".Background.GoogleAwarenessReceivers.GoogleOnFootReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".Background.GoogleAwarenessReceivers.GoogleVehicleReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".Main.DetailPhotoActivity" />
+        <activity android:name=".Main.GpsActivity" />
+        <activity android:name=".Main.CallActivity" />
+        <activity android:name=".Main.SmsTradeActivity" />
+
+        <receiver
+            android:name=".Background.GoogleAwarenessReceivers.GoogleFenceReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

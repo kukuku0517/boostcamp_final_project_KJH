@@ -18,10 +18,9 @@ import io.realm.annotations.PrimaryKey;
 public class NotifyGroupData extends RealmObject implements MyRealmObject {
 
     @PrimaryKey
-    long id;
-    public RealmList<NotifyUnitData> units;
-    long start, end;
-int a;
+    private long id;
+    private RealmList<NotifyUnitData> units;
+    private long start, end;
 
     public long getStart() {
         return start;
@@ -52,7 +51,7 @@ int a;
 
         for (int i = 0; i < units.size(); i++) {
             Log.d("asdfasdf", ":::" + units.get(i).getName());
-           if (units.get(i).getName() != null && units.get(i).getName().equals(s)) {
+            if (units.get(i).getName() != null && units.get(i).getName().equals(s)) {
                 return i;
             }
         }
@@ -77,5 +76,10 @@ int a;
     @Override
     public long getId() {
         return id;
+    }
+
+    @Override
+    public void setComment(String comment) {
+
     }
 }

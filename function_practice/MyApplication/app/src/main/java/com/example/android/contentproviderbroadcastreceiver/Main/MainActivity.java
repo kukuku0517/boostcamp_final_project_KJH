@@ -1,4 +1,4 @@
-package com.example.android.contentproviderbroadcastreceiver;
+package com.example.android.contentproviderbroadcastreceiver.Main;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,10 +9,10 @@ import android.widget.CalendarView;
 import android.widget.TextView;
 
 import com.example.android.contentproviderbroadcastreceiver.Background.DataUpdateService;
-import com.example.android.contentproviderbroadcastreceiver.Background.GoogleLocationService;
-import com.example.android.contentproviderbroadcastreceiver.Background.LocationUpdateService;
+import com.example.android.contentproviderbroadcastreceiver.Background.GoogleAwarenessService;
 import com.example.android.contentproviderbroadcastreceiver.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
+import com.example.android.contentproviderbroadcastreceiver.R;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
@@ -41,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
         startService(i);
         Intent notifyIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
         startActivity(notifyIntent);
-        Intent locationIntent = new Intent(this,GoogleLocationService.class);
+        Intent locationIntent = new Intent(this, GoogleAwarenessService.class);
         startService(locationIntent);
+
+
 
         Realm.init(this);
 

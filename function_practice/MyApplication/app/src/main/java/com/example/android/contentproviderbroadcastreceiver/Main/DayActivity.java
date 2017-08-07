@@ -1,10 +1,12 @@
-package com.example.android.contentproviderbroadcastreceiver;
+package com.example.android.contentproviderbroadcastreceiver.Main;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,12 +22,12 @@ import com.example.android.contentproviderbroadcastreceiver.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
-import com.example.android.contentproviderbroadcastreceiver.Data.NotifyData;
+import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmParcelableObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
-import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
-import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
+import com.example.android.contentproviderbroadcastreceiver.Data.SmsTradeData;
 import com.example.android.contentproviderbroadcastreceiver.Interface.CardItemClickListener;
+import com.example.android.contentproviderbroadcastreceiver.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +48,8 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
     @BindView(R.id.rv_day)
     RecyclerView rv;
+    @BindView(R.id.fab_day)
+    FloatingActionButton fab;
     @BindView(R.id.progressBar)
     ProgressBar pb;
 
@@ -73,6 +77,13 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         endMillis = end.getTimeInMillis();
         quarter = (endMillis - startMillis) / 4;
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
@@ -87,17 +98,17 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         getSharedPreferences("setting", Activity.MODE_PRIVATE);
-//       mPref.edit().putBoolean("init", true).commit();
+        mPref.edit().putBoolean("init", true).commit();
 
         if (!mPref.contains("init")) {
             Log.d("pref", "0");
-            new RealmAsync().execute(0);
-            new RealmAsync().execute(1);
+//            new RealmAsync().execute(0);
+//            new RealmAsync().execute(1);
             new RealmAsync().execute(2);
         } else if (!mPref.getBoolean("init", false)) {
             Log.d("pref", "1");
-            new RealmAsync().execute(0);
-            new RealmAsync().execute(1);
+//            new RealmAsync().execute(0);
+//            new RealmAsync().execute(1);
             new RealmAsync().execute(2);
         } else {
             Log.d("pref", "2");
@@ -105,29 +116,58 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         }
     }
 
+
     @Override
     public void onNotifyItemClick(MyRealmObject item) {
-        Intent intent = new Intent(this, DetailActivity.class);
+        Intent intent = new Intent(this, UnitActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("class", 0);
         startActivity(intent);
     }
 
+
     @Override
-    public void onSmsItemClick(MyRealmObject item) {
-        Intent intent = new Intent(this, DetailActivity.class);
+    public void onSmsTradeItemClick(MyRealmParcelableObject item) {
+        Intent intent = new Intent(this, SmsTradeActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("class", 1);
+//        intent.putExtra("item", item);
         startActivity(intent);
     }
 
     @Override
-    public void onPhotoItemClick(MyRealmObject item) {
+    public void onSmsItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, UnitActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class", 1);
+//        intent.putExtra("item", item);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onPhotoGroupItemClick(MyRealmObject item) {
         Intent intent = new Intent(this, PhotoActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("class", 2);
         startActivity(intent);
     }
+
+    @Override
+    public void onGpsItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, GpsActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class", 2);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onCallItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, CallActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class", 2);
+        startActivity(intent);
+    }
+
 
     private class RealmAsync extends AsyncTask<Integer, Void, Void> {
         Realm realmAsync;
@@ -176,8 +216,9 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         RealmResults<RealmObject> pgData = RealmHelper.DataLoad(PhotoGroupData.class, "start", startMillis, endMillis);
 
         RealmResults<GpsData> gData = RealmHelper.gpsDataLoad("date", startMillis, endMillis);
-        RealmResults<NotifyGroupData> ngDatas = RealmHelper.notifyGroupDataLoad("end", startMillis, endMillis);
-        RealmResults<SmsGroupData> smsGroupDatas = RealmHelper.smsGroupDataLoad("date", startMillis, endMillis);
+        RealmResults<NotifyGroupData> ngDatas = RealmHelper.notifyGroupDataLoad("end", startMillis, endMillis - 1);
+        RealmResults<SmsGroupData> smsGroupDatas = RealmHelper.smsGroupDataLoad("date", startMillis, endMillis - 1);
+        RealmResults<RealmObject> smsTradeDatas = RealmHelper.DataLoad(SmsTradeData.class, "date", startMillis, endMillis);
         for (GpsData g : gData) {
             items.add(g);
         }
@@ -188,8 +229,11 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 //        for (PhotoData p : pData) {
 //            items.add(p);
 //        }
-        for(RealmObject pg :pgData ){
-            items.add((PhotoGroupData)pg);
+        for (RealmObject pg : pgData) {
+            items.add((PhotoGroupData) pg);
+        }
+        for (RealmObject std : smsTradeDatas) {
+            items.add((SmsTradeData) std);
         }
 
 
@@ -203,8 +247,7 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         }
 
 
-        Collections.sort(items, new Comparator<MyRealmObject>()
-        {
+        Collections.sort(items, new Comparator<MyRealmObject>() {
             @Override
             public int compare(MyRealmObject o1, MyRealmObject o2) {
                 return (int) (o1.getDate() - o2.getDate());

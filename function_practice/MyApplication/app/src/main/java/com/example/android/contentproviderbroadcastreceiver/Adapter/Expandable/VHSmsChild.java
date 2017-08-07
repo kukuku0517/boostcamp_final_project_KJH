@@ -39,5 +39,10 @@ public class VHSmsChild extends AbstractExpandableItemViewHolder {
         Date d = new Date(child.getDate());
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);
+        if (child.isSent()) {
+            date.append("보냄");
+        } else {
+            date.append("받음");
+        }
     }
 }

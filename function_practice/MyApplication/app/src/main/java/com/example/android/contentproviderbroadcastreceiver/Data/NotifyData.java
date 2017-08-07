@@ -8,6 +8,12 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class NotifyData extends RealmObject implements MyRealmObject {
+    @PrimaryKey
+    private   long  id;
+
+    private  long date;
+    private String content,person;
+
     public long getDate() {
         return date;
     }
@@ -32,13 +38,13 @@ public class NotifyData extends RealmObject implements MyRealmObject {
         this.person = person;
     }
 
-    public long date;
-    public String content,person;
-    @PrimaryKey
-    long  id;
-
     public long  getId() {
         return id;
+    }
+
+    @Override
+    public void setComment(String hello) {
+
     }
 
 

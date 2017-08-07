@@ -208,6 +208,13 @@ https://stackoverflow.com/questions/39966099/realm-query-which-also-filters-cust
 	-	highlight
 	-	etc
 2.	query는 결국 parentObject안되고 각각 class마다 돌릴것
+
 	-	class <-> String 가능. query마다 가능, 불가능 class 구별
 	-	3단계 class (notify, sms)는 child > unit > group 순으로 parent의 id를 갖고있게 한다
 	-	장소, 사람, 시간, comment, (tag)
+
+3.	헬퍼클래스 모듈화
+
+4.	static method자제
+
+5.

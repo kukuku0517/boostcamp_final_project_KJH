@@ -1,31 +1,25 @@
-package com.example.android.contentproviderbroadcastreceiver;
+package com.example.android.contentproviderbroadcastreceiver.Main;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.View;
 
 import com.example.android.contentproviderbroadcastreceiver.Adapter.DayAdapter;
-import com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable.NotifyAdapter;
-import com.example.android.contentproviderbroadcastreceiver.Adapter.Expandable.SmsAdapter;
-import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.PhotoGroupData;
-import com.example.android.contentproviderbroadcastreceiver.Data.GroupData.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
-import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.example.android.contentproviderbroadcastreceiver.Interface.PhotoItemClickListener;
+import com.example.android.contentproviderbroadcastreceiver.R;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
-public class PhotoActivity extends AppCompatActivity {
+public class PhotoActivity extends AppCompatActivity implements PhotoItemClickListener {
 
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
@@ -57,5 +51,13 @@ public class PhotoActivity extends AppCompatActivity {
             rv.setLayoutManager(layoutManager);
             rv.setAdapter(adapter);
         }
+    }
+
+    @Override
+    public void onPhotoItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this,DetailPhotoActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("class", 2);
+        startActivity(intent);
     }
 }

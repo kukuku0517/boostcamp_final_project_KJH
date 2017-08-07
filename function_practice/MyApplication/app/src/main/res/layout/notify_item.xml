@@ -65,8 +65,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/notify_number"
                 android:text=""
-
+                android:hint="메모가 없습니다"
                 android:visibility="visible" />
+
+
 
 
             <Button

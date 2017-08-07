@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide;
 import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
 import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
+import com.example.android.contentproviderbroadcastreceiver.Interface.CardItemClickListener;
+import com.example.android.contentproviderbroadcastreceiver.Interface.PhotoItemClickListener;
 import com.example.android.contentproviderbroadcastreceiver.R;
 
 import java.text.DateFormat;
@@ -35,15 +37,16 @@ public class VHPhoto extends DayViewHolder {
     TextView location;
     @BindView(R.id.photo_button)
     Button button;
-Context context;
-    public VHPhoto(View view,Context context) {
+    Context context;
+
+    public VHPhoto(View view, Context context) {
         super(view);
-        this.context=context;
+        this.context = context;
     }
 
     @Override
     public void bindType(final MyRealmObject item) {
-       PhotoData callData = (PhotoData) item;
+        PhotoData callData = (PhotoData) item;
         DateFormat sdFormat = new SimpleDateFormat("hh : mm");
         Date d = new Date(callData.getDate());
         String tempDate = sdFormat.format(d);
@@ -52,6 +55,13 @@ Context context;
 //        iv.setImageResource(R.drawable.ic_image_black_24dp);
 
         Glide.with(context).load(callData.getPath()).into(iv);
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               PhotoItemClickListener listener = (PhotoItemClickListener) context;
+                listener.onPhotoItemClick(item);
+            }
+        });
 
     }
 }

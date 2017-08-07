@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -36,10 +37,11 @@ public class VHNotifyGroup extends DayViewHolder {
     @BindView(R.id.notify_group_button)
     Button button;
     @BindView(R.id.notify_cv)
-    CardView cv;
+   View view;
 
-    public VHNotifyGroup(View view) {
+    public VHNotifyGroup(View view,Context context) {
         super(view);
+        setmListener(context);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class VHNotifyGroup extends DayViewHolder {
             person.setText("");
         }
 
-        button.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onNotifyItemClick(item);

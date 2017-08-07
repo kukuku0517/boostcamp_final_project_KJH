@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.Adapter;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -41,9 +42,12 @@ public class VHSmsGroup extends DayViewHolder {
     TextView content;
     @BindView(R.id.sms_group_button)
     Button button;
+    @BindView(R.id.sms_group_cv)
+    View view;
 
-    public VHSmsGroup(View view) {
+    public VHSmsGroup(View view, Context context) {
         super(view);
+        setmListener(context);
     }
 
     @Override
@@ -62,7 +66,7 @@ public class VHSmsGroup extends DayViewHolder {
         }
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onSmsItemClick(item);

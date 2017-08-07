@@ -1,5 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.Data;
 
+import android.os.Parcelable;
+
 import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -16,4 +18,5 @@ public interface MyRealmObject extends RealmModel {
 
     long getId();
 
+    void setComment(String comment);
 }
