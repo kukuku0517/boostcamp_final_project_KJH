@@ -1,26 +1,17 @@
 package com.example.android.contentproviderbroadcastreceiver.Background;
 
 import android.app.Notification;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.RequiresApi;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.RemoteViews;
 
-import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
-import static android.os.Build.VERSION_CODES.N;
+import com.example.android.contentproviderbroadcastreceiver.Helper.RealmHelper;
 
 /**
  * Created by samsung on 2017-07-28.
@@ -86,7 +77,7 @@ public class SNSNotificationService extends NotificationListenerService {
 //        Log.i("NotificationListener", "[snowdeer] Title:" + notificatin.getSortKey());
 //
 
-        RealmHelper.notifyDataSave(title, String.valueOf(text), String.valueOf(subText), when);
+        RealmHelper.getInstance().notifyDataSave(title, String.valueOf(text), String.valueOf(subText), when);
 
     }
 

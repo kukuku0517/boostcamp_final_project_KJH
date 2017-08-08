@@ -15,33 +15,16 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.provider.CallLog;
 import android.provider.MediaStore;
-import android.provider.Telephony;
-import android.service.notification.NotificationListenerService;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
-import android.telecom.Call;
 import android.util.Log;
 
-import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
-import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
-import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
-import com.example.android.contentproviderbroadcastreceiver.Interface.DateHelper;
+import com.example.android.contentproviderbroadcastreceiver.Helper.RealmHelper;
 import com.example.android.contentproviderbroadcastreceiver.R;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
-
-import static android.R.attr.id;
-import static android.R.attr.type;
-import static android.bluetooth.BluetoothClass.Service.TELEPHONY;
-import static com.example.android.contentproviderbroadcastreceiver.R.string.month;
-import static com.example.android.contentproviderbroadcastreceiver.R.string.year;
 
 public class DataUpdateService extends Service {
 
@@ -133,7 +116,7 @@ public class DataUpdateService extends Service {
                     long time = c.getLong(c.getColumnIndex(MediaStore.Images.Media.DATE_ADDED));
                     if (call != id && time >= readLastDateFromMediaStore(getApplicationContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI)) {
                         call = id;
-                        RealmHelper.photoDataSave(c);
+                        RealmHelper.getInstance().photoDataSave(c);
                     }
                 }
             }

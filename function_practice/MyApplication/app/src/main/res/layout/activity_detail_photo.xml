@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.example.android.contentproviderbroadcastreceiver.Main.DetailPhotoActivity">
+    tools:context="com.example.android.contentproviderbroadcastreceiver.DetailView.DetailPhotoActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -78,6 +78,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="comment" />
+                <Button
+                    android:id="@+id/photo_detail_delete_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="delete" />
             </LinearLayout>
 
 

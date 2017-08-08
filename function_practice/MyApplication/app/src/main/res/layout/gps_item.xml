@@ -73,6 +73,25 @@
             android:text="Button"
             android:textColor="@android:color/darker_gray" />
 
+        <Button
+            android:id="@+id/gps_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/gps_button"
+            android:background="@android:color/transparent"
+            android:text="delete"
+            android:textColor="@android:color/darker_gray" />
+        <Button
+            android:id="@+id/gps_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/gps_delete"
+            android:background="@android:color/transparent"
+            android:text="highlight"
+            android:textColor="@android:color/darker_gray" />
+
     </RelativeLayout>
 
 

@@ -26,14 +26,14 @@
             android:name="com.google.android.awareness.API_KEY"
             android:value="AIzaSyArg9huEcpEGWcDvpXQbRaMoCkCruKWqQk" />
 
-        <activity android:name=".Main.MainActivity">
+        <activity android:name=".DailyView.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main.DayActivity" />
+        <activity android:name=".DailyView.DayActivity" />
 
         <receiver
             android:name=".Background.BootBroadcastReceiver"
@@ -54,46 +54,48 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Main.UnitActivity" />
+        <activity android:name=".GroupView.UnitActivity" />
 
         <service
-            android:name=".Background.LocationUpdateService"
+            android:name=".Background.NoUse.LocationUpdateService"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".Background.GoogleLocationService"
+            android:name=".Background.NoUse.GoogleLocationService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".Main.PhotoActivity" />
+        <activity android:name=".GroupView.PhotoActivity" />
 
         <service
-            android:name=".Background.GoogleAwarenessService"
+            android:name=".Background.GoogleAwareness.GoogleAwarenessService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name=".Background.GoogleAwarenessReceivers.GoogleStillReceiver"
+            android:name=".Background.NoUse.GoogleStillReceiver"
             android:enabled="true"
             android:exported="true" />
         <receiver
-            android:name=".Background.GoogleAwarenessReceivers.GoogleOnFootReceiver"
+            android:name=".Background.NoUse.GoogleOnFootReceiver"
             android:enabled="true"
             android:exported="true" />
         <receiver
-            android:name=".Background.GoogleAwarenessReceivers.GoogleVehicleReceiver"
+            android:name=".Background.NoUse.GoogleVehicleReceiver"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".Main.DetailPhotoActivity" />
-        <activity android:name=".Main.GpsActivity" />
-        <activity android:name=".Main.CallActivity" />
-        <activity android:name=".Main.SmsTradeActivity" />
+        <activity android:name=".DetailView.DetailPhotoActivity" />
+        <activity android:name=".DetailView.GpsStillActivity" />
+        <activity android:name=".DetailView.CallActivity" />
+        <activity android:name=".DetailView.SmsTradeActivity" />
 
         <receiver
-            android:name=".Background.GoogleAwarenessReceivers.GoogleFenceReceiver"
+            android:name=".Background.GoogleAwareness.GoogleFenceReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <activity android:name=".DetailView.GpsMoveActivity"></activity>
     </application>
 
 </manifest>

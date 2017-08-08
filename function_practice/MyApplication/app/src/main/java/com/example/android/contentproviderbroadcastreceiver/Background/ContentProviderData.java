@@ -9,12 +9,8 @@ import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
-import com.example.android.contentproviderbroadcastreceiver.Data.CallData;
-import com.example.android.contentproviderbroadcastreceiver.Data.PhotoData;
-import com.example.android.contentproviderbroadcastreceiver.Data.RealmHelper;
-import com.example.android.contentproviderbroadcastreceiver.Data.SmsData;
+import com.example.android.contentproviderbroadcastreceiver.Helper.RealmHelper;
 
 import io.realm.Realm;
 
@@ -44,7 +40,7 @@ public class ContentProviderData {
         Cursor c = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, projection, selection,
                 null, CallLog.Calls.DEFAULT_SORT_ORDER);
         while (c.moveToNext()) {
-            RealmHelper.callDataSave(c);
+            RealmHelper.getInstance().callDataSave(c);
         }
     }
 
@@ -76,7 +72,7 @@ public class ContentProviderData {
                 null,
                 null);      // 정렬 안 함
         while (imageCursor.moveToNext()) {
-            RealmHelper.photoDataSave(imageCursor);
+            RealmHelper.getInstance().photoDataSave(imageCursor);
         }
     }
 }

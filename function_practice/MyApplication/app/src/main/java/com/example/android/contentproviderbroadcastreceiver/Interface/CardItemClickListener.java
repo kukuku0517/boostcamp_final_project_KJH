@@ -1,9 +1,6 @@
 package com.example.android.contentproviderbroadcastreceiver.Interface;
 
-import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmObject;
-import com.example.android.contentproviderbroadcastreceiver.Data.MyRealmParcelableObject;
-
-import io.realm.RealmObject;
+import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.GpsData;
 
 /**
  * Created by samsung on 2017-08-01.
@@ -12,13 +9,13 @@ import io.realm.RealmObject;
 public interface CardItemClickListener {
     void onNotifyItemClick(MyRealmObject item);
 
-    void onSmsItemClick(MyRealmObject item);
+    void onSmsGroupItemClick(MyRealmObject item);
 
-    void onSmsTradeItemClick(MyRealmParcelableObject item);
+    void onSmsTradeItemClick(MyRealmObject item);
 
     void onPhotoGroupItemClick(MyRealmObject item);
 
-    void onGpsItemClick(MyRealmObject item);
+    void onGpsItemClick(GpsData item);
 
     void onCallItemClick(MyRealmObject item);
 

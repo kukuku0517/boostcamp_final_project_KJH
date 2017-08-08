@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/trade_cv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    android:id="@+id/trade_cv"
 
     >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@android:color/holo_orange_dark">
+            android:background="@android:color/holo_orange_dark"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/sms_trade_iv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_attach_money_black_24dp"
                 android:layout_gravity="center_vertical"
-                />
+                android:src="@drawable/ic_attach_money_black_24dp" />
 
             <TextView
                 android:id="@+id/sms_trade_date"
@@ -38,9 +35,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
 
+                android:text="TextView"
                 android:textColor="@android:color/white"
-                android:textSize="10sp"
-                android:text="TextView" />
+                android:textSize="10sp" />
 
         </LinearLayout>
 
@@ -57,8 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:textStyle="bold"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/sms_trade_cost"
@@ -73,7 +70,16 @@
                 android:id="@+id/sms_trade_place"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sms_trade_thing"
+                android:layout_below="@id/sms_trade_cost"
+                android:text="dd"
+
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/sms_trade_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sms_trade_place"
                 android:text="dd"
 
                 android:visibility="visible" />
@@ -85,9 +91,22 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:background="@android:color/transparent"
+                android:text="Comment"
                 android:textColor="@android:color/holo_orange_dark"
-                android:textStyle="bold"
-                android:text="Comment" />
+                android:textStyle="bold" />
+
+
+            <Button
+                android:id="@+id/sms_trade_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/sms_trade_write"
+                android:background="@android:color/transparent"
+                android:text="delete"
+                android:textColor="@android:color/holo_orange_dark"
+                android:textStyle="bold" />
+
 
         </RelativeLayout>
 
