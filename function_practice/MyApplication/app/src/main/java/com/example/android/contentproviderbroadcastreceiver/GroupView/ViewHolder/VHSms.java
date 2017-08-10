@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.GroupView.ViewHolder;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class VHSms extends AbstractExpandableItemViewHolder {
 //                content.setText(comment.getText());
 //                mListener.onClick(NotifyUnitData.class,item, comment.getText().toString());
 //                CommentUtil.getInstance().show((UnitActivity)context,smsUnitData.getId(),SmsUnitData.class);
-                CommentUtil.getInstance().show((UnitActivity)context,smsUnitData.getId(), RealmDataHelper.getInstance().SMS_UNIT_DATA);
+                CommentUtil.getInstance().show((AppCompatActivity) context,smsUnitData.getId(), RealmDataHelper.getInstance().SMS_UNIT_DATA);
 
             }
         });

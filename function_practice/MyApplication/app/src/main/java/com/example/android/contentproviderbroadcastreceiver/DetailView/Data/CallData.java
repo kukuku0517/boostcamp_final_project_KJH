@@ -2,6 +2,7 @@ package com.example.android.contentproviderbroadcastreceiver.DetailView.Data;
 
 import android.os.Parcel;
 
+import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmGpsObject;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
 
 import io.realm.RealmObject;
@@ -91,5 +92,10 @@ public class CallData extends RealmObject implements MyRealmObject {
     @Override
     public int getType() {
         return 0;
+    }
+
+    @Override
+    public String select() {
+        return String.valueOf(date);
     }
 }

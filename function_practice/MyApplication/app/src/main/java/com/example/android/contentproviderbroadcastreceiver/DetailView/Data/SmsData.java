@@ -96,4 +96,9 @@ public class SmsData extends RealmObject implements MyRealmObject {
         this.address = address;
     }
 
+    @Override
+    public String select() {
+        return String.valueOf(date);
+    }
+
 }

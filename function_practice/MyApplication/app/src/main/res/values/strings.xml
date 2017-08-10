@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ContentProviderBroadcastReceiver</string>
+    <string name="app_name">SelfNS</string>
     <string name="year">year</string>
     <string name="month">month</string>
     <string name="dayofmonth">day</string>

@@ -17,7 +17,7 @@ import com.example.android.contentproviderbroadcastreceiver.Helper.RealmHelper;
  * Created by samsung on 2017-07-28.
  */
 
-public class SNSNotificationService extends NotificationListenerService {
+public class SNSNotificationService extends NotificationListenerService{
     @Override
     public IBinder onBind(Intent intent) {
         return super.onBind(intent);

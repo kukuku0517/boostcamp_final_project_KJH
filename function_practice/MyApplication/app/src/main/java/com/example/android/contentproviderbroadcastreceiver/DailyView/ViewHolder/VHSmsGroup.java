@@ -35,7 +35,7 @@ public class VHSmsGroup extends DayViewHolder {
     @BindView(R.id.sms_group_cv)
     View view;
 
-    public VHSmsGroup(View view, Context context, NotifyListener nListener) {
+    public VHSmsGroup(View view, Context context) {
         super(view);
         setmListener(context,nListener);
     }

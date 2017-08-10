@@ -7,15 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 import com.example.android.contentproviderbroadcastreceiver.DailyView.Adapter.DayAdapter;
-import com.example.android.contentproviderbroadcastreceiver.DailyView.Data.PhotoGroupData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.PhotoData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.DetailPhotoActivity;
 import com.example.android.contentproviderbroadcastreceiver.Interface.PhotoItemClickListener;
 import com.example.android.contentproviderbroadcastreceiver.Helper.RealmDataHelper;
 import com.example.android.contentproviderbroadcastreceiver.R;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -1,5 +1,6 @@
 package com.example.android.contentproviderbroadcastreceiver.Helper;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +40,7 @@ public class CommentUtil {
 //        dialogFragment.show(fm, "fragment_dialog_test");
 //    }
     public void show(AppCompatActivity activity, long id, int type){
+
         FragmentManager fm = activity.getSupportFragmentManager();
         Bundle args = new Bundle();
 //        args.putString("class", c.getCanonicalName());

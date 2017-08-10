@@ -12,6 +12,7 @@ import java.util.GregorianCalendar;
 
 public class DateHelper {
     static DateHelper datehelper;
+    public static final long QUARTER =21600000;
 
     public static DateHelper getInstance() {
         if (datehelper == null) {
@@ -53,6 +54,14 @@ public class DateHelper {
         today.add(Calendar.DATE, 1);
         long end = today.getTimeInMillis();
         return new long[]{start, end};
+    }
+
+    public long getDayAfter(long millis, int days) {
+        Date date = new Date(millis);
+        GregorianCalendar today = new GregorianCalendar();
+        today.setTime(date);
+        today.add(Calendar.DATE, days);
+        return today.getTimeInMillis();
     }
 
 

@@ -40,7 +40,6 @@ public class GoogleFenceReceiver extends BroadcastReceiver implements GoogleApiC
         this.context = context;
         FenceState fenceState = FenceState.extract(intent);
         Log.d("fenceCheck", fenceState.getFenceKey()); //false 1, true 2
-//        Toast.makeText(context, String.valueOf(fenceState.getCurrentState()) + intent.getAction(), Toast.LENGTH_LONG).show();
         if (TextUtils.equals(fenceState.getFenceKey(), ReceiverConstants.ON_FOOT_KEY)) {
             fenceStateNum = fenceState.getCurrentState();
             fenceType = 0;
@@ -50,13 +49,13 @@ public class GoogleFenceReceiver extends BroadcastReceiver implements GoogleApiC
         } else if (TextUtils.equals(fenceState.getFenceKey(), ReceiverConstants.VEHICLE_KEY)) {
             fenceStateNum = fenceState.getCurrentState();
             fenceType = 4;
-        } else if(TextUtils.equals(fenceState.getFenceKey(), ReceiverConstants.HEADPHONE_KEY)) {
+        } else if (TextUtils.equals(fenceState.getFenceKey(), ReceiverConstants.HEADPHONE_KEY)) {
             fenceStateNum = fenceState.getCurrentState();
             fenceType = 6;
-        }else{
+        } else {
 
         }
-        Log.d("fenceState",fenceType+""+fenceStateNum);
+        Log.d("fenceState", fenceType + "" + fenceStateNum);
         locationClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
@@ -69,50 +68,41 @@ public class GoogleFenceReceiver extends BroadcastReceiver implements GoogleApiC
     }
 
 
-    public void onStateTrue(double lat, double lng, CharSequence place, String originId){
-        RealmHelper.getInstance().gpsDataSave(System.currentTimeMillis(),lat,lng,1, (String) place , fenceType+fenceStateNum, originId);
 
-    };
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             return;
         }
 
-        final int[] type = new int[1];
-        final double[] lat = new double[1];
-        final double[] lng = new double[1];
-        final CharSequence[] place = new CharSequence[1];
-
         Awareness.SnapshotApi.getPlaces(locationClient)
                 .setResultCallback(new ResultCallback<PlacesResult>() {
+
                     @Override
                     public void onResult(@NonNull PlacesResult placesResult) {
                         if (!placesResult.getStatus().isSuccess()) {
                             Log.e(TAG, "Could not get location.");
                             return;
+                        }else{
+                            List<PlaceLikelihood> placeLikelihoods = placesResult.getPlaceLikelihoods();
+                            LatLng latLng = placeLikelihoods.get(0).getPlace().getLatLng();
+                            double lat = latLng.latitude;
+                            double lng = latLng.longitude;
+                            CharSequence place = placeLikelihoods.get(0).getPlace().getName();
+                            String originId = placeLikelihoods.get(0).getPlace().getId();
+                            stateSave(lat, lng, place, originId);
                         }
-                        List<PlaceLikelihood> placeLikelihoods = placesResult.getPlaceLikelihoods();
-                        LatLng latLng = placeLikelihoods.get(0).getPlace().getLatLng();
-                        double lat = latLng.latitude;
-                      double lng = latLng.longitude;
-                       CharSequence place = placeLikelihoods.get(0).getPlace().getName();
-                        String originId = placeLikelihoods.get(0).getPlace().getId();
-                        onStateTrue(lat,lng,place,originId);
-
-
-//                                        RealmHelper.gpsDataSave(System.currentTimeMillis(),lat[0],lng[0],1, (String) place[0],type[0]);
-
-
                     }
 
 
                 });
-
-
     }
+
+    private void stateSave(double lat, double lng, CharSequence place, String originId) {
+        RealmHelper.getInstance().gpsDataSave(System.currentTimeMillis(), lat, lng, 1, (String) place, fenceType + fenceStateNum, originId);
+    }
+
 
     @Override
     public void onConnectionSuspended(int i) {

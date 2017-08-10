@@ -100,4 +100,9 @@ public class PhotoData extends RealmObject implements MyRealmObject {
     public int getType() {
         return 5;
     }
+
+    @Override
+    public String select() {
+        return String.valueOf(date);
+    }
 }

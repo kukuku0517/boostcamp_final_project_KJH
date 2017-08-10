@@ -91,5 +91,10 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject {
 
     }
 
+    @Override
+    public String select() {
+        return String.valueOf(start);
+    }
+
 
 }

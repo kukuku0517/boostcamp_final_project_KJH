@@ -17,14 +17,9 @@ import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHSmsGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHSmsTrade;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
-import com.example.android.contentproviderbroadcastreceiver.Interface.NotifyListener;
 import com.example.android.contentproviderbroadcastreceiver.R;
 
-import java.util.ArrayList;
-import java.util.logging.LogRecord;
-
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
@@ -34,7 +29,7 @@ import static android.media.CamcorderProfile.get;
  * Created by samsung on 2017-07-26.
  */
 
-public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements NotifyListener{
+public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
     private RealmList<MyRealmObject> items;
     private Realm realm;
@@ -71,42 +66,42 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements N
         DayViewHolder holder;
         switch (viewType) {
             case 0: //call
-                layoutIdForListItem = R.layout.call_item;
+                layoutIdForListItem = R.layout.item_call;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHCall(view,context,this);
+                return new VHCall(view,context);
             case 1: //gps
-                layoutIdForListItem = R.layout.gps_item;
+                layoutIdForListItem = R.layout.item_gps;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHGps(view,context,this);
+                return new VHGps(view,context);
             case 2: //photo group
-                layoutIdForListItem = R.layout.photo_group_item;
+                layoutIdForListItem = R.layout.item_photo_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHPhotoGroup(view,context,this);
+                holder = new VHPhotoGroup(view,context);
 
                 return holder;
             case 3: //notigroup
                 Log.d("Notification", "layout");
-                layoutIdForListItem = R.layout.notify_group_item;
+                layoutIdForListItem = R.layout.item_notify_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHNotifyGroup(view,context,this);
+                holder = new VHNotifyGroup(view,context);
 
                 return holder;
             case 4: //sms group
-                layoutIdForListItem = R.layout.sms_group_item;
+                layoutIdForListItem = R.layout.item_sms_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHSmsGroup(view,context,this);
+                holder = new VHSmsGroup(view,context);
 
                 return holder;
             case 5: //photo
-                layoutIdForListItem = R.layout.photo_item;
+                layoutIdForListItem = R.layout.item_photo;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHPhoto(view,context,this);
+                holder = new VHPhoto(view,context);
 //                holder.setmListener(context);
                 return holder;
             case 6: //sms trade
-                layoutIdForListItem = R.layout.sms_trade_item;
+                layoutIdForListItem = R.layout.item_sms_trade;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHSmsTrade(view,context,this);
+                holder = new VHSmsTrade(view,context);
 
                 return holder;
             default:
@@ -142,8 +137,4 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements N
 
     private Context context;
 
-    @Override
-    public void onNotify() {
-        notifyDataSetChanged();
-    }
 }

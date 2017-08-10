@@ -73,4 +73,9 @@ public class NotifyData extends RealmObject implements MyRealmObject {
     public int getType() {
         return 0;
     }
+
+    @Override
+    public String select() {
+        return String.valueOf(date);
+    }
 }

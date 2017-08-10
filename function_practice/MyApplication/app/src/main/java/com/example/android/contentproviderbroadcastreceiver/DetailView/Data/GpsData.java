@@ -1,5 +1,6 @@
 package com.example.android.contentproviderbroadcastreceiver.DetailView.Data;
 
+import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmGpsObject;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
 
 import io.realm.RealmObject;
@@ -9,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-08-01.
  */
 
-public class GpsData extends RealmObject implements MyRealmObject {
+public class GpsData extends RealmObject implements MyRealmGpsObject {
 
     @PrimaryKey
     private long id;
@@ -113,4 +114,8 @@ public class GpsData extends RealmObject implements MyRealmObject {
     }
 
 
+    @Override
+    public String select() {
+        return String.valueOf(date);
+    }
 }

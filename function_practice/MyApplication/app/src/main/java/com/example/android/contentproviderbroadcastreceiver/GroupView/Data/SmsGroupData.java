@@ -91,4 +91,9 @@ public class SmsGroupData extends RealmObject implements MyRealmObject {
     public void setComment(String hello) {
 
     }
+
+    @Override
+    public String select() {
+        return String.valueOf(start);
+    }
 }

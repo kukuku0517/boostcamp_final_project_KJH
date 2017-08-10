@@ -1,8 +1,10 @@
 package com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,14 +43,14 @@ public class VHCall extends DayViewHolder {
     @BindView(R.id.call_comment)
     TextView comment;
     @BindView(R.id.call_button)
-    Button button;
+    ImageButton button;
     @BindView(R.id.call_delete)
-    Button deleteBtn;
+    ImageButton deleteBtn;
     @BindView(R.id.call_cv)
     View view;
 
     private Context context;
-    public VHCall(View view, Context context, NotifyListener nListener) {
+    public VHCall(View view, Context context) {
         super(view);
         ButterKnife.bind(this, view); //없애고 돌려보기
         this.context=context;
@@ -85,7 +87,7 @@ comment.setText(callData.getComment());
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommentUtil.getInstance().show((DayActivity)context,callData.getId(), RealmDataHelper.CALL_DATA);
+                CommentUtil.getInstance().show((AppCompatActivity) context,callData.getId(), RealmDataHelper.CALL_DATA);
             }
         });
 

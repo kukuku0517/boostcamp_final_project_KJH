@@ -4,7 +4,7 @@ import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.Call
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.GpsData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyUnitData;
-import com.example.android.contentproviderbroadcastreceiver.DailyView.Data.PhotoGroupData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.SmsUnitData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.PhotoData;

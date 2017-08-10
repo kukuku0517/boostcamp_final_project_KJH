@@ -126,4 +126,9 @@ public class SmsUnitData extends RealmObject implements MyRealmObject {
     public String getContent() {
         return content;
     }
+
+    @Override
+    public String select() {
+        return String.valueOf(start);
+    }
 }

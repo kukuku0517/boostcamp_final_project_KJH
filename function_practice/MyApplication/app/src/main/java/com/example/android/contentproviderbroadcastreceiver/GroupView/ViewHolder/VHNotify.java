@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.GroupView.ViewHolder;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -56,7 +57,7 @@ public class VHNotify extends AbstractExpandableItemViewHolder {
             public void onClick(View v) {
 //                content.setText(comment.getText());
 //                mListener.onClick(NotifyUnitData.class,item, comment.getText().toString());
-                CommentUtil.getInstance().show((UnitActivity) context, notifyUnitData.getId(), RealmDataHelper.getInstance().NOTIFY_UNIT_DATA);
+                CommentUtil.getInstance().show((AppCompatActivity)  context, notifyUnitData.getId(), RealmDataHelper.getInstance().NOTIFY_UNIT_DATA);
             }
         });
 

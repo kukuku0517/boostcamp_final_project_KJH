@@ -17,9 +17,11 @@ import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.SmsD
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.SmsTradeData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyUnitData;
-import com.example.android.contentproviderbroadcastreceiver.DailyView.Data.PhotoGroupData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.SmsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.SmsUnitData;
+
+import java.util.StringTokenizer;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -42,12 +44,15 @@ public class RealmHelper {
     }
 
     public RealmHelper() {
-    };
+    }
+
+    ;
+
     public RealmHelper(Context context) {
         this.context = context;
     }
 
-  final long QUARTER = 21600000;
+    final long QUARTER = 21600000;
 
     public DayData getDayObject(Realm realm, long date) {
         final long[] today = DateHelper.getInstance().getStartEndDate(date);
@@ -84,7 +89,7 @@ public class RealmHelper {
     }
 
     //해당 전화번호의 이름을 연락처에서 가져오기.
-    public  String getContactName(final String phoneNumber) {
+    public String getContactName(final String phoneNumber) {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
         String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
         String contactName = "모르는 번호";
@@ -108,7 +113,7 @@ public class RealmHelper {
         }
     }
 
-    private  void getPlaceWithType(Realm realm, double[] lat, double[] lng, String[] place, String[] originId, int[] type) {
+    private void getPlaceWithType(Realm realm, double[] lat, double[] lng, String[] place, String[] originId, int[] type) {
         RealmResults<GpsData> gpsDatas = realm.where(GpsData.class).findAll();
         if (gpsDatas.size() != 0) {
             GpsData last = gpsDatas.last();
@@ -120,7 +125,7 @@ public class RealmHelper {
         }
     }
 
-    public  void callDataSave(final Cursor c) {
+    public void callDataSave(final Cursor c) {
 
         Realm realm = Realm.getDefaultInstance();
         final String phone = c.getString(c.getColumnIndex(CallLog.Calls.NUMBER));
@@ -151,7 +156,7 @@ public class RealmHelper {
 
     }
 
-    public  void gpsDataSave(final long date, final double lat, final double lng, final int change, final String place, final int type, final String originId) {
+    public void gpsDataSave(final long date, final double lat, final double lng, final int change, final String place, final int type, final String originId) {
 
         Realm realm = Realm.getDefaultInstance();
         final DayData dayData = getDayObject(realm, date);
@@ -178,7 +183,7 @@ public class RealmHelper {
         });
     }
 
-    public  void photoDataSave(final Cursor imageCursor) {
+    public void photoDataSave(final Cursor imageCursor) {
         Realm realm = Realm.getDefaultInstance();
 
         final String filePath = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -355,11 +360,41 @@ public class RealmHelper {
     }
 
     private boolean isTrade(String body) {
+        String[] banks = new String[]{"KB", "국민은행", "신한", "하나", "우리", "외환", "씨티", "농협"};
+        String[] elements = {"잔액", "WEB", "결제", "원", "W", "$"};
 
-        if (body.contains("잔액") && body.contains("신한"))
-            return true;
-        else
-            return false;
+
+        if (containsList(body, banks)) {
+            if (containsList(body, elements)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsList(String body, String[] list) {
+        for (String s : list) {
+            if (body.contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String[] getTradeData(String body) {
+        String[] tradeDatas = new String[3]; //은행, 가격, 장소/아이템
+        String[] banks = new String[]{"KB", "국민은행", "신한", "하나", "우리", "외환", "씨티", "농협"};
+        String[] elements = {"잔액", "WEB", "결제", "원", "W", "$"};
+        StringTokenizer tokenizer = new StringTokenizer(body);
+        for (int i = 0; i < tokenizer.countTokens(); i++) {
+            String token = tokenizer.nextToken();
+            if(containsList(token,banks)){
+                tradeDatas[0]=token;
+            }
+
+
+        }
+        return tradeDatas;
     }
 
     public void notifyDataSave(final String title, final String text, String subtext, final long date) {
@@ -389,7 +424,7 @@ public class RealmHelper {
                     ngData3.setTime(start + QUARTER * 2, start + QUARTER * 3);
                     ngData4.setTime(start + QUARTER * 3, start + QUARTER * 4);
 
-                    ngDatas = DataLoad(NotifyGroupData.class, "start", start, end);
+                    ngDatas = DataLoad(NotifyGroupData.class, "start", start, end - 1);
                 }
                 int index;
                 if (notifyData.getDate() < start + QUARTER) {
@@ -435,11 +470,18 @@ public class RealmHelper {
 
     }
 
-    public  RealmResults<RealmObject> DataLoad(Class c, String query, long start, long end) {
+    public RealmResults<RealmObject> DataLoad(Class c, String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).between(query, start, end).findAll();
         return cData;
     }
+
+    public RealmResults<RealmObject> DataHighlightLoad(Class c, String query, long start, long end) {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).between(query, start, end).equalTo("highlight", true).findAll();
+        return cData;
+    }
+
 
     public RealmResults<GpsData> gpsDataLoad(String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
@@ -447,24 +489,6 @@ public class RealmHelper {
         return gData;
     }
 
-    public RealmResults<CallData> callDataLoad(String query, long start, long end) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<CallData> cData = realm.where(CallData.class).between(query, start, end).findAll();
-        return cData;
-    }
-
-    public  RealmResults<PhotoData> photoDataLoad(String query, long start, long end) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<PhotoData> pData = realm.where(PhotoData.class).between(query, start, end).findAll();
-        return pData;
-
-    }
-
-    public  RealmResults<SmsData> smsDataLoad(String query, long start, long end) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<SmsData> sData = realm.where(SmsData.class).between(query, start, end).findAll();
-        return sData;
-    }
 
     public RealmResults<SmsGroupData> smsGroupDataLoad(String date, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
@@ -472,25 +496,15 @@ public class RealmHelper {
         return SmsData;
     }
 
-    public RealmResults<NotifyData> notifyDataLoad(String query, long start, long end) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<NotifyData> nData = realm.where(NotifyData.class).between(query, start, end).findAll();
-        return nData;
-    }
 
-    public  RealmResults<NotifyGroupData> notifyGroupDataLoad(String query, long start, long end) {
+    public RealmResults<NotifyGroupData> notifyGroupDataLoad(String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<NotifyGroupData> ngData = realm.where(NotifyGroupData.class).between("start", start, end).findAll();
         return ngData;
     }
 
-    public RealmResults<NotifyUnitData> notifyUnitDataLoad(String query, long start, long end) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<NotifyUnitData> nuData = realm.where(NotifyUnitData.class).between(query, start, end).findAll();
-        return nuData;
-    }
 
-    public  void photodataDelete(RealmObject item) {
+    public void photodataDelete(RealmObject item) {
 
         Realm realm = Realm.getDefaultInstance();
 
@@ -517,7 +531,7 @@ public class RealmHelper {
         });
     }
 
-    public  void photoGroupDataDelete(RealmObject item) {
+    public void photoGroupDataDelete(RealmObject item) {
         Realm realm = Realm.getDefaultInstance();
         final PhotoGroupData photoGroupData = (PhotoGroupData) item;
         final DayData dayData = getDayObject(realm, photoGroupData.getDate());

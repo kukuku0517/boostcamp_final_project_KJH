@@ -36,7 +36,7 @@ public class VHPhoto extends DayViewHolder {
     Button button;
     Context context;
 
-    public VHPhoto(View view, Context context, NotifyListener nListener) {
+    public VHPhoto(View view, Context context) {
         super(view);
         this.context = context;
     }

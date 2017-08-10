@@ -7,10 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.android.contentproviderbroadcastreceiver.DailyView.Data.PhotoGroupData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.PhotoGroupData;
 import com.example.android.contentproviderbroadcastreceiver.Helper.RealmHelper;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
-import com.example.android.contentproviderbroadcastreceiver.Interface.NotifyListener;
 import com.example.android.contentproviderbroadcastreceiver.R;
 
 import java.text.DateFormat;
@@ -39,7 +38,7 @@ public class VHPhotoGroup extends DayViewHolder {
     View view;
 
 
-    public VHPhotoGroup(View view, Context context, NotifyListener nListener) {
+    public VHPhotoGroup(View view, Context context) {
         super(view);
         setmListener(context,nListener);
     }

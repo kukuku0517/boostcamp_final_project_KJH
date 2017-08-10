@@ -53,6 +53,7 @@ public class GoogleAwarenessService extends Service implements GoogleApiClient.C
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("fence",FENCE_RECEIVER_ACTION);
         locationClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addApi(Places.GEO_DATA_API)
@@ -64,83 +65,6 @@ public class GoogleAwarenessService extends Service implements GoogleApiClient.C
         return Service.START_STICKY;
     }
 
-    protected void queryFence(final String fenceKey) {
-        Awareness.FenceApi.queryFences(locationClient,
-                FenceQueryRequest.forFences(Arrays.asList(fenceKey)))
-                .setResultCallback(new ResultCallback<FenceQueryResult>() {
-                    @Override
-                    public void onResult(@NonNull FenceQueryResult fenceQueryResult) {
-                        if (!fenceQueryResult.getStatus().isSuccess()) {
-                            Log.e(TAG, "Could not query fence: " + fenceKey);
-                            return;
-                        }
-                        FenceStateMap map = fenceQueryResult.getFenceStateMap();
-
-
-                        for (String fenceKey : map.getFenceKeys()) {
-
-                            FenceState fenceState = map.getFenceState(fenceKey);
-
-                            Log.i(TAG, "Fence " + fenceKey + ": "
-                                    + fenceState.getCurrentState()
-                                    + ", was="
-                                    + fenceState.getPreviousState()
-                                    + ", lastUpdateTime="
-                            );
-                        }
-                    }
-                });
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        AwarenessFence walkingFence = DetectedActivityFence.during(DetectedActivityFence.ON_FOOT);
-        AwarenessFence stillFence = DetectedActivityFence.during(DetectedActivityFence.STILL);
-        AwarenessFence vehicleFence = DetectedActivityFence.during(DetectedActivityFence.IN_VEHICLE);
-        AwarenessFence cycleFence = DetectedActivityFence.during(DetectedActivityFence.ON_BICYCLE);
-
-        AwarenessFence moveFence = AwarenessFence.or(vehicleFence, cycleFence);
-        AwarenessFence headPhone = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
-
-
-// Create a combination fence to AND primitive fences.
-
-        Intent i = new Intent(FENCE_RECEIVER_ACTION);
-        mPendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
-
-//        stillReceiver = new GoogleStillReceiver();
-//        onFootReceiver = new GoogleOnFootReceiver();
-//        vehicleReceiver = new GoogleVehicleReceiver();
-//
-//
-//        registerReceiver(stillReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-//        registerReceiver(onFootReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-        myFenceReceiver = new GoogleFenceReceiver();
-        registerReceiver(myFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
-
-        Awareness.FenceApi.updateFences(
-                locationClient,
-                new FenceUpdateRequest.Builder()
-                        .addFence(ReceiverConstants.ON_FOOT_KEY, walkingFence, mPendingIntent)
-//                        .addFence(ReceiverConstants.STILL_KEY, stillFence, mPendingIntent)
-//                        .addFence(ReceiverConstants.VEHICLE_KEY, moveFence, mPendingIntent)
-                        .addFence(ReceiverConstants.HEADPHONE_KEY, headPhone, mPendingIntent)
-                        .build())
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        if (status.isSuccess()) {
-                            Log.i(TAG, "Fence was successfully registered.");
-//                            queryFence(FENCE_KEY);
-                        } else {
-                            Log.e(TAG, "Fence could not be registered: " + status);
-                        }
-                    }
-                });
-
-
-    }
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -157,17 +81,60 @@ public class GoogleAwarenessService extends Service implements GoogleApiClient.C
 
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "fenceDestroy");
         Awareness.FenceApi.updateFences(
                 locationClient,
                 new FenceUpdateRequest.Builder()
                         .removeFence(ReceiverConstants.ON_FOOT_KEY)
-//                        .removeFence(ReceiverConstants.STILL_KEY)
-//                        .removeFence(ReceiverConstants.VEHICLE_KEY)
+                        .removeFence(ReceiverConstants.STILL_KEY)
+                        .removeFence(ReceiverConstants.VEHICLE_KEY)
                         .removeFence(ReceiverConstants.HEADPHONE_KEY)
+                        .build())
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+                        if (status.isSuccess()) {
+                            Log.i(TAG, "Fence was successfully unregistered.");
+//                            queryFence(FENCE_KEY);
+                        } else {
+                            Log.e(TAG, "Fence could not be registered: " + status);
+                        }
+                    }
+                });
+//        unregisterReceiver(myFenceReceiver);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        AwarenessFence walkingFence = DetectedActivityFence.during(DetectedActivityFence.ON_FOOT);
+        AwarenessFence stillFence = DetectedActivityFence.during(DetectedActivityFence.STILL);
+
+        AwarenessFence vehicleFence = DetectedActivityFence.during(DetectedActivityFence.IN_VEHICLE);
+        AwarenessFence cycleFence = DetectedActivityFence.during(DetectedActivityFence.ON_BICYCLE);
+        AwarenessFence moveFence = AwarenessFence.or(vehicleFence, cycleFence);
+
+        AwarenessFence headPhone = HeadphoneFence.during(HeadphoneState.PLUGGED_IN);
+
+
+// Create a combination fence to AND primitive fences.
+
+        Intent i = new Intent("android.intent.action.FENCE_RECEIVER_ACTION");
+        mPendingIntent = PendingIntent.getBroadcast(this, 0, i, 0);
+
+//        myFenceReceiver = new GoogleFenceReceiver();
+//        registerReceiver(myFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+
+        Awareness.FenceApi.updateFences(
+                locationClient,
+                new FenceUpdateRequest.Builder()
+                        .addFence(ReceiverConstants.ON_FOOT_KEY, walkingFence, mPendingIntent)
+                        .addFence(ReceiverConstants.STILL_KEY, stillFence, mPendingIntent)
+                        .addFence(ReceiverConstants.VEHICLE_KEY, moveFence, mPendingIntent)
+                        .addFence(ReceiverConstants.HEADPHONE_KEY, headPhone, mPendingIntent)
                         .build())
                 .setResultCallback(new ResultCallback<Status>() {
                     @Override
@@ -180,5 +147,35 @@ public class GoogleAwarenessService extends Service implements GoogleApiClient.C
                         }
                     }
                 });
+
+
     }
 }
+
+//    protected void queryFence(final String fenceKey) {
+//        Awareness.FenceApi.queryFences(locationClient,
+//                FenceQueryRequest.forFences(Arrays.asList(fenceKey)))
+//                .setResultCallback(new ResultCallback<FenceQueryResult>() {
+//                    @Override
+//                    public void onResult(@NonNull FenceQueryResult fenceQueryResult) {
+//                        if (!fenceQueryResult.getStatus().isSuccess()) {
+//                            Log.e(TAG, "Could not query fence: " + fenceKey);
+//                            return;
+//                        }
+//                        FenceStateMap map = fenceQueryResult.getFenceStateMap();
+//
+//
+//                        for (String fenceKey : map.getFenceKeys()) {
+//
+//                            FenceState fenceState = map.getFenceState(fenceKey);
+//
+//                            Log.i(TAG, "Fence " + fenceKey + ": "
+//                                    + fenceState.getCurrentState()
+//                                    + ", was="
+//                                    + fenceState.getPreviousState()
+//                                    + ", lastUpdateTime="
+//                            );
+//                        }
+//                    }
+//                });
+//    }

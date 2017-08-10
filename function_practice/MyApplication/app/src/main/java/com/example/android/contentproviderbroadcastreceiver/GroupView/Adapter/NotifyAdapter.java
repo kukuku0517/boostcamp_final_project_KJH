@@ -71,14 +71,14 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public VHNotify onCreateGroupViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.notify_item, parent, false);
+        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notify, parent, false);
 
         return new VHNotify(v,this,context);
     }
 
     @Override
     public VHNotifyChild onCreateChildViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sms_child_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms_child, parent, false);
         return new VHNotifyChild(v);
     }
 

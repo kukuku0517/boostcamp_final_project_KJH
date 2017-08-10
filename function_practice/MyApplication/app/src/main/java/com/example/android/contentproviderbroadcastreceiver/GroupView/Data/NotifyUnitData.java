@@ -108,4 +108,9 @@ public class NotifyUnitData extends RealmObject implements MyRealmObject {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public String select() {
+        return String.valueOf(start);
+    }
 }

@@ -1,5 +1,6 @@
-package com.example.android.contentproviderbroadcastreceiver.DailyView.Data;
+package com.example.android.contentproviderbroadcastreceiver.GroupView.Data;
 
+import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmGpsObject;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.PhotoData;
 
@@ -11,7 +12,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-08-03.
  */
 
-public class PhotoGroupData extends RealmObject implements MyRealmObject {
+public class PhotoGroupData extends RealmObject implements MyRealmGpsObject {
     @PrimaryKey
     private long id;
     private int count;
@@ -53,6 +54,17 @@ public class PhotoGroupData extends RealmObject implements MyRealmObject {
 
     public void setEnd(long end) {
         this.end = end;
+    }
+
+    @Override
+    public double getLat() {
+
+        return getPhotoss().get(0).getLat();
+    }
+
+    @Override
+    public double getLng() {
+        return getPhotoss().get(0).getLng();
     }
 
     public String getPlace() {
@@ -101,5 +113,11 @@ public class PhotoGroupData extends RealmObject implements MyRealmObject {
     @Override
     public void setComment(String comment) {
 this.comment = comment;
+    }
+
+
+    @Override
+    public String select() {
+        return String.valueOf(start);
     }
 }

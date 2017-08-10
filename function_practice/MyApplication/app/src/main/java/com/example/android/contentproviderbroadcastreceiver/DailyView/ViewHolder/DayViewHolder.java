@@ -8,6 +8,7 @@ import com.example.android.contentproviderbroadcastreceiver.DailyView.Adapter.Da
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Interface.CardItemClickListener;
 import com.example.android.contentproviderbroadcastreceiver.Interface.NotifyListener;
+import com.gvillani.pinnedlist.PinnedViewHolder;
 
 import butterknife.ButterKnife;
 import io.realm.RealmObject;
@@ -16,7 +17,7 @@ import io.realm.RealmObject;
  * Created by samsung on 2017-07-26.
  */
 
-public abstract class DayViewHolder extends RecyclerView.ViewHolder{
+public abstract class DayViewHolder extends PinnedViewHolder{
     public CardItemClickListener mListener;
     public NotifyListener nListener;
 

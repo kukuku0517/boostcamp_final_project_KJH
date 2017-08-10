@@ -62,13 +62,13 @@ public class SmsAdapter extends AbstractExpandableItemAdapter<VHSms, VHSmsChild>
 
     @Override
     public VHSms onCreateGroupViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sms_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms, parent, false);
         return new VHSms(v, this, context);
     }
 
     @Override
     public VHSmsChild onCreateChildViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sms_child_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms_child, parent, false);
         return new VHSmsChild(v);
     }
 

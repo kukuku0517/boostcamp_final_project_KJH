@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyArg9huEcpEGWcDvpXQbRaMoCkCruKWqQk" />
@@ -27,11 +27,7 @@
             android:value="AIzaSyArg9huEcpEGWcDvpXQbRaMoCkCruKWqQk" />
 
         <activity android:name=".DailyView.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".DailyView.DayActivity" />
 
@@ -72,18 +68,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <receiver
-            android:name=".Background.NoUse.GoogleStillReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".Background.NoUse.GoogleOnFootReceiver"
-            android:enabled="true"
-            android:exported="true" />
-        <receiver
-            android:name=".Background.NoUse.GoogleVehicleReceiver"
-            android:enabled="true"
-            android:exported="true" />
 
         <activity android:name=".DetailView.DetailPhotoActivity" />
         <activity android:name=".DetailView.GpsStillActivity" />
@@ -93,9 +77,20 @@
         <receiver
             android:name=".Background.GoogleAwareness.GoogleFenceReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.FENCE_RECEIVER_ACTION" />
+            </intent-filter>
+        </receiver>
 
-        <activity android:name=".DetailView.GpsMoveActivity"></activity>
+        <activity android:name=".DetailView.GpsMoveActivity" />
+        <activity android:name=".DailyView.Main2Activity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

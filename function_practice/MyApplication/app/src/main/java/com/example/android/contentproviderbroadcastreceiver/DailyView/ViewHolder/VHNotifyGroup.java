@@ -34,7 +34,7 @@ public class VHNotifyGroup extends DayViewHolder {
     @BindView(R.id.notify_cv)
    View view;
 
-    public VHNotifyGroup(View view,Context context, NotifyListener nListener) {
+    public VHNotifyGroup(View view, Context context) {
         super(view);
         setmListener(context,nListener);
     }

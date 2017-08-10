@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ public class VHGps extends DayViewHolder {
 
     private Context context;
 
-    public VHGps(View view, Context context, NotifyListener nListener) {
+    public VHGps(View view, Context context) {
         super(view);
         ButterKnife.bind(this, view); //없애고 돌려보기
         this.context = context;
@@ -97,7 +98,7 @@ public class VHGps extends DayViewHolder {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommentUtil.getInstance().show((DayActivity) context, gpsData.getId(), RealmDataHelper.getInstance().GPS_DATA);
+                CommentUtil.getInstance().show((AppCompatActivity)  context, gpsData.getId(), RealmDataHelper.getInstance().GPS_DATA);
             }
         });
         view.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,7 @@
 package com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ public class VHSmsTrade extends DayViewHolder {
 
     private Context context;
 
-    public VHSmsTrade(View view, Context context, NotifyListener nListener) {
+    public VHSmsTrade(View view, Context context) {
         super(view);
         this.context = context;
         setmListener(context,nListener);
@@ -67,7 +68,7 @@ public class VHSmsTrade extends DayViewHolder {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CommentUtil.getInstance().show((DayActivity) context, stData.getId(), RealmDataHelper.getInstance().SMS_TRADE_DATA);
+                CommentUtil.getInstance().show((AppCompatActivity) context, stData.getId(), RealmDataHelper.getInstance().SMS_TRADE_DATA);
 
             }
         });
