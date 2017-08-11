@@ -19,4 +19,6 @@ public interface CardItemClickListener {
 
     void onCallItemClick(MyRealmObject item);
 
+    void onGpsGroupItemClick(MyRealmObject item);
+
 }

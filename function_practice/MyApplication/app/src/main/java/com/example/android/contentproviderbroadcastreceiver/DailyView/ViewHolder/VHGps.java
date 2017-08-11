@@ -55,7 +55,7 @@ public class VHGps extends DayViewHolder {
         super(view);
         ButterKnife.bind(this, view); //없애고 돌려보기
         this.context = context;
-        setmListener(context,nListener);
+//        setmListener(context,nListener);
     }
 
     @Override
@@ -101,12 +101,12 @@ public class VHGps extends DayViewHolder {
                 CommentUtil.getInstance().show((AppCompatActivity)  context, gpsData.getId(), RealmDataHelper.getInstance().GPS_DATA);
             }
         });
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onGpsItemClick(gpsData);
-            }
-        });
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mListener.onGpsItemClick(gpsData);
+//            }
+//        });
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -2,6 +2,7 @@ package com.example.android.contentproviderbroadcastreceiver.Helper;
 
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.CallData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.GpsData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.GpsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyUnitData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.PhotoGroupData;
@@ -25,6 +26,7 @@ public class RealmDataHelper {
     public static final int PHOTO_GROUP_DATA = 6;
     public static final int SMS_GROUP_DATA = 7;
     public static final int SMS_UNIT_DATA = 8;
+    public static final int GPS_GROUP_DATA = 9;
 
     public static RealmDataHelper getInstance() {
         if (instance == null) {
@@ -53,6 +55,8 @@ public class RealmDataHelper {
                 return SmsTradeData.class;
             case SMS_UNIT_DATA:
                 return SmsUnitData.class;
+            case GPS_GROUP_DATA:
+                return GpsGroupData.class;
             default:
                 return null;
         }

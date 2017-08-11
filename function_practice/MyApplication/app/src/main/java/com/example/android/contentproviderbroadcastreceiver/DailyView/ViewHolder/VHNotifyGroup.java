@@ -5,12 +5,15 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyGroupData;
+import com.example.android.contentproviderbroadcastreceiver.Helper.DateHelper;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
 import com.example.android.contentproviderbroadcastreceiver.Interface.NotifyListener;
 import com.example.android.contentproviderbroadcastreceiver.R;
+import com.github.vipulasri.timelineview.TimelineView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,38 +26,47 @@ import butterknife.BindView;
  */
 
 public class VHNotifyGroup extends DayViewHolder {
-    @BindView(R.id.notify_group_date)
+
+    //공통
+    @BindView(R.id.item_am_pm)
+    TextView ampm;
+    @BindView(R.id.item_date)
     TextView date;
-    @BindView(R.id.notify_group_person)
-    TextView person;
-    @BindView(R.id.notify_group_content)
-    TextView content;
-    @BindView(R.id.notify_group_button)
-    Button button;
-    @BindView(R.id.notify_cv)
-   View view;
+    @BindView(R.id.item_time_marker)
+    TimelineView tlv;
+
+
+    //공통 메뉴
+    @BindView(R.id.item_people)
+    View peopleView;
+
+    //고유 레이아웃
+    @BindView(R.id.notify_group_cv)
+    View view;
+    @BindView(R.id.notify_group_pcount)
+    TextView pcount;
+    @BindView(R.id.notify_group_mcount)
+    TextView mcount;
+
 
     public VHNotifyGroup(View view, Context context) {
         super(view);
-        setmListener(context,nListener);
+        setmListener(context, nListener);
     }
 
     @Override
     public void bindType(final MyRealmObject item) {
         NotifyGroupData notifyData = (NotifyGroupData) item;
-        DateFormat sdFormat = new SimpleDateFormat("HH : mm");
-        Date d = new Date(notifyData.getDate());
-        String tempDate = sdFormat.format(d);
-
-        date.setText("~"+tempDate);
+        date.setText(DateHelper.getInstance().toDateString("hh:mm",notifyData.getDate()));
+        ampm.setText(DateHelper.getInstance().isAm(notifyData.getDate()));
 
         int size = notifyData.getUnits().size();
-        if(size!=0){
-            int count =  notifyData.getUnits().size()-1;
-            String name =  notifyData.getUnits().get(0).getName();
-            person.setText(name+" 외 "+count+"명");
-        }else{
-            person.setText("");
+        if (size != 0) {
+            int count = notifyData.getUnits().size() - 1;
+            String name = notifyData.getUnits().get(0).getName();
+            pcount.setText(name + " 외 " + count + "명");
+        } else {
+            pcount.setText("");
         }
 
         view.setOnClickListener(new View.OnClickListener() {
@@ -63,36 +75,5 @@ public class VHNotifyGroup extends DayViewHolder {
                 mListener.onNotifyItemClick(item);
             }
         });
-    }
-//
-//    private void onClickButton() {
-//
-//        if (content.getVisibility() == View.VISIBLE) {
-//            Log.d("smsAni", "on");
-//            createRotateAnimator(content, 1f, 0f).start();
-//            createRotateAnimator(iv, 1f, 0f).start();
-//            createRotateAnimator(button, 1f, 0f).start();
-//            content.setVisibility(View.GONE);
-//            iv.setVisibility(View.GONE);
-//            button.setVisibility(View.GONE);
-////            expandState.put(i, false);
-//        } else {
-//            Log.d("smsAni", "off");
-//            createRotateAnimator(content, 0f, 1f).start();
-//            createRotateAnimator(iv, 0f, 1f).start();
-//            createRotateAnimator(button, 0f, 1f).start();
-//            content.setVisibility(View.VISIBLE);
-//            iv.setVisibility(View.VISIBLE);
-//            button.setVisibility(View.VISIBLE);
-////            expandState.put(i, true);
-//        }
-//    }
-
-    //Code to rotate button
-    private ObjectAnimator createRotateAnimator(final View target, final float from, final float to) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(target, "alpha", from, to, 1).ofInt(target, "bottom", 1, 0);
-        animator.setDuration(300);
-        animator.setInterpolator(new LinearInterpolator());
-        return animator;
     }
 }

@@ -19,7 +19,7 @@ public class DayData extends RealmObject {
     private  long id;
 
     private  long start, end;
-    private  int gpsNew=0;
+    private long  gpsNew=0;
     private  int callNew =0;
 
 
@@ -42,11 +42,11 @@ public class DayData extends RealmObject {
         this.end = end;
     }
 
-    public int getGpsNew() {
+    public long getGpsNew() {
         return gpsNew;
     }
 
-    public void setGpsNew(int gpsNew) {
+    public void setGpsNew(long gpsNew) {
         this.gpsNew = gpsNew;
     }
 

@@ -1,115 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/trade_cv"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-
-    >
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <include
+            android:id="@+id/timeline_view"
+            layout="@layout/item_base_timeline" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_toRightOf="@id/timeline_view"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/holo_orange_dark"
-            android:orientation="vertical">
+            android:layout_height="100dp"
+
+            android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/sms_trade_iv"
+                android:id="@+id/trade_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/finance" />
+
+            <ImageView
+                android:id="@+id/tint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#50000000"
+
+                />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_attach_money_black_24dp" />
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp">
 
-            <TextView
-                android:id="@+id/sms_trade_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
+                <TextView
+                    android:id="@+id/trade_place"
+                    style="@style/MyTheme.Textview.title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="4dp"
+                    android:text="McDonalds" />
 
-                android:text="TextView"
-                android:textColor="@android:color/white"
-                android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/trade_location"
+                    style="@style/MyTheme.Textview.caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/trade_place"
+                    android:text="010-5069-9315"
+                    android:textColor="@android:color/white" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/trade_price"
+                    style="@style/MyTheme.Textview.caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/trade_location"
+                    android:text="\ 5,000"
+                    android:textColor="@android:color/white" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:id="@+id/sms_trade_thing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="TextView"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/sms_trade_cost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_below="@id/sms_trade_thing"
-
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/sms_trade_place"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/sms_trade_cost"
-                android:text="dd"
-
-                android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/sms_trade_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/sms_trade_place"
-                android:text="dd"
-
-                android:visibility="visible" />
+                <TextView
+                    android:id="@+id/trade_comment"
+                    style="@style/MyTheme.Textview.body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/trade_price"
+                    android:text="that was expensive" />
 
 
-            <Button
-                android:id="@+id/sms_trade_write"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                android:text="Comment"
-                android:textColor="@android:color/holo_orange_dark"
-                android:textStyle="bold" />
+                <include layout="@layout/item_base_menus" />
+
+            </RelativeLayout>
 
 
-            <Button
-                android:id="@+id/sms_trade_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/sms_trade_write"
-                android:background="@android:color/transparent"
-                android:text="delete"
-                android:textColor="@android:color/holo_orange_dark"
-                android:textStyle="bold" />
+        </FrameLayout>
 
-
-        </RelativeLayout>
+        <include layout="@layout/item_base_people"
+            android:id="@+id/item_people"/>
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</LinearLayout>

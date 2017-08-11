@@ -58,6 +58,7 @@ public class CommentUtil {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                Log.d("highlight","asdf");
                 item.setHighlight();
             }
         });

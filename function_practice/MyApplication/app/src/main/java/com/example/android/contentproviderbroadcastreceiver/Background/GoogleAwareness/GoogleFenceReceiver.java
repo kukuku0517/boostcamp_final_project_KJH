@@ -52,8 +52,6 @@ public class GoogleFenceReceiver extends BroadcastReceiver implements GoogleApiC
         } else if (TextUtils.equals(fenceState.getFenceKey(), ReceiverConstants.HEADPHONE_KEY)) {
             fenceStateNum = fenceState.getCurrentState();
             fenceType = 6;
-        } else {
-
         }
         Log.d("fenceState", fenceType + "" + fenceStateNum);
         locationClient = new GoogleApiClient.Builder(context)
@@ -72,6 +70,7 @@ public class GoogleFenceReceiver extends BroadcastReceiver implements GoogleApiC
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.d("fenceState","connected");
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -106,11 +105,11 @@ public class GoogleFenceReceiver extends BroadcastReceiver implements GoogleApiC
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d("fenceState","sus");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d("fenceState","confail");
     }
 }

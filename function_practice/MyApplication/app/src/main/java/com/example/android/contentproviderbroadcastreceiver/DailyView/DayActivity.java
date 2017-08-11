@@ -30,8 +30,10 @@ import android.widget.TextView;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.Adapter.DayAdapter;
 import com.example.android.contentproviderbroadcastreceiver.Background.ContentProviderData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.CallActivity;
+import com.example.android.contentproviderbroadcastreceiver.DetailView.GpsGroupActivity;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.GpsStillActivity;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.SmsTradeActivity;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.GpsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.PhotoActivity;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.CallData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.GpsData;
@@ -170,7 +172,8 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getApplicationContext(), WriteActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -210,8 +213,11 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
     @Override
     public void onMapReady(GoogleMap mMap) {
-        double lat = mapItems.get(0).getItem().getLat();
-        double lng = mapItems.get(0).getItem().getLng();
+        double lat = 33, lng = 125;
+        if (!mapItems.isEmpty()) {
+            lat = mapItems.get(0).getItem().getLat();
+            lng = mapItems.get(0).getItem().getLng();
+        }
         map = mMap;
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 14.0f));
         map.setOnInfoWindowClickListener(this);
@@ -370,7 +376,7 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
                 getItemFromRealm();
                 adapter.updateItem(items);
                 adapter.notifyDataSetChanged();
-                setMarkerData(map);
+//                setMarkerData(map);
             }
         });
     }
@@ -380,12 +386,18 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         RealmResults<RealmObject> cData = RealmHelper.getInstance().DataLoad(CallData.class, "date", startMillis, endMillis);
         RealmResults<RealmObject> pgData = RealmHelper.getInstance().DataLoad(PhotoGroupData.class, "start", startMillis, endMillis);
         RealmResults<RealmObject> smsTradeDatas = RealmHelper.getInstance().DataLoad(SmsTradeData.class, "date", startMillis, endMillis);
-        RealmResults<GpsData> gData = RealmHelper.getInstance().gpsDataLoad("date", startMillis, endMillis);
+//        RealmResults<GpsData> gData = RealmHelper.getInstance().gpsDataLoad("date", startMillis, endMillis);
+        RealmResults<RealmObject> ggData = RealmHelper.getInstance().DataLoad(GpsGroupData.class, "end", startMillis, endMillis);
+
         RealmResults<NotifyGroupData> ngDatas = RealmHelper.getInstance().notifyGroupDataLoad("end", startMillis, endMillis - 1);
         RealmResults<SmsGroupData> smsGroupDatas = RealmHelper.getInstance().smsGroupDataLoad("date", startMillis, endMillis - 1);
 
-        for (GpsData g : gData) {
-            items.add(g);
+//        for (GpsData g : gData) {
+//            items.add(g);
+//        }
+
+        for (RealmObject gg : ggData) {
+            items.add((GpsGroupData) gg);
         }
         for (RealmObject c : cData) {
             items.add((CallData) c);
@@ -400,7 +412,10 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         for (SmsGroupData m : smsGroupDatas) {
             items.add(m);
         }
+
+        Log.d("Notification", "iterbef");
         for (NotifyGroupData nn : ngDatas) {
+            Log.d("Notification", "iter");
             items.add(nn);
         }
 
@@ -476,6 +491,15 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmDataHelper.getInstance().CALL_DATA);
         startActivity(intent);
+    }
+
+    @Override
+    public void onGpsGroupItemClick(MyRealmObject item) {
+        Intent intent = new Intent(this, GpsGroupActivity.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("type", RealmDataHelper.getInstance().GPS_GROUP_DATA);
+        startActivity(intent);
+
     }
 
     class MapItem {

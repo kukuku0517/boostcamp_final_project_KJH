@@ -1,91 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp"
     android:id="@+id/sms_group_cv"
-
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent">
+        <include
+            android:id="@+id/timeline_view"
+            layout="@layout/item_base_timeline" />
+    </LinearLayout>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/timeline_view"
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:background="@android:color/holo_orange_light">
+            android:layout_height="100dp"
+
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/sms_group_iv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_email_black_24dp" />
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                app:srcCompat="@drawable/envelope" />
 
-        </RelativeLayout>
-
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/sms_group_date"
+                android:id="@+id/sms_group_pcount"
+                style="@style/MyTheme.Textview.body.black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="10sp"
-                android:text="TextView" />
-
+                android:layout_toRightOf="@id/sms_group_iv"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="30dp"
+                android:text="26 people" />
             <TextView
-                android:id="@+id/sms_group_person"
+                android:id="@+id/sms_group_mcount"
+                style="@style/MyTheme.Textview.caption.black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sms_group_date"
-                android:text="TextView" />
-
-            <!--<TextView-->
-                <!--android:id="@+id/sms_group_number"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-
-                <!--android:layout_below="@id/sms_group_person"-->
-
-                <!--android:text="TextView" />-->
-
-            <TextView
-                android:id="@+id/sms_group_content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/sms_group_person"
-                android:layout_marginTop="10dp"
-                android:text="댓글을 입력하세요"
-
-                android:visibility="visible" />
-
-
-            <Button
-                android:id="@+id/sms_group_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@android:color/transparent"
-                android:textColor="@android:color/holo_orange_light"
-                android:textStyle="bold"
-                android:text="Button" />
+                android:layout_toRightOf="@id/sms_group_iv"
+                android:layout_below="@id/sms_group_pcount"
+                android:layout_marginRight="4dp"
+                android:text="134 messages" />
+
 
         </RelativeLayout>
+
+        <include layout="@layout/item_base_people"
+            android:id="@+id/item_people"/>
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</LinearLayout>

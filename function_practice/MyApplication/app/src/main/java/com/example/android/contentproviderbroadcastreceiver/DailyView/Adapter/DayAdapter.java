@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHCall;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHGps;
+import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHGpsGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHNotifyGroup;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.ViewHolder.VHPhoto;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHPhotoGroup;
@@ -68,42 +69,48 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
             case 0: //call
                 layoutIdForListItem = R.layout.item_call;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHCall(view,context);
-            case 1: //gps
-                layoutIdForListItem = R.layout.item_gps;
+                return new VHCall(view, context);
+
+            case 1:// gps group
+                layoutIdForListItem = R.layout.item_gps_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHGps(view,context);
+                return new VHGpsGroup(view, context);
+
             case 2: //photo group
                 layoutIdForListItem = R.layout.item_photo_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHPhotoGroup(view,context);
+                holder = new VHPhotoGroup(view, context);
 
                 return holder;
             case 3: //notigroup
                 Log.d("Notification", "layout");
                 layoutIdForListItem = R.layout.item_notify_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHNotifyGroup(view,context);
+                holder = new VHNotifyGroup(view, context);
 
                 return holder;
             case 4: //sms group
                 layoutIdForListItem = R.layout.item_sms_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHSmsGroup(view,context);
+                holder = new VHSmsGroup(view, context);
 
                 return holder;
             case 5: //photo
                 layoutIdForListItem = R.layout.item_photo;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHPhoto(view,context);
+                holder = new VHPhoto(view, context);
 //                holder.setmListener(context);
                 return holder;
             case 6: //sms trade
                 layoutIdForListItem = R.layout.item_sms_trade;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                holder = new VHSmsTrade(view,context);
+                holder = new VHSmsTrade(view, context);
 
                 return holder;
+            case 7: //gps
+                layoutIdForListItem = R.layout.item_gps;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                return new VHGps(view, context);
             default:
                 return null;
         }
@@ -112,8 +119,8 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
-        RealmObject item = (RealmObject)items.get(position);
-        if(item.isValid()){
+        RealmObject item = (RealmObject) items.get(position);
+        if (item.isValid()) {
             holder.bindType((MyRealmObject) item);
         }
     }

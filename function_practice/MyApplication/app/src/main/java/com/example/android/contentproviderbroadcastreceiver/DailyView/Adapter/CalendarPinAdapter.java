@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHCall;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHGps;
+import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHGpsGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHNotifyGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHPhotoGroup;
 import com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolder.VHPin;
@@ -68,10 +69,15 @@ public class CalendarPinAdapter  extends RecyclerView.Adapter<DayViewHolder> imp
                 layoutIdForListItem = R.layout.item_call;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHCall(view,context);
+//            case 1: //gps
+//                layoutIdForListItem = R.layout.item_gps;
+//                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+//                return new VHGps(view,context);
             case 1: //gps
-                layoutIdForListItem = R.layout.item_gps;
+                layoutIdForListItem = R.layout.item_gps_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
-                return new VHGps(view,context);
+                return new VHGpsGroup(view,context);
+
             case 2: //photo group
                 layoutIdForListItem = R.layout.item_photo_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);

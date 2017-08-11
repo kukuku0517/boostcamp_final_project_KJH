@@ -6,13 +6,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static android.R.attr.format;
+
 /**
  * Created by samsung on 2017-08-05.
  */
 
 public class DateHelper {
     static DateHelper datehelper;
-    public static final long QUARTER =21600000;
+    public static final long QUARTER = 21600000;
 
     public static DateHelper getInstance() {
         if (datehelper == null) {
@@ -28,6 +30,29 @@ public class DateHelper {
 
         return tempDate;
     }
+
+    public String isAm(long millis) {
+        Date d = new Date(millis);
+        Calendar c = new GregorianCalendar();
+        c.setTime(d);
+        if (c.get(Calendar.HOUR_OF_DAY) < 12) {
+            return "AM";
+        } else {
+            return "PM";
+        }
+
+    }
+
+    public String toDurationString(long millis) {
+        long dur = millis;
+        int hour = (int) (dur / 60 / 60);
+        int min = (int) (dur / 60 % 60);
+        int sec = (int) (dur % 60);
+        String data = String.format("%d시간 %d분 %d초", hour, min, sec);
+
+        return data;
+    }
+
 
     public Calendar toDate(long millis) {
         Date d = new Date(millis);

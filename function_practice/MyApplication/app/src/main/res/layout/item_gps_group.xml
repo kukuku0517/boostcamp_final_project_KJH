@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/gps_group_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/gps_group_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/travel" />
+
+        <ImageView
+            android:id="@+id/tint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#50000000"
+
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/timeline_view"
+                layout="@layout/item_base_timeline" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/timeline_view"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="8dp">
+
+                    <TextView
+                        android:id="@+id/gps_group_departure"
+                        style="@style/MyTheme.Textview.title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginRight="4dp"
+                        android:text="Departure" />
+
+                    <TextView
+                        android:id="@+id/gps_group_place"
+                        style="@style/MyTheme.Textview.caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/gps_group_departure"
+                        android:text="Los Angeles"
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/gps_group_moving"
+                        style="@style/MyTheme.Textview.caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/gps_group_departure"
+                        android:layout_toRightOf="@id/gps_group_place"
+                        android:layout_marginLeft="8dp"
+                        android:text="Now Moving ..."
+                        android:textColor="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/gps_group_comment"
+                        style="@style/MyTheme.Textview.body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/gps_group_moving"
+                        android:text="This travel is fun!" />
+
+
+                    <include layout="@layout/item_base_menus" />
+
+                </RelativeLayout>
+
+
+                <include
+                    android:id="@+id/item_people"
+                    layout="@layout/item_base_people" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+    >
+</LinearLayout>

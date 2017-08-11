@@ -15,6 +15,7 @@ import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.Noti
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.PhotoData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.SmsData;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.SmsTradeData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.GpsGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyGroupData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.NotifyUnitData;
 import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.PhotoGroupData;
@@ -93,11 +94,13 @@ public class RealmHelper {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
         String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
         String contactName = "모르는 번호";
+        Log.d("initialize",contactName);
         Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
         if (cursor.moveToNext()) {
             contactName = cursor.getString(0);
-            cursor.close();
+
         }
+        cursor.close();
         return contactName;
     }
 
@@ -163,7 +166,7 @@ public class RealmHelper {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-
+//
                 GpsData gd = realm.createObject(GpsData.class, nextId(GpsData.class, realm));
                 gd.setDate(date);
                 gd.setLat(lat);
@@ -173,12 +176,59 @@ public class RealmHelper {
                 gd.setMoveState(type);
                 gd.setOriginId(originId);
 
-                if (change == 1) {
+                GpsGroupData gpsGroupData;
+                if (dayData.getGpsNew() == 0) {
+                    //create new group
+                    gpsGroupData = realm.createObject(GpsGroupData.class, nextId(GpsGroupData.class, realm));
+                    gpsGroupData.getGpsDatas().add(gd);
 
-                    Log.d("photogroup", "gpsChange");
+                    gpsGroupData.setStart(date);
+                    gpsGroupData.setEnd(date);
 
-                    dayData.setPhotoLast(0);
+                    gpsGroupData.setPlace(place);
+                    gpsGroupData.setLat(lat);
+                    gpsGroupData.setLng(lng);
+                    dayData.setGpsNew(gpsGroupData.getId());
+                } else {
+                    gpsGroupData = realm.where(GpsGroupData.class).equalTo("id", dayData.getGpsNew()).findFirst();
+                    if (gpsGroupData != null) {
+                        if (gpsGroupData.getEnd() + 1000 * 15 < date) {
+
+                            //clean up last group
+                            GpsGroupData gpsGroupDataEnd = realm.createObject(GpsGroupData.class, nextId(GpsGroupData.class, realm));
+                            GpsData last = gpsGroupData.getGpsDatas().last();
+
+                            gpsGroupDataEnd.setEnd(last.getDate());
+                            gpsGroupDataEnd.setPlace(last.getPlace());
+                            gpsGroupDataEnd.setLat(last.getLat());
+                            gpsGroupDataEnd.setLng(last.getLng());
+
+                            //create new group
+                            GpsGroupData gpsGroupData2 = realm.createObject(GpsGroupData.class, nextId(GpsGroupData.class, realm));
+                            gpsGroupData2.getGpsDatas().add(gd);
+
+                            gpsGroupData2.setStart(date);
+                            gpsGroupData2.setEnd(date);
+                            gpsGroupData2.setPlace(place);
+                            gpsGroupData2.setLat(lat);
+                            gpsGroupData2.setLng(lng);
+                            dayData.setGpsNew(gpsGroupData2.getId());
+                        } else {
+                            gpsGroupData.getGpsDatas().add(gd);
+                            gpsGroupData.setEnd(date);
+                        }
+                    }
                 }
+
+                //TODO gps update photo group
+//                if (change == 1) {
+//
+//                    Log.d("photogroup", "gpsChange");
+//
+//                    dayData.setPhotoLast(0);
+//                }
+
+
             }
         });
     }
@@ -388,8 +438,8 @@ public class RealmHelper {
         StringTokenizer tokenizer = new StringTokenizer(body);
         for (int i = 0; i < tokenizer.countTokens(); i++) {
             String token = tokenizer.nextToken();
-            if(containsList(token,banks)){
-                tradeDatas[0]=token;
+            if (containsList(token, banks)) {
+                tradeDatas[0] = token;
             }
 
 

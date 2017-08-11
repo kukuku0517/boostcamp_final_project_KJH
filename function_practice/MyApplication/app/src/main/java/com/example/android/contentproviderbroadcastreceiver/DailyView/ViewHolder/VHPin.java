@@ -26,6 +26,9 @@ public class VHPin extends DayViewHolder {
 
     @BindView(R.id.pin_date)
     TextView date;
+    @BindView(R.id.pin_year)
+    TextView year;
+
     @BindView(R.id.pin_view)
     View view;
 
@@ -38,8 +41,9 @@ public class VHPin extends DayViewHolder {
     @Override
     public void bindType(final MyRealmObject item) {
         final DatePinData datePinData = (DatePinData) item;
-        String dateString = DateHelper.getInstance().toDateString("yyyy년 MM월 dd일", datePinData.getDate());
-        date.setText(dateString);
+        year.setText( DateHelper.getInstance().toDateString("yyyy", datePinData.getDate()));
+        date.setText( DateHelper.getInstance().toDateString("MM월 dd일", datePinData.getDate()));
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

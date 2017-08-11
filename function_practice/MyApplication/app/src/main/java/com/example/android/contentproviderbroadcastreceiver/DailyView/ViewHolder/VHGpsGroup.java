@@ -2,40 +2,29 @@ package com.example.android.contentproviderbroadcastreceiver.DailyView.ViewHolde
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.contentproviderbroadcastreceiver.DailyView.Adapter.DayAdapter;
 import com.example.android.contentproviderbroadcastreceiver.DetailView.Data.CallData;
+import com.example.android.contentproviderbroadcastreceiver.GroupView.Data.GpsGroupData;
+import com.example.android.contentproviderbroadcastreceiver.Helper.CommentUtil;
 import com.example.android.contentproviderbroadcastreceiver.Helper.DateHelper;
 import com.example.android.contentproviderbroadcastreceiver.Helper.RealmHelper;
 import com.example.android.contentproviderbroadcastreceiver.Interface.MyRealmObject;
-import com.example.android.contentproviderbroadcastreceiver.Helper.CommentUtil;
-import com.example.android.contentproviderbroadcastreceiver.Helper.RealmDataHelper;
-import com.example.android.contentproviderbroadcastreceiver.DailyView.DayActivity;
-import com.example.android.contentproviderbroadcastreceiver.Interface.NotifyListener;
 import com.example.android.contentproviderbroadcastreceiver.R;
 import com.github.vipulasri.timelineview.LineType;
 import com.github.vipulasri.timelineview.TimelineView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.R.attr.button;
-
 /**
- * Created by samsung on 2017-07-26.
+ * Created by samsung on 2017-08-11.
  */
 
-public class VHCall extends DayViewHolder {
+public class VHGpsGroup extends DayViewHolder {
 
     //공통
     @BindView(R.id.item_am_pm)
@@ -60,25 +49,25 @@ public class VHCall extends DayViewHolder {
     View hideMenu;
 
     //고유 레이아웃
-    @BindView(R.id.call_cv)
+    @BindView(R.id.gps_group_cv)
     View view;
 
     //고유 뷰
-    @BindView(R.id.call_iv)
-    ImageView iv;
-    @BindView(R.id.call_person)
-    TextView person;
-    @BindView(R.id.call_duration)
-    TextView duration;
-    @BindView(R.id.call_number)
-    TextView number;
-    @BindView(R.id.call_comment)
+    @BindView(R.id.gps_group_comment)
     TextView comment;
+    @BindView(R.id.gps_group_departure)
+    TextView departure;
+    @BindView(R.id.gps_group_iv)
+    ImageView iv;
+    @BindView(R.id.gps_group_moving)
+    TextView moving;
+    @BindView(R.id.gps_group_place)
+    TextView place;
 
     private Context context;
     private boolean isExpanded = false;
 
-    public VHCall(View view, Context context) {
+    public VHGpsGroup(View view, Context context) {
         super(view);
         ButterKnife.bind(this, view); //없애고 돌려보기
         this.context = context;
@@ -89,26 +78,32 @@ public class VHCall extends DayViewHolder {
 
     @Override
     public void bindType(final MyRealmObject item) {
-        final CallData callData = (CallData) item;
+        final GpsGroupData callData = (GpsGroupData) item;
 
-        date.setText(DateHelper.getInstance().toDateString("hh:mm",callData.getDate()));
+        date.setText(DateHelper.getInstance().toDateString("hh:mm", callData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(callData.getDate()));
-
-        person.setText(callData.getPerson());
         comment.setText(callData.getComment());
-        duration.setText(DateHelper.getInstance().toDurationString(callData.getDuration()));
-        switch (callData.getCallState()) {
-            case 1: //incoming
-                duration.append(" 수신");
-                break;
-            case 2: //outgoing
-                duration.append(" 발신");
-                break;
-            default:
-                break;
+        place.setText(callData.getPlace());
+        if (callData.getHighlight()) {
+
+            highlightBtn.setColorFilter(Color.YELLOW);
+        } else {
+
+            highlightBtn.setColorFilter(Color.BLACK);
+        }
+        if (callData.isStart()) {
+            departure.setText("출발");
+            if (callData.getEndId() == -1) {
+                moving.setText("이동중 ...");
+            } else {
+                moving.setText("");
+            }
+        } else {
+            departure.setText("도착");
+            moving.setText("");
         }
 
-        number.setText(callData.getNumber());
+
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +113,6 @@ public class VHCall extends DayViewHolder {
 
                     highlightBtn.setColorFilter(Color.YELLOW);
                 }
-
                 CommentUtil.getInstance().highlight(callData);
             }
         });
@@ -131,7 +125,7 @@ public class VHCall extends DayViewHolder {
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onCallItemClick(item);
+                mListener.onGpsGroupItemClick(item);
             }
         });
         view.setOnClickListener(new View.OnClickListener() {

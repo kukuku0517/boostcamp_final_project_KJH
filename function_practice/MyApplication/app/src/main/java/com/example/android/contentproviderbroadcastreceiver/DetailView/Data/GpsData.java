@@ -102,7 +102,7 @@ public class GpsData extends RealmObject implements MyRealmGpsObject {
     }
 
     public int getType() {
-        return 1;
+        return 7;
     }
 
     public long getDate() {
