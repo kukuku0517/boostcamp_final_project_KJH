@@ -28,7 +28,7 @@
                 android:layout_height="128dp"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_image_black_24dp" />
+                app:srcCompat="@drawable/ic_image_black_24dp" />
 
 
 

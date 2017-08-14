@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "970855530325",
+    "firebase_url": "https://boostcamp-week02-prac.firebaseio.com",
+    "project_id": "boostcamp-week02-prac",
+    "storage_bucket": "boostcamp-week02-prac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970855530325:android:371d13655fbd8599",
+        "android_client_info": {
+          "package_name": "com.example.android.selfns"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "970855530325-8q6a4r5jn25hctdlf7lc3caqiugip2v6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYU0jbl0d2zty2eBOukm14nsoY_2CNf3U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

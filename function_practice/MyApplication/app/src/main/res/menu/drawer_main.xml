@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_friend_search"
+            android:icon="@drawable/ic_search_black_24dp"
+            android:title="친구 찾기" />
+        <item
+            android:id="@+id/nav_friend_list"
+            android:icon="@drawable/ic_people_black_24dp"
+            android:title="친구 목록" />
+
+
+    </group>
+
+    <item android:title="계정">
+        <menu>
+            <item
+                android:id="@+id/nav_edit"
+                android:icon="@drawable/ic_edit_black_24dp"
+                android:title="정보수정" />
+            <item
+                android:id="@+id/nav_signout"
+                android:icon="@drawable/ic_exit_to_app_black_24dp"
+                android:title="로그아웃" />
+        </menu>
+    </item>
+
+</menu>

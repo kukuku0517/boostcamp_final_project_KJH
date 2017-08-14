@@ -3,4 +3,10 @@
     <string name="year">year</string>
     <string name="month">month</string>
     <string name="dayofmonth">day</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="facebook_app_id">116576035670082</string>
+    <string name="fb_login_protocol_scheme">fb116576035670082</string>
 </resources>

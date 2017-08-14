@@ -5,13 +5,14 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "com.example.android.contentproviderbroadcastreceiver"
+        applicationId "com.example.android.selfns"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -31,9 +32,7 @@ dependencies {
         transitive = true
     }
 
-
-
-
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -50,12 +49,20 @@ dependencies {
     compile 'org.parceler:parceler-api:1.1.6'
     compile 'com.gvillani:pinnedlist:0.9.2'
     compile 'de.halfbit:pinned-section-listview:1.0.0'
-    compile 'com.google.maps.android:android-maps-utils:0.4.+'
+    compile 'com.google.maps.android:android-maps-utils:+'
     compile 'com.github.vipulasri:timelineview:1.0.5'
     compile 'com.github.mancj:SlideUp-Android:2.2.5'
+    compile 'com.google.firebase:firebase-auth:11.0.4'
+    compile 'com.google.firebase:firebase-database:11.0.4'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+
+    compile 'com.google.firebase:firebase-crash:11.0.4'
+    compile 'io.reactivex:rxjava:1.0.16'
 }
 
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.android.application'

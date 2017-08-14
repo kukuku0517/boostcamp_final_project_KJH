@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.android.contentproviderbroadcastreceiver.DetailView.GpsStillActivity">
+    tools:context="com.example.android.selfns.DetailView.GpsStillActivity">
 
     <ImageView
         android:id="@+id/gps_still_iv"
@@ -88,6 +88,6 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="com.example.android.contentproviderbroadcastreceiver.DetailView.GpsStillActivity" />
+        tools:context="com.example.android.selfns.DetailView.GpsStillActivity" />
 
 </LinearLayout>

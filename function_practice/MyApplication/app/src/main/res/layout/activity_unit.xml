@@ -5,7 +5,7 @@
     android:id="@+id/detail_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.contentproviderbroadcastreceiver.GroupView.UnitActivity">
+    tools:context="com.example.android.selfns.GroupView.UnitActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sms_rv"
