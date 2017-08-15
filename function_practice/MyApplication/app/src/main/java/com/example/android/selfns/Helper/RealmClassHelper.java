@@ -1,17 +1,17 @@
 package com.example.android.selfns.Helper;
 
-import com.example.android.selfns.DetailView.Data.CallData;
-import com.example.android.selfns.DetailView.Data.CustomData;
-import com.example.android.selfns.DetailView.Data.DatePinData;
-import com.example.android.selfns.DetailView.Data.GpsData;
-import com.example.android.selfns.GroupView.Data.GpsGroupData;
-import com.example.android.selfns.GroupView.Data.NotifyGroupData;
-import com.example.android.selfns.GroupView.Data.NotifyUnitData;
-import com.example.android.selfns.GroupView.Data.PhotoGroupData;
-import com.example.android.selfns.GroupView.Data.SmsGroupData;
-import com.example.android.selfns.GroupView.Data.SmsUnitData;
-import com.example.android.selfns.DetailView.Data.PhotoData;
-import com.example.android.selfns.DetailView.Data.SmsTradeData;
+import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyUnitData;
+import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsUnitData;
+import com.example.android.selfns.Data.RealmData.UnitData.CallData;
+import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
+import com.example.android.selfns.Data.RealmData.UnitData.DatePinData;
+import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 
 /**
  * Created by samsung on 2017-08-08.

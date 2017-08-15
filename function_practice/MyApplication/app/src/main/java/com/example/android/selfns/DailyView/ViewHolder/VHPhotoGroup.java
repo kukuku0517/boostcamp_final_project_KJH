@@ -8,17 +8,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.android.selfns.GroupView.Data.PhotoGroupData;
+import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
-import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
 
 import butterknife.BindView;
-
-import static com.example.android.selfns.Helper.RealmHelper.context;
 
 /**
  * Created by samsung on 2017-08-03.
@@ -74,8 +71,8 @@ public class VHPhotoGroup extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final PhotoGroupData callData = (PhotoGroupData) item;
+    public void bindType(final BaseDTO item) {
+        final PhotoGroupDTO callData = (PhotoGroupDTO) item;
 
         date.setText(DateHelper.getInstance().toDateString("hh:mm",callData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(callData.getDate()));
@@ -84,7 +81,7 @@ public class VHPhotoGroup extends DayViewHolder {
         int photoNum = callData.getPhotoss().size();
         number.setText(String.valueOf(photoNum) + "장");
         comment.setText(callData.getComment());
-        if (callData.getHighlight()) {
+        if (callData.isHighlight()) {
 
             highlightBtn.setColorFilter(Color.YELLOW);
         } else {
@@ -94,7 +91,7 @@ public class VHPhotoGroup extends DayViewHolder {
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (callData.getHighlight()) {
+                if (callData.isHighlight()) {
                     highlightBtn.setColorFilter(Color.BLACK);
                 } else {
 
@@ -119,7 +116,7 @@ public class VHPhotoGroup extends DayViewHolder {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.getInstance().photoGroupDataDelete(callData);
+                ItemInteractionUtil.getInstance(context).deletePhotoGroupItem(callData);
             }
         });
 
@@ -127,7 +124,7 @@ public class VHPhotoGroup extends DayViewHolder {
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onPhotoGroupItemClick(item);
+                mListener.onPhotoGroupItemClick(callData);
             }
         });
 

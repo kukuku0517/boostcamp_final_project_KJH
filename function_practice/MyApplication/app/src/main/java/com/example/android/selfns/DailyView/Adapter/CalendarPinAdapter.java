@@ -1,7 +1,6 @@
 package com.example.android.selfns.DailyView.Adapter;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.DetailView.ViewHolder.VHCall;
 import com.example.android.selfns.DetailView.ViewHolder.VHCustom;
 import com.example.android.selfns.DailyView.ViewHolder.VHGpsGroup;
@@ -20,11 +20,11 @@ import com.example.android.selfns.DetailView.ViewHolder.VHSmsTrade;
 import com.example.android.selfns.GroupView.ViewHolder.VHPhoto;
 import com.example.android.selfns.Helper.PinnedHeaderItemDecoration;
 import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.R;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
-import io.realm.RealmList;
 
 /**
  * Created by samsung on 2017-08-09.
@@ -32,30 +32,12 @@ import io.realm.RealmList;
 
 public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> implements PinnedHeaderItemDecoration.PinnedHeaderAdapter {
 
-    private RealmList<MyRealmObject> items;
+    private ArrayList<BaseDTO> items;
     private Realm realm;
 
     public CalendarPinAdapter(Context context, Realm realm) {
         this.context = context;
         this.realm = realm;
-        final Handler handler = new Handler();
-//        realm.addChangeListener(new RealmChangeListener<Realm>() {
-//            @Override
-//            public void onChange(Realm realm) {
-//                Thread t = new Thread(new Runnable(){
-//
-//                    @Override
-//                    public void run() {
-//                        handler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                notifyDataSetChanged();
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        });
 
     }
 
@@ -117,7 +99,8 @@ public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> impl
                 holder = new VHPin(view, context);
 
                 return holder;
-            case RealmClassHelper.GPS_DATA: //gps
+
+            case RealmClassHelper.CUSTOM_DATA: //gps
                 layoutIdForListItem = R.layout.item_custom;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHCustom(view, context);
@@ -129,9 +112,9 @@ public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> impl
 
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
-        MyRealmObject item = (MyRealmObject) items.get(position);
+        BaseDTO item = (BaseDTO) items.get(position);
 
-        holder.bindType((MyRealmObject) item);
+        holder.bindType(item);
 
     }
 
@@ -142,11 +125,11 @@ public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> impl
 
     @Override
     public int getItemViewType(int position) {
-        MyRealmObject item = items.get(position);
+      BaseDTO item = items.get(position);
         return item.getType();
     }
 
-    public void updateItem(RealmList<MyRealmObject> item) {
+    public void updateItem(ArrayList<BaseDTO> item) {
         this.items = item;
         notifyDataSetChanged();
     }

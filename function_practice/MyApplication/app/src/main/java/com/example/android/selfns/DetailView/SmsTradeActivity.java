@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.android.selfns.DetailView.Data.SmsTradeData;
+import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmClassHelper;
@@ -39,6 +39,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.parceler.Parcels;
 
 import java.util.Calendar;
 
@@ -70,7 +72,7 @@ public class SmsTradeActivity extends AppCompatActivity  implements OnMapReadyCa
 
     private Context context = this;
     private GoogleApiClient mGoogleApiClient;
-    private SmsTradeData smsTradeData;
+    private SmsTradeDTO smsTradeData;
     private Realm realm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,9 @@ public class SmsTradeActivity extends AppCompatActivity  implements OnMapReadyCa
         realm = Realm.getDefaultInstance();
         Class c = RealmClassHelper.getInstance().getClass(getIntent().getIntExtra("type", -1));
         long id = getIntent().getLongExtra("id", -1);
-        smsTradeData = (SmsTradeData) realm.where(c).equalTo("id", id).findFirst();
+        smsTradeData = Parcels.unwrap(getIntent().getParcelableExtra("item"));
+
+
         if (smsTradeData != null) {
             initMap();
             bindData();
@@ -191,16 +195,8 @@ placePhotosAsync();
                 final Place place = PlacePicker.getPlace(data, this);
                 String toastMsg = String.format("Place: %s", place.getName());
                 Toast.makeText(context, toastMsg, Toast.LENGTH_LONG).show();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
 
-                        smsTradeData.setLat(place.getLatLng().latitude);
-                        smsTradeData.setLng(place.getLatLng().longitude);
-                        smsTradeData.setPlace(place.getName().toString());
-                        smsTradeData.setOriginId(place.getId());
-                    }
-                });
+                ItemInteractionUtil.getInstance(context).setPlace(smsTradeData);
             }
         }
     }

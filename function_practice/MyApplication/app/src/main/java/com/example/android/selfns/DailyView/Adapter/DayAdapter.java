@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.DetailView.ViewHolder.VHCall;
 import com.example.android.selfns.DetailView.ViewHolder.VHCustom;
 import com.example.android.selfns.DetailView.ViewHolder.VHGps;
@@ -19,12 +20,11 @@ import com.example.android.selfns.DailyView.ViewHolder.VHPhotoGroup;
 import com.example.android.selfns.DailyView.ViewHolder.VHSmsGroup;
 import com.example.android.selfns.DetailView.ViewHolder.VHSmsTrade;
 import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.R;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmObject;
 
 import static android.media.CamcorderProfile.get;
 
@@ -34,7 +34,7 @@ import static android.media.CamcorderProfile.get;
 
 public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
-    private RealmList<MyRealmObject> items;
+    private ArrayList<BaseDTO> items;
     private Realm realm;
 
     public DayAdapter(Context context, Realm realm) {
@@ -95,7 +95,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
                 layoutIdForListItem = R.layout.item_sms_group;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 holder = new VHSmsGroup(view, context);
-
                 return holder;
             case RealmClassHelper.PHOTO_DATA: //photo
                 layoutIdForListItem = R.layout.item_photo;
@@ -107,7 +106,6 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
                 layoutIdForListItem = R.layout.item_sms_trade;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 holder = new VHSmsTrade(view, context);
-
                 return holder;
             case RealmClassHelper.GPS_DATA: //gps
                 layoutIdForListItem = R.layout.item_gps;
@@ -125,10 +123,9 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
-        RealmObject item = (RealmObject) items.get(position);
-        if (item.isValid()) {
-            holder.bindType((MyRealmObject) item);
-        }
+        BaseDTO item = (BaseDTO) items.get(position);
+        holder.bindType(item);
+
     }
 
     @Override
@@ -138,11 +135,11 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        MyRealmObject item = items.get(position);
+        BaseDTO item = items.get(position);
         return item.getType();
     }
 
-    public void updateItem(RealmList<MyRealmObject> item) {
+    public void updateItem(ArrayList<BaseDTO> item) {
         this.items = item;
         notifyDataSetChanged();
     }

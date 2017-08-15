@@ -6,8 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.android.selfns.GroupView.Data.SmsUnitData;
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsUnitData;
 import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.RealmClassHelper;
@@ -43,7 +43,7 @@ public class VHSms extends AbstractExpandableItemViewHolder {
         this.context = context;
     }
 
-    public void bindType(final MyRealmObject item) {
+    public void bindType(final BaseDTO item) {
         final SmsUnitData smsUnitData = (SmsUnitData) item;
         person.setText(smsUnitData.getName());
         number.setText(smsUnitData.getAddress());

@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.selfns.Data.DTO.Detail.SmsDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsUnitDTO;
 import com.example.android.selfns.GroupView.ViewHolder.VHSms;
 import com.example.android.selfns.GroupView.ViewHolder.VHSmsChild;
-import com.example.android.selfns.GroupView.Data.SmsGroupData;
-import com.example.android.selfns.GroupView.Data.SmsUnitData;
-import com.example.android.selfns.Interface.MyRealmCommentableObject;
-import com.example.android.selfns.Interface.MyRealmObject;
-import com.example.android.selfns.DetailView.Data.SmsData;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
 import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.R;
@@ -27,7 +27,7 @@ import io.realm.Realm;
 
 public class SmsAdapter extends AbstractExpandableItemAdapter<VHSms, VHSmsChild> implements CommentBtnClickListener {
 
-    private SmsGroupData items;
+    private SmsGroupDTO items;
     private Context context;
     private Realm realm;
 
@@ -37,7 +37,7 @@ public class SmsAdapter extends AbstractExpandableItemAdapter<VHSms, VHSmsChild>
         this.realm = realm;
     }
 
-    public void setItems(SmsGroupData items) {
+    public void setItems(SmsGroupDTO items) {
         this.items = items;
     }
 
@@ -75,7 +75,7 @@ public class SmsAdapter extends AbstractExpandableItemAdapter<VHSms, VHSmsChild>
 
     @Override
     public void onBindGroupViewHolder(VHSms holder, int groupPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        SmsUnitData unitdata = items.getUnits().get(groupPosition);
+        SmsUnitDTO unitdata = items.getUnits().get(groupPosition);
         holder.bindType(unitdata);
     }
 
@@ -91,7 +91,7 @@ public class SmsAdapter extends AbstractExpandableItemAdapter<VHSms, VHSmsChild>
 
     @Override
     public void onBindChildViewHolder(VHSmsChild holder, int groupPosition, int childPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        SmsData child = items.getUnits().get(groupPosition).getSmss().get(childPosition);
+        SmsDTO child = items.getUnits().get(groupPosition).getSmss().get(childPosition);
         holder.bindType(child);
     }
 

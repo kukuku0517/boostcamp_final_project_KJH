@@ -3,7 +3,7 @@ package com.example.android.selfns.GroupView.ViewHolder;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.selfns.DetailView.Data.SmsData;
+import com.example.android.selfns.Data.DTO.Detail.SmsDTO;
 import com.example.android.selfns.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
@@ -30,7 +30,7 @@ public class VHSmsChild extends AbstractExpandableItemViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindType(SmsData child) {
+    public void bindType(SmsDTO child) {
 
         content.setText(child.getContent());
         DateFormat sdFormat = new SimpleDateFormat("HH:mm");

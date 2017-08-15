@@ -2,16 +2,17 @@ package com.example.android.selfns.DetailView.ViewHolder;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
-import com.example.android.selfns.DetailView.Data.CallData;
+import com.example.android.selfns.Data.DTO.Detail.CallDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
-import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.LineType;
@@ -43,6 +44,8 @@ public class VHCall extends DayViewHolder {
     ImageButton editBtn;
     @BindView(R.id.item_share)
     ImageButton shareBtn;
+    @BindView(R.id.item_tag)
+    ImageButton tagBtn;
 
     //공통 메뉴
     @BindView(R.id.item_people)
@@ -79,8 +82,8 @@ public class VHCall extends DayViewHolder {
 
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final CallData callData = (CallData) item;
+    public void bindType(final BaseDTO item) {
+        final CallDTO callData = (CallDTO) item;
 
         date.setText(DateHelper.getInstance().toDateString("hh:mm",callData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(callData.getDate()));
@@ -100,17 +103,19 @@ public class VHCall extends DayViewHolder {
         }
 
         number.setText(callData.getNumber());
-        if (callData.getHighlight()) {
+        if (callData.isHighlight()) {
             highlightBtn.setColorFilter(Color.YELLOW);
         } else {
 
             highlightBtn.setColorFilter(Color.BLACK);
         }
-
+        for(String f:callData.getFriend()){
+            Log.d("friend",f);
+        }
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (callData.getHighlight()) {
+                if (callData.isHighlight()) {
                     highlightBtn.setColorFilter(Color.BLACK);
                 } else {
 
@@ -123,13 +128,20 @@ public class VHCall extends DayViewHolder {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.DataDelete(callData);
+                ItemInteractionUtil.getInstance(context).deleteItem(callData);
             }
         });
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onCallItemClick(item);
+            }
+        });
+
+        tagBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemInteractionUtil.getInstance(context).tagFriend((AppCompatActivity) context,item);
             }
         });
 

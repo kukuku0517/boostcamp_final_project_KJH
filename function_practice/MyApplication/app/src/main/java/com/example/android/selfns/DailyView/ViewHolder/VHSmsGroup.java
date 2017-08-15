@@ -4,9 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.selfns.GroupView.Data.SmsGroupData;
-import com.example.android.selfns.GroupView.Data.SmsUnitData;
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsUnitDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
 
@@ -50,8 +50,8 @@ public class VHSmsGroup extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        SmsGroupData callData = (SmsGroupData) item;
+    public void bindType(final BaseDTO item) {
+        SmsGroupDTO callData = (SmsGroupDTO) item;
         DateFormat sdFormat = new SimpleDateFormat("hh:mm");
         Date d = new Date(callData.getDate());
         String tempDate = sdFormat.format(d);
@@ -65,7 +65,7 @@ public class VHSmsGroup extends DayViewHolder {
         }
 
         int count = 0;
-        for (SmsUnitData sud : callData.getUnits()) {
+        for (SmsUnitDTO sud : callData.getUnits()) {
             count += sud.getSmss().size();
         }
         mcount.setText(String.format("총 %d개의 메세지",count));

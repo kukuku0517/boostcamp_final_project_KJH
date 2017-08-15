@@ -1,6 +1,6 @@
 package com.example.android.selfns.ExtraView.Comment;
 
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
 
 /**
  * Created by samsung on 2017-08-05.

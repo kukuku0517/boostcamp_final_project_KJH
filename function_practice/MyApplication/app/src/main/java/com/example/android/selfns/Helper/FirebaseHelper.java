@@ -1,12 +1,10 @@
 package com.example.android.selfns.Helper;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.LoginView.UserDTO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,11 +14,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
-
-import static android.R.attr.id;
-import static android.R.id.edit;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 
 /**
  * Created by samsung on 2017-08-14.
@@ -50,7 +43,7 @@ public class FirebaseHelper {
     public FirebaseHelper(Context context) {
         this.context = context;
         mPref = context.getSharedPreferences("setting", Activity.MODE_PRIVATE);
-        setCurrentUser(FirebaseAuth.getInstance().getCurrentUser());
+
     }
 
     public static FirebaseHelper getInstance(Context context) {
@@ -67,7 +60,9 @@ public class FirebaseHelper {
     public void setCurrentUser(FirebaseUser currentUser) {
         SharedPreferences.Editor editor = mPref.edit();
         editor.putString("userId", currentUser.getUid());
-        editor.putString("userPhoto", currentUser.getPhotoUrl().toString());
+        if(currentUser.getPhotoUrl()!=null){
+            editor.putString("userPhoto", currentUser.getPhotoUrl().toString());
+        }
         editor.putString("userName", currentUser.getDisplayName());
         editor.commit();
     }
@@ -137,9 +132,14 @@ public class FirebaseHelper {
         FirebaseUser u = getCurrentUser();
         UserDTO user = new UserDTO();
         user.setId(u.getEmail());
-        user.setPhotoUrl(u.getPhotoUrl().toString());
         user.setUid(u.getUid());
-        user.setName(u.getDisplayName());
+        if(u.getPhotoUrl()!=null){
+            user.setPhotoUrl(u.getPhotoUrl().toString());
+        }
+        if(u.getDisplayName()!=null){
+            user.setName(u.getDisplayName());
+        }
+
         getUsersRef().child(user.getUid()).child(USER_DTO).setValue(user);
 
 
@@ -150,13 +150,35 @@ public class FirebaseHelper {
         return myRef;
     }
 
-    public void setFriends(String friendId) {
+    public void setFriends(final String friendId) {
 
         String a = getCurrentUserId();
         String b = friendId;
 
         myRef = getFriendsRef(getCurrentUserId());
         myRef.push().setValue(friendId);
+
+//        myRef.runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//                boolean isFriend = false;
+//                for(MutableData m:mutableData.getChildren()){
+//                    if(friendId.equals(m.getValue()))isFriend=true;
+//                }
+//
+//                if(!isFriend){
+//                    myRef.push().setValue(friendId);
+//                }
+//
+//
+//                return null;
+//            }
+//
+//            @Override
+//            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+//
+//            }
+//        });
 
     }
 
@@ -176,11 +198,11 @@ public class FirebaseHelper {
         return myRef;
     }
 
-    public void getUserPosts(){
+    public void getUserPosts() {
 
     }
 
-    public void setPost(int type, MyRealmObject item) {
+    public void setPost(int type, BaseDTO item) {
         DatabaseReference myRef = getPostsRef().push();
         String key = myRef.getKey();
         myRef.child(CLASS).setValue(type);

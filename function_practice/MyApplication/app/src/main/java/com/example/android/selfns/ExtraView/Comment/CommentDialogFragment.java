@@ -11,8 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.android.selfns.Interface.MyRealmCommentableObject;
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.R;
 

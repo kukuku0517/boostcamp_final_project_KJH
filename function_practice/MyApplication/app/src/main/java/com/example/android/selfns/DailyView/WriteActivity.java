@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.android.selfns.DetailView.Data.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.R;

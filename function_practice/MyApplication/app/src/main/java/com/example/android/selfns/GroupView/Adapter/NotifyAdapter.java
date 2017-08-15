@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.selfns.Data.DTO.Detail.NotifyDTO;
+import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.NotifyUnitDTO;
 import com.example.android.selfns.GroupView.ViewHolder.VHNotify;
 import com.example.android.selfns.GroupView.ViewHolder.VHNotifyChild;
-import com.example.android.selfns.GroupView.Data.NotifyGroupData;
-import com.example.android.selfns.GroupView.Data.NotifyUnitData;
-import com.example.android.selfns.Interface.MyRealmCommentableObject;
-import com.example.android.selfns.Interface.MyRealmObject;
-import com.example.android.selfns.DetailView.Data.NotifyData;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
 import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.R;
@@ -28,7 +28,7 @@ import io.realm.RealmChangeListener;
 
 public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNotifyChild> implements CommentBtnClickListener {
 
-    private NotifyGroupData items;
+    private NotifyGroupDTO items;
     private Context context;
     private Realm realm;
 
@@ -45,7 +45,7 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
         });
     }
 
-    public void setItems(NotifyGroupData items)
+    public void setItems(NotifyGroupDTO items)
     {
         this.items=items;
     }
@@ -85,10 +85,10 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public void onBindGroupViewHolder(VHNotify holder, int groupPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        NotifyUnitData unitdata =items.getUnits().get(groupPosition);
-        if(unitdata.isValid()){
+        NotifyUnitDTO unitdata =items.getUnits().get(groupPosition);
+
             holder.bindType(unitdata);
-        }
+
 
     }
 
@@ -104,10 +104,10 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public void onBindChildViewHolder(VHNotifyChild holder, int groupPosition, int childPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        NotifyData child = items.getUnits().get(groupPosition).getNotifys().get(childPosition);
-        if(child.isValid()){
+        NotifyDTO child = items.getUnits().get(groupPosition).getNotifys().get(childPosition);
+
             holder.bindType(child);
-        }
+
     }
 
     @Override

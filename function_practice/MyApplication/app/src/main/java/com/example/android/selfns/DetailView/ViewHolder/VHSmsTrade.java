@@ -8,10 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
-import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
-import com.example.android.selfns.DetailView.Data.SmsTradeData;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
@@ -69,15 +68,15 @@ public class VHSmsTrade extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final SmsTradeData stData = (SmsTradeData) item;
+    public void bindType(final BaseDTO item) {
+        final SmsTradeDTO stData = (SmsTradeDTO) item;
         date.setText(DateHelper.getInstance().toDateString("hh:mm",stData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(stData.getDate()));
 
         comment.setText(stData.getComment());
         location.setText(stData.getPlace());
 
-        if (stData.getHighlight()) {
+        if (stData.isHighlight()) {
 
             highlightBtn.setColorFilter(Color.YELLOW);
         } else {
@@ -87,7 +86,7 @@ public class VHSmsTrade extends DayViewHolder {
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (stData.getHighlight()) {
+                if (stData.isHighlight()) {
                     highlightBtn.setColorFilter(Color.BLACK);
                 } else {
 
@@ -100,7 +99,7 @@ public class VHSmsTrade extends DayViewHolder {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.DataDelete(stData);
+                ItemInteractionUtil.getInstance(context).deleteItem(stData);
             }
         });
         editBtn.setOnClickListener(new View.OnClickListener() {

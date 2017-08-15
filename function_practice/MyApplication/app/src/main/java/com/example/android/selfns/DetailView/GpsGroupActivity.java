@@ -7,16 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.example.android.selfns.DailyView.Adapter.DayAdapter;
-import com.example.android.selfns.DetailView.Data.GpsData;
-import com.example.android.selfns.GroupView.Data.GpsGroupData;
-import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.R;
+
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.RealmList;
 
 public class GpsGroupActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
@@ -25,10 +26,10 @@ public class GpsGroupActivity extends AppCompatActivity {
     @BindView(R.id.rv_gps_group)
     RecyclerView rv;
 
-    private RealmList<MyRealmObject> items = new RealmList<>();
+    private ArrayList<BaseDTO> items = new ArrayList<>();
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
-    GpsGroupData gpsGroupData;
+    GpsGroupDTO gpsGroupData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +39,19 @@ public class GpsGroupActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Realm realm = Realm.getDefaultInstance();
-        Class c = RealmClassHelper.getInstance().getClass(getIntent().getIntExtra("type", -1));
-        long id = getIntent().getLongExtra("id", -1);
-        gpsGroupData = (GpsGroupData) realm.where(c).equalTo("id", id).findFirst();
-        realm = Realm.getDefaultInstance();
+//        Class c = RealmClassHelper.getInstance().getClass(getIntent().getIntExtra("type", -1));
+//        long id = getIntent().getLongExtra("id", -1);
+
+        gpsGroupData = Parcels.unwrap(getIntent().getParcelableExtra("item"));
+
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         adapter = new DayAdapter(this, realm);
-        getItemFromRealm();
+        items.addAll(gpsGroupData.getGpsDatas());
         adapter.updateItem(items);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
     }
 
-    private void getItemFromRealm() {
-        for (GpsData gps : gpsGroupData.getGpsDatas()) {
-            items.add(gps);
-        }
-    }
+
 }

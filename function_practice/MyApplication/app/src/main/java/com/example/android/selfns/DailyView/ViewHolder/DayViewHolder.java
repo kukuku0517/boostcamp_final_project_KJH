@@ -3,7 +3,7 @@ package com.example.android.selfns.DailyView.ViewHolder;
 import android.content.Context;
 import android.view.View;
 
-import com.example.android.selfns.Interface.MyRealmObject;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Interface.CardItemClickListener;
 import com.example.android.selfns.Interface.NotifyListener;
 import com.gvillani.pinnedlist.PinnedViewHolder;
@@ -27,7 +27,7 @@ public abstract class DayViewHolder extends PinnedViewHolder{
         mListener = (CardItemClickListener) context;
         this.nListener=nListener;
     }
-    public abstract void bindType(MyRealmObject item);
+    public abstract void bindType(BaseDTO item);
 
 
 

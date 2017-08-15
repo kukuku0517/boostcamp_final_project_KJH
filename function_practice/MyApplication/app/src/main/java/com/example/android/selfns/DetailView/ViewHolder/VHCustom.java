@@ -8,11 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
-import com.example.android.selfns.DetailView.Data.CustomData;
+import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
-import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.LineType;
 import com.github.vipulasri.timelineview.TimelineView;
@@ -76,8 +75,8 @@ public class VHCustom extends DayViewHolder {
 
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final CustomData callData = (CustomData) item;
+    public void bindType(final BaseDTO item) {
+        final CustomDTO callData = (CustomDTO) item;
 
         date.setText(DateHelper.getInstance().toDateString("hh:mm",callData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(callData.getDate()));
@@ -100,7 +99,7 @@ public class VHCustom extends DayViewHolder {
 //        }
 //
 //        number.setText(callData.getNumber());
-        if (callData.getHighlight()) {
+        if (callData.isHighlight()) {
             highlightBtn.setColorFilter(Color.YELLOW);
         } else {
 
@@ -110,7 +109,7 @@ public class VHCustom extends DayViewHolder {
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (callData.getHighlight()) {
+                if (callData.isHighlight()) {
                     highlightBtn.setColorFilter(Color.BLACK);
                 } else {
 
@@ -123,13 +122,13 @@ public class VHCustom extends DayViewHolder {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.DataDelete(callData);
+                ItemInteractionUtil.getInstance(context).deleteItem(callData);
             }
         });
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onCallItemClick(item);
+                mListener.onCustomItemClick(item);
             }
         });
         view.setOnClickListener(new View.OnClickListener() {

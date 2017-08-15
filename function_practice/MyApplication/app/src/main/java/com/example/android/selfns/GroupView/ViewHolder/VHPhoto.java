@@ -8,10 +8,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
-import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
-import com.example.android.selfns.DetailView.Data.PhotoData;
 import com.example.android.selfns.Interface.PhotoItemClickListener;
 import com.example.android.selfns.R;
 
@@ -42,8 +41,8 @@ public class VHPhoto extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final PhotoData callData = (PhotoData) item;
+    public void bindType(final BaseDTO item) {
+        final PhotoDTO callData = (PhotoDTO) item;
         DateFormat sdFormat = new SimpleDateFormat("hh : mm");
         Date d = new Date(callData.getDate());
         String tempDate = sdFormat.format(d);
@@ -60,7 +59,7 @@ public class VHPhoto extends DayViewHolder {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.getInstance().photodataDelete(callData);
+               ItemInteractionUtil.getInstance(context).deletePhotoItem(callData);
             }
         });
         //TODO sharebtn

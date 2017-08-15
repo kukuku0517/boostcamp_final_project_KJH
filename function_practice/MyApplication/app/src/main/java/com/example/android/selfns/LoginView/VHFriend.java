@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  * Created by samsung on 2017-08-14.
  */
 
-public class VHFriend extends RecyclerView.ViewHolder {
+public class VHFriend extends VHFriendBase {
 
     @BindView(R.id.friend_name)
     TextView name;

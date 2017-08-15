@@ -44,31 +44,45 @@ public class FriendActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         FirebaseHelper instance = FirebaseHelper.getInstance(context);
-        DatabaseReference mRef = instance.getFriendsRef(instance.getCurrentUserId());
+        final String currentUid = instance.getCurrentUserId();
 
-
-        mRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference allUserRef = instance.getUsersRef();
+        allUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 items.clear();
-                for (DataSnapshot d : dataSnapshot.getChildren()) {
-                    String uid = d.getValue().toString();
-                    DatabaseReference userRef = FirebaseHelper.getInstance(context).getUserData(uid);
-                    userRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            UserDTO user = dataSnapshot.getValue(UserDTO.class);
-                            items.add(user);
-                            Log.d("firebaserv", user.getUid());
-                            adapter.updateItem(items);
-                            adapter.notifyDataSetChanged();
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                for (final DataSnapshot d : dataSnapshot.getChildren()) {
+                    final String uid = d.getKey().toString();
+                    if (!uid.equals(currentUid)) {
 
-                        }
-                    });
+                        DatabaseReference mRef = FirebaseHelper.getInstance(context).getFriendsRef(currentUid);
+                        mRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                boolean isFriend = false;
+                                for (DataSnapshot m : dataSnapshot.getChildren()) {
+                                    if (uid.equals(m.getValue())) isFriend = true;
+                                }
+
+                                if (!isFriend) {
+                                    UserDTO user = d.child("userDTO").getValue(UserDTO.class);
+                                    items.add(user);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+                    }
+
                 }
+                adapter.updateItem(items);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -77,15 +91,47 @@ public class FriendActivity extends AppCompatActivity {
             }
         });
 
+//        DatabaseReference mRef = instance.getFriendsRef(currentUid);
+//
+//        mRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                items.clear();
+//                for (DataSnapshot d : dataSnapshot.getChildren()) {
+//                    String uid = d.getValue().toString();
+//
+//                    if (!uid.equals(currentUid)) {
+//                        DatabaseReference userRef = FirebaseHelper.getInstance(context).getUserData(uid);
+//                        userRef.addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(DataSnapshot dataSnapshot) {
+//                                UserDTO user = dataSnapshot.getValue(UserDTO.class);
+//
+//                                items.add(user);
+//                                adapter.updateItem(items);
+//                                adapter.notifyDataSetChanged();
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(DatabaseError databaseError) {
+//
+//                            }
+//                        });
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        adapter = new FriendAdapter(this);
-
+        adapter = new FriendAdapter(this,0);
         adapter.updateItem(items);
-
         rv.setHasFixedSize(true);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
-
-
     }
 }

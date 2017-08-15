@@ -37,32 +37,33 @@ import com.example.android.selfns.Background.DataUpdateService;
 import com.example.android.selfns.Background.GoogleAwareness.GoogleAwarenessService;
 import com.example.android.selfns.Background.SNSNotificationService;
 import com.example.android.selfns.DailyView.Adapter.CalendarPinAdapter;
-import com.example.android.selfns.DetailView.Data.CustomData;
-import com.example.android.selfns.DetailView.Data.PhotoData;
+import com.example.android.selfns.Data.DTO.Detail.CallDTO;
+import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
+import com.example.android.selfns.Data.DTO.Detail.DatePinDTO;
+import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
+import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
+import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
+import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.DetailView.GpsGroupActivity;
-import com.example.android.selfns.GroupView.Data.GpsGroupData;
-import com.example.android.selfns.GroupView.Data.PhotoGroupData;
 import com.example.android.selfns.DetailView.CallActivity;
-import com.example.android.selfns.DetailView.Data.CallData;
-import com.example.android.selfns.DetailView.Data.DatePinData;
-import com.example.android.selfns.DetailView.Data.GpsData;
-import com.example.android.selfns.DetailView.Data.SmsTradeData;
+import com.example.android.selfns.Data.RealmData.UnitData.CallData;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.DetailView.GpsStillActivity;
 import com.example.android.selfns.DetailView.SmsTradeActivity;
-import com.example.android.selfns.GroupView.Data.NotifyGroupData;
-import com.example.android.selfns.GroupView.Data.PhotoGroupFBData;
-import com.example.android.selfns.GroupView.Data.SmsGroupData;
 import com.example.android.selfns.GroupView.PhotoActivity;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.FirebaseHelper;
+import com.example.android.selfns.Helper.ItemComparator;
 import com.example.android.selfns.Helper.PinnedHeaderItemDecoration;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.Interface.CardItemClickListener;
 import com.example.android.selfns.Interface.DatePinClickListener;
-import com.example.android.selfns.Interface.MyRealmObject;
-import com.example.android.selfns.Interface.MyRealmShareableObject;
 import com.example.android.selfns.LoginView.FriendActivity;
 import com.example.android.selfns.LoginView.LoginActivity;
 import com.example.android.selfns.R;
@@ -79,21 +80,16 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
-
-import static android.R.id.list;
-import static com.facebook.HttpMethod.POST;
 
 public class MainActivity extends AppCompatActivity implements CardItemClickListener, DatePinClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -119,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     private Realm realmAsync;
     private RecyclerView.LayoutManager layoutManager;
     private CalendarPinAdapter adapter;
-    private RealmList<MyRealmObject> items = new RealmList<>();
+    private ArrayList<BaseDTO> items = new ArrayList<>();
     private SlideUp slideUp;
     private Context context = this;
     private int PERMISSION_ALL = 1;
@@ -223,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     private void initUserState() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+        if (user != null && user.getPhotoUrl()!=null) {
             Glide.with(this).load(user.getPhotoUrl()).into(profile);
         } else {
             // No user is signed in
@@ -433,13 +429,13 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         items.addAll(getItemFromRealm(minusDay2));
         items.addAll(getItemFromRealm(minusDay1));
         items.addAll(getItemFromRealm(millis));
-        Collections.sort(items, new CompareItem());
-
+        Collections.sort(items, new ItemComparator());
+        getItemFromFB();
     }
 
-    private RealmList<MyRealmObject> getItemFromRealm(long millis) {
+    private ArrayList<BaseDTO> getItemFromRealm(long millis) {
 
-        final RealmList<MyRealmObject> items = new RealmList<>();
+        final ArrayList<BaseDTO> items = new ArrayList<>();
         long today[] = DateHelper.getInstance().getStartEndDate(millis);
         long startMillis = today[0];
         long endMillis = today[1];
@@ -453,35 +449,31 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         RealmResults<RealmObject> customData = RealmHelper.getInstance().DataLoad(CustomData.class, "date", startMillis, endMillis);
 
 
-        DatePinData datePinData = new DatePinData();
+        DatePinDTO datePinData = new DatePinDTO();
         datePinData.setDate(startMillis);
         items.add(datePinData);
 
         for (RealmObject cd : customData) {
-            items.add((CustomData) cd);
+            items.add(new CustomDTO((CustomData) cd));
         }
         for (RealmObject g : ggData) {
-            items.add((GpsGroupData) g);
+            items.add(new GpsGroupDTO((GpsGroupData) g));
         }
-
         for (RealmObject c : cData) {
-            items.add((CallData) c);
+            items.add(new CallDTO((CallData) c));
         }
-
         for (RealmObject pg : pgData) {
-            items.add((PhotoGroupData) pg);
+            items.add(new PhotoGroupDTO((PhotoGroupData) pg));
         }
         for (RealmObject std : smsTradeDatas) {
-            items.add((SmsTradeData) std);
+            items.add(new SmsTradeDTO((SmsTradeData) std));
         }
 
-//        for (RealmObject m : smsGroupDatas) {
-//            items.add((SmsGroupData) m);
-//        }
-//
-//        for (RealmObject nn : ngDatas) {
-//            items.add((NotifyGroupData) nn);
-//        }
+
+        return items;
+    }
+
+    private void getItemFromFB() {
         DatabaseReference myRef = FirebaseHelper.getInstance(context).getCurrentUserRef().child("post");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -496,52 +488,29 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
                             int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
                             String uid = dataSnapshot.child("uid").getValue().toString();
                             Log.d("firebasesync", uid);
-                            MyRealmShareableObject item;
+                            BaseDTO item;
                             switch (type) {
                                 case RealmClassHelper.CALL_DATA:
-                                    item = dataSnapshot.child("item").getValue(CallData.class);
+                                    item = dataSnapshot.child("item").getValue(CallDTO.class);
                                     break;
                                 case RealmClassHelper.CUSTOM_DATA:
-                                    item = dataSnapshot.child("item").getValue(CustomData.class);
+                                    item = dataSnapshot.child("item").getValue(CustomDTO.class);
                                     break;
                                 case RealmClassHelper.PHOTO_DATA:
-                                    item = dataSnapshot.child("item").getValue(PhotoData.class);
+                                    item = dataSnapshot.child("item").getValue(PhotoDTO.class);
                                     break;
                                 case RealmClassHelper.PHOTO_GROUP_DATA:
-                                    PhotoGroupFBData item1 = dataSnapshot.child("item").getValue(PhotoGroupFBData.class);
-                                    PhotoGroupData item2 = new PhotoGroupData();
-                                    item2.setPlace(item1.getPlace());
-                                    item2.setComment(item1.getComment());
-                                    item2.setEnd(item1.getEnd());
-                                    item2.setCount(item1.getCount());
-                                    item2.setHighlight();
-                                    item2.setId(item1.getId());
-                                    item2.setShare(item1.isShare());
-                                    item2.setStart(item1.getStart());
-
-                                   item2.setPhotoss(new RealmList<PhotoData>(item1.getPhotoss().toArray(new PhotoData[item1.getPhotoss().size()])));
-                                    item=item2;
-
+                                    item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
                                     break;
                                 case RealmClassHelper.SMS_TRADE_DATA:
-                                    item = dataSnapshot.child("item").getValue(SmsTradeData.class);
+                                    item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
                                     break;
                                 default:
                                     item = null;
                             }
 
                             items.add(item);
-                            Collections.sort(items, new Comparator<MyRealmObject>() {
-                                @Override
-                                public int compare(MyRealmObject o1, MyRealmObject o2) {
-                                    return (int) (o1.getDate() - o2.getDate());
-                                }
-
-                                @Override
-                                public boolean equals(Object obj) {
-                                    return false;
-                                }
-                            });
+                            Collections.sort(items, new ItemComparator());
                             adapter.updateItem(items);
                             adapter.notifyDataSetChanged();
                         }
@@ -559,20 +528,6 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
             }
         });
-
-        Collections.sort(items, new Comparator<MyRealmObject>() {
-            @Override
-            public int compare(MyRealmObject o1, MyRealmObject o2) {
-                return (int) (o1.getDate() - o2.getDate());
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return false;
-            }
-        });
-
-        return items;
     }
 
     private void displayRecyclerView() {
@@ -596,7 +551,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
-    public void onNotifyItemClick(MyRealmObject item) {
+    public void onNotifyItemClick(BaseDTO item) {
         Intent intent = new Intent(this, UnitActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmClassHelper.getInstance().NOTIFY_GROUP_DATA);
@@ -604,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
-    public void onSmsGroupItemClick(MyRealmObject item) {
+    public void onSmsGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, UnitActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmClassHelper.getInstance().SMS_GROUP_DATA);
@@ -612,7 +567,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
-    public void onSmsTradeItemClick(MyRealmObject item) {
+    public void onSmsTradeItemClick(BaseDTO item) {
         Intent intent = new Intent(this, SmsTradeActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmClassHelper.getInstance().SMS_TRADE_DATA);
@@ -620,22 +575,23 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
-    public void onDatePinClick(MyRealmObject item) {
+    public void onDatePinClick(BaseDTO item) {
         Intent intent = new Intent(this, DayActivity.class);
         intent.putExtra("date", item.getDate());
         startActivity(intent);
     }
 
     @Override
-    public void onPhotoGroupItemClick(MyRealmObject item) {
+    public void onPhotoGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, PhotoActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmClassHelper.getInstance().PHOTO_GROUP_DATA);
+
         startActivity(intent);
     }
 
     @Override
-    public void onGpsItemClick(GpsData item) {
+    public void onGpsItemClick(BaseDTO item) {
         Intent intent = new Intent(this, GpsStillActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmClassHelper.getInstance().GPS_DATA);
@@ -643,7 +599,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
-    public void onCallItemClick(MyRealmObject item) {
+    public void onCallItemClick(BaseDTO item) {
         Intent intent = new Intent(this, CallActivity.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
@@ -651,7 +607,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
-    public void onGpsGroupItemClick(MyRealmObject item) {
+    public void onGpsGroupItemClick(BaseDTO item) {
 
         Intent intent = new Intent(this, GpsGroupActivity.class);
         intent.putExtra("id", item.getId());
@@ -659,10 +615,10 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         startActivity(intent);
     }
 
-    private class CompareItem implements Comparator<MyRealmObject> {
-        @Override
-        public int compare(MyRealmObject o1, MyRealmObject o2) {
-            return 0;
-        }
+    @Override
+    public void onCustomItemClick(BaseDTO item) {
+
     }
+
+
 }

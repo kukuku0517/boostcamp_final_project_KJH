@@ -3,7 +3,7 @@ package com.example.android.selfns.GroupView.ViewHolder;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.selfns.DetailView.Data.NotifyData;
+import com.example.android.selfns.Data.DTO.Detail.NotifyDTO;
 import com.example.android.selfns.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
@@ -31,7 +31,7 @@ public class VHNotifyChild  extends AbstractExpandableItemViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindType(NotifyData child) {
+    public void bindType(NotifyDTO child) {
 //        name.setText(child.getPerson());
         content.setText(child.getContent());
         DateFormat sdFormat = new SimpleDateFormat("HH:mm");

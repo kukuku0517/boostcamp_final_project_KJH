@@ -7,10 +7,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
-import com.example.android.selfns.DetailView.Data.GpsData;
+import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
-import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.R;
 
@@ -58,8 +57,8 @@ public class VHGps extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final GpsData gpsData = (GpsData) item;
+    public void bindType(final BaseDTO item) {
+        final GpsDTO gpsData = (GpsDTO) item;
         DateFormat sdFormat = new SimpleDateFormat("HH : mm");
         Date d = new Date(gpsData.getDate());
         String tempDate = sdFormat.format(d);
@@ -102,7 +101,7 @@ public class VHGps extends DayViewHolder {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.DataDelete(gpsData);
+                ItemInteractionUtil.getInstance(context).deleteItem(gpsData);
             }
         });
 

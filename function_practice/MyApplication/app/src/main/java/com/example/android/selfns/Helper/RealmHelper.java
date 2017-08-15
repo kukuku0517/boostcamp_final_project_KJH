@@ -11,22 +11,22 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
-import com.example.android.selfns.DailyView.Data.DayData;
-import com.example.android.selfns.DetailView.Data.CallData;
-import com.example.android.selfns.DetailView.Data.CustomData;
-import com.example.android.selfns.DetailView.Data.GpsData;
-import com.example.android.selfns.DetailView.Data.NotifyData;
-import com.example.android.selfns.DetailView.Data.PhotoData;
-import com.example.android.selfns.DetailView.Data.SmsData;
-import com.example.android.selfns.DetailView.Data.SmsTradeData;
-import com.example.android.selfns.GroupView.Data.GpsGroupData;
-import com.example.android.selfns.GroupView.Data.NotifyGroupData;
-import com.example.android.selfns.GroupView.Data.NotifyUnitData;
-import com.example.android.selfns.GroupView.Data.PhotoGroupData;
-import com.example.android.selfns.GroupView.Data.SmsGroupData;
-import com.example.android.selfns.GroupView.Data.SmsUnitData;
+import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
+import com.example.android.selfns.Data.RealmData.DayData;
+import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyUnitData;
+import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsUnitData;
+import com.example.android.selfns.Data.RealmData.UnitData.CallData;
+import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
+import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
+import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsData;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 
 import java.util.StringTokenizer;
 
@@ -626,7 +626,7 @@ public class RealmHelper {
         });
     }
 
-    public static void notifyUnitDataDelete(final RealmObject item) {
+    public void notifyUnitDataDelete(final RealmObject item) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
 
@@ -645,7 +645,7 @@ public class RealmHelper {
         });
     }
 
-    public static void smsUnitDataDelete(final RealmObject item) {
+    public void smsUnitDataDelete(final RealmObject item) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
 
@@ -664,7 +664,7 @@ public class RealmHelper {
         });
     }
 
-    public static void DataDelete(final RealmObject item) {
+    public void DataDelete(final RealmObject item) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -673,5 +673,10 @@ public class RealmHelper {
             }
         });
     }
+
+    public void setDate(){
+
+    }
+
 
 }

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.selfns.GroupView.Data.NotifyGroupData;
+import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
 
@@ -48,8 +48,8 @@ public class VHNotifyGroup extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        NotifyGroupData notifyData = (NotifyGroupData) item;
+    public void bindType(final BaseDTO item) {
+        NotifyGroupDTO notifyData = (NotifyGroupDTO) item;
         date.setText(DateHelper.getInstance().toDateString("hh:mm",notifyData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(notifyData.getDate()));
 

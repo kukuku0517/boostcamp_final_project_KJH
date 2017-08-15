@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,23 +23,32 @@ import android.widget.ProgressBar;
 
 import com.example.android.selfns.DailyView.Adapter.DayAdapter;
 import com.example.android.selfns.Background.ContentProviderData;
+import com.example.android.selfns.Data.DTO.Detail.CallDTO;
+import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
+import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
+import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
+import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsGroupData;
 import com.example.android.selfns.DetailView.CallActivity;
-import com.example.android.selfns.DetailView.Data.CustomData;
+import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.DetailView.GpsGroupActivity;
 import com.example.android.selfns.DetailView.GpsStillActivity;
 import com.example.android.selfns.DetailView.SmsTradeActivity;
-import com.example.android.selfns.GroupView.Data.GpsGroupData;
 import com.example.android.selfns.GroupView.PhotoActivity;
-import com.example.android.selfns.DetailView.Data.CallData;
-import com.example.android.selfns.DetailView.Data.GpsData;
-import com.example.android.selfns.GroupView.Data.NotifyGroupData;
-import com.example.android.selfns.GroupView.Data.PhotoGroupData;
-import com.example.android.selfns.GroupView.Data.SmsGroupData;
+import com.example.android.selfns.Data.RealmData.UnitData.CallData;
+import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Helper.DateHelper;
+import com.example.android.selfns.Helper.ItemComparator;
 import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmGpsObject;
-import com.example.android.selfns.Interface.MyRealmObject;
-import com.example.android.selfns.DetailView.Data.SmsTradeData;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.Interface.CardItemClickListener;
 import com.example.android.selfns.Helper.RealmClassHelper;
@@ -56,9 +64,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.ui.IconGenerator;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -66,7 +75,6 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -87,7 +95,7 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
     private Realm realm;
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
-    private RealmList<MyRealmObject> items = new RealmList<>();
+    private ArrayList<BaseDTO> items = new ArrayList<>();
     private List<MapItem> mapItems = new ArrayList<>();
     private long startMillis, endMillis, quarter;
     private boolean isMapOpen = false;
@@ -391,42 +399,30 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 //            items.add(g);
 //        }
         for (RealmObject cd : customData) {
-            items.add((CustomData) cd);
+            items.add(new CustomDTO((CustomData) cd));
         }
         for (RealmObject gg : ggData) {
-            items.add((GpsGroupData) gg);
+            items.add(new GpsGroupDTO((GpsGroupData) gg));
         }
         for (RealmObject c : cData) {
-            items.add((CallData) c);
+            items.add(new CallDTO((CallData) c));
         }
 
         for (RealmObject pg : pgData) {
-            items.add((PhotoGroupData) pg);
+            items.add(new PhotoGroupDTO((PhotoGroupData) pg));
         }
         for (RealmObject std : smsTradeDatas) {
-            items.add((SmsTradeData) std);
+            items.add(new SmsTradeDTO((SmsTradeData) std));
         }
         for (SmsGroupData m : smsGroupDatas) {
-            items.add(m);
+            items.add(new SmsGroupDTO(m));
         }
-
-        Log.d("Notification", "iterbef");
         for (NotifyGroupData nn : ngDatas) {
-            Log.d("Notification", "iter");
-            items.add(nn);
+
+            items.add(new NotifyGroupDTO((nn)));
         }
 
-        Collections.sort(items, new Comparator<MyRealmObject>() {
-            @Override
-            public int compare(MyRealmObject o1, MyRealmObject o2) {
-                return (int) (o1.getDate() - o2.getDate());
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return false;
-            }
-        });
+        Collections.sort(items,  new ItemComparator());
 
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i) instanceof GpsData) {
@@ -441,60 +437,77 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
 
     @Override
-    public void onNotifyItemClick(MyRealmObject item) {
+    public void onNotifyItemClick(BaseDTO item) {
         Intent intent = new Intent(this, UnitActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().NOTIFY_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().NOTIFY_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((NotifyGroupDTO)item));
         startActivity(intent);
     }
 
     @Override
-    public void onSmsGroupItemClick(MyRealmObject item) {
+    public void onSmsGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, UnitActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().SMS_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().SMS_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((SmsGroupDTO)item));
         startActivity(intent);
     }
 
 
     @Override
-    public void onSmsTradeItemClick(MyRealmObject item) {
+    public void onSmsTradeItemClick(BaseDTO item) {
         Intent intent = new Intent(this, SmsTradeActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().SMS_TRADE_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().SMS_TRADE_DATA);
+        intent.putExtra("item", Parcels.wrap((SmsTradeDTO)item));
         startActivity(intent);
     }
 
-
     @Override
-    public void onPhotoGroupItemClick(MyRealmObject item) {
+    public void onPhotoGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, PhotoActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().PHOTO_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().PHOTO_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((PhotoGroupDTO)item));
         startActivity(intent);
     }
 
+
+
     @Override
-    public void onGpsItemClick(GpsData item) {
+    public void onGpsItemClick(BaseDTO item) {
         Intent intent = new Intent(this, GpsStillActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().GPS_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().GPS_DATA);
+        intent.putExtra("item", Parcels.wrap((GpsDTO)item));
         startActivity(intent);
     }
 
     @Override
-    public void onCallItemClick(MyRealmObject item) {
+    public void onCallItemClick(BaseDTO item) {
         Intent intent = new Intent(this, CallActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
+        intent.putExtra("item", Parcels.wrap((CallDTO)item));
         startActivity(intent);
     }
 
     @Override
-    public void onGpsGroupItemClick(MyRealmObject item) {
+    public void onCustomItemClick(BaseDTO item) {
+        Intent intent = new Intent(this, CallActivity.class);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
+        intent.putExtra("item", Parcels.wrap((CustomDTO)item));
+        startActivity(intent);
+    }
+    @Override
+    public void onGpsGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, GpsGroupActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().GPS_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().GPS_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((GpsGroupDTO)item));
+
         startActivity(intent);
 
     }

@@ -14,11 +14,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.android.selfns.DetailView.Data.PhotoData;
+import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.R;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -27,11 +26,12 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.parceler.Parcels;
+
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 public class DetailPhotoActivity extends AppCompatActivity {
 
@@ -57,8 +57,8 @@ public class DetailPhotoActivity extends AppCompatActivity {
     Button deleteBtn;
 
     private Context context = this;
-    private PhotoData photoDataGlobal;
-    private Realm realmGlobal;
+
+    PhotoDTO photoData;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -67,14 +67,13 @@ public class DetailPhotoActivity extends AppCompatActivity {
                 final Place place = PlacePicker.getPlace(data, this);
                 String toastMsg = String.format("Place: %s", place.getName());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-                realmGlobal.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        photoDataGlobal.setLat(place.getLatLng().latitude);
-                        photoDataGlobal.setLng(place.getLatLng().longitude);
-                        photoDataGlobal.setPlace(place.getName().toString());
-                    }
-                });
+                photoData.setLat(place.getLatLng().latitude);
+                photoData.setLat(place.getLatLng().longitude);
+                photoData.setPlace(place.getName().toString());
+                photoData.setOriginId(place.getId());
+
+                ItemInteractionUtil.getInstance(context).setPlace(photoData);
+
             }
         }
     }
@@ -85,12 +84,12 @@ public class DetailPhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_photo);
         ButterKnife.bind(this);
 
-        final Realm realm = Realm.getDefaultInstance();
-        Class c = RealmClassHelper.getInstance().getClass(getIntent().getIntExtra("type", -1));
-        long id = getIntent().getLongExtra("id", -1);
-        final PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", id).findFirst();
-        photoDataGlobal = photoData;
-        realmGlobal = realm;
+//        final Realm realm = Realm.getDefaultInstance();
+//        Class c = RealmClassHelper.getInstance().getClass(getIntent().getIntExtra("type", -1));
+//        long id = getIntent().getLongExtra("id", -1);
+//        final PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", id).findFirst();
+        photoData = Parcels.unwrap(getIntent().getParcelableExtra("item"));
+
         if (photoData != null) {
             Glide.with(this).load(photoData.getPath()).into(iv);
             comment.setText(photoData.getComment());
@@ -140,13 +139,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 final long millis = DateHelper.getInstance().toMillis(cal, hourOfDay, minute);
-
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        photoData.setDate(millis);
-                    }
-                });
+                ItemInteractionUtil.getInstance(context).setDate(photoData, millis);
             }
         };
         final TimePickerDialog dialog = new TimePickerDialog(this, listener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
@@ -170,7 +163,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.getInstance().photodataDelete(photoData);
+                ItemInteractionUtil.getInstance(context).deletePhotoItem(photoData);
             }
         });
     }

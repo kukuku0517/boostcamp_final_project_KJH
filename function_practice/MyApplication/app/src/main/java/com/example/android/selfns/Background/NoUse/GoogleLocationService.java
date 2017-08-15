@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.example.android.selfns.DetailView.Data.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.selfns.DetailView.Data.DatePinData;
+import com.example.android.selfns.Data.DTO.Detail.DatePinDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Interface.DatePinClickListener;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.R;
 
 import butterknife.BindView;
@@ -35,8 +35,8 @@ public class VHPin extends DayViewHolder {
     }
 
     @Override
-    public void bindType(final MyRealmObject item) {
-        final DatePinData datePinData = (DatePinData) item;
+    public void bindType(final BaseDTO item) {
+        final DatePinDTO datePinData = (DatePinDTO) item;
         year.setText( DateHelper.getInstance().toDateString("yyyy", datePinData.getDate()));
         date.setText( DateHelper.getInstance().toDateString("MM월 dd일", datePinData.getDate()));
 

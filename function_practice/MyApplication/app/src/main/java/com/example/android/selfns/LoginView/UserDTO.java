@@ -1,5 +1,7 @@
 package com.example.android.selfns.LoginView;
 
+import com.example.android.selfns.Helper.FirebaseHelper;
+
 /**
  * Created by samsung on 2017-08-13.
  */
@@ -46,7 +48,7 @@ public class UserDTO {
         this.photoUrl = photoUrl;
     }
 
-    public int getType(){
+    public int getType() {
         return 0;
     }
 }

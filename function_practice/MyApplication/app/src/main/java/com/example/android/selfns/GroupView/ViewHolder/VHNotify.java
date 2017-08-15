@@ -6,10 +6,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.android.selfns.GroupView.Data.NotifyUnitData;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyUnitData;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.Interface.MyRealmObject;
 import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.R;
@@ -45,7 +45,7 @@ public class VHNotify extends AbstractExpandableItemViewHolder {
         this.context=context;
     }
 
-    public void bindType(final MyRealmObject item) {
+    public void bindType(final BaseDTO item) {
         final NotifyUnitData notifyUnitData = (NotifyUnitData) item;
         person.setText(notifyUnitData.getName());
         number.setText(notifyUnitData.getName());
@@ -63,7 +63,7 @@ public class VHNotify extends AbstractExpandableItemViewHolder {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RealmHelper.notifyUnitDataDelete(notifyUnitData);
+                RealmHelper.getInstance().notifyUnitDataDelete(notifyUnitData);
             }
         });
 
