@@ -168,7 +168,7 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
         startMillis = today[0];
         endMillis = today[1];
-        quarter = (endMillis - startMillis) / 4;
+        quarter = DateHelper.QUARTER;
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,35 +305,6 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         marker.setSnippet(marker.getTitle());
     }
 
-    private class RealmAsync extends AsyncTask<Integer, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            realmAsync = Realm.getDefaultInstance();
-            ContentProviderData cp = new ContentProviderData(getApplicationContext(), startMillis, endMillis, realmAsync);
-            switch (params[0]) {
-                case 0:
-                    cp.readSMSMessage();
-                    break;
-                case 1:
-                    cp.readCallLogs();
-                    break;
-                case 2:
-                    cp.readImages();
-                    break;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-//            SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//            mPref.edit().putBoolean("init", true).commit();
-            displayRecyclerView();
-        }
-    }
-
     void displayRecyclerView() {
         pb.setVisibility(View.GONE);
         getItemFromRealm();
@@ -342,36 +313,6 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            Log.d("dayscroll", "a");
-//            rv.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-//                @Override
-//                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-//                    Log.d("dayscroll", String.valueOf(rv.getLayoutManager().getPosition(v)));
-//                }
-//            });
-//        } else {
-//            Log.d("dayscroll", "b");
-//            rv.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//                @Override
-//                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//
-//                }
-//
-//                @Override
-//                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                    super.onScrolled(recyclerView, dx, dy);
-////                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-////                    layoutManager.findFirstVisibleItemPosition();
-////
-////                    View view = recyclerView.getFocusedChild();
-////                    Log.d("scrollchild", "scroll");
-////                    if (view != null) {
-////                        Log.d("scrollchild", String.valueOf(recyclerView.indexOfChild(view)));
-////                    }
-//                }
-//            });
-//        }
         realm.addChangeListener(new RealmChangeListener<Realm>() {
             @Override
             public void onChange(Realm realm) {

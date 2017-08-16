@@ -13,8 +13,9 @@ public interface MyRealmShareableObject extends MyRealmObject {
 
     void setShare(boolean share);
 
-    List<String> getFriend();
+ String getFriends();
 
-    void setFriend(ArrayList<String> friend);
+void setFriends(String friends);
+
 
 }

@@ -5,13 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
-
-    <ImageView
-        android:id="@+id/imageView2"
-        app:srcCompat="@drawable/dot"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_margin="8dp"
-   />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_tag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -7,11 +7,11 @@
 
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="로딩 1-2분정도 걸림 취소하지마세요/SelfNS 알림받기 설정해주세요" />
+    <!--<TextView-->
+        <!--android:id="@+id/textView6"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="로딩 1-2분정도 걸림 취소하지마세요/SelfNS 알림받기 설정해주세요" />-->
 
 
     <ProgressBar
@@ -47,9 +47,10 @@
 
                 android:background="@android:color/white"
                 android:translationZ="10dp"
-                app:mcv_selectionColor="#00F"
+                app:mcv_selectionColor="@color/colorEmerald"
                 app:mcv_showOtherDates="all"
-                app:mcv_tileWidth="match_parent" />
+                app:mcv_tileWidth="match_parent"
+                />
         </android.support.v7.widget.CardView>
 
 

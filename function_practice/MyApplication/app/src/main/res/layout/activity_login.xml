@@ -5,21 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/holo_orange_light"
+    android:background="@drawable/splash_background"
     tools:context="com.example.android.selfns.LoginView.LoginActivity">
 
 
-    <TextView
-        android:id="@+id/title"
-        android:gravity="center"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/splash_layout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/sign_up"
-        android:textStyle="bold"
-        android:textSize="40sp"
-        android:textColor="@android:color/white"
-        android:text="SelfNS" />
+        android:layout_above="@+id/sign_in_id"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="100dp"
+
+     >
+
+        <TextView
+
+            android:id="@+id/splash_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="56sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="S" />
+        <TextView
+            android:id="@+id/splash_elf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/splash_s"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="elf"/>
+
+
+        <TextView
+            android:id="@+id/splash_ns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/splash_elf"
+            android:textSize="56sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="NS" />
+    </LinearLayout>
+
 
     <EditText
         android:id="@+id/sign_in_id"
@@ -52,12 +84,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/sign_up_facebook"
-        android:text="가입하기" />
+        android:text="가입하기"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/sign_up_facebook"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Facebook으로 로그인" />
+        android:text="Facebook으로 로그인"
+       />
 </RelativeLayout>

@@ -22,15 +22,19 @@ public class CustomDTO implements CommentableDTO, ShareableDTO {
     String place;
     boolean share;
     boolean highlight = false;
-    ArrayList<String> friend=new ArrayList<>();
+    String friends="[]";
 
-    public ArrayList<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
+
     public CustomDTO() {
 
     }
@@ -46,7 +50,7 @@ public class CustomDTO implements CommentableDTO, ShareableDTO {
         this.place = data.getPlace();
         this.share = data.isShare();
         this.highlight = data.isHighlight();
-        this.friend=data.getFriend();
+        this.friends=data.getFriends();
     }
 
     public void setId(long id) {

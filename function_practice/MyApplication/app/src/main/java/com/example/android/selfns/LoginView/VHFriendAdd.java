@@ -13,6 +13,8 @@ import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.R;
 
+import org.json.JSONException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,7 +28,7 @@ public class VHFriendAdd extends VHFriendBase {
     TextView name;
     @BindView(R.id.friend_title)
     TextView title;
-    @BindView(R.id.friend_add)
+    @BindView(R.id.friend_tag)
     Button add;
 
     @BindView(R.id.friend_profile)
@@ -51,7 +53,11 @@ public class VHFriendAdd extends VHFriendBase {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemInteractionUtil.getInstance(context).addFriend(item,user);
+                try {
+                    ItemInteractionUtil.getInstance(context).addFriend(item,user);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

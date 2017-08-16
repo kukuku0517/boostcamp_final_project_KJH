@@ -35,7 +35,7 @@ public class SmsUnitDTO implements CommentableDTO {
         }
     }
 
-    ArrayList<SmsDTO> smss;
+    ArrayList<SmsDTO> smss=new ArrayList<>();
     private int count;
     private long start, end;
     private String name;

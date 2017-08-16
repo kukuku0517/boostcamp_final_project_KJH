@@ -12,9 +12,10 @@ public interface ShareableDTO extends BaseDTO {
 
     void setShare(boolean share);
 
-    ArrayList<String> friend = new ArrayList<>();
 
-    ArrayList<String> getFriend();
+ String getFriends() ;
 
-    void setFriend(ArrayList<String> friend);
+void setFriends(String friends) ;
+
+
 }

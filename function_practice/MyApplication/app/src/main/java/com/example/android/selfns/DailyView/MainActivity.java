@@ -40,10 +40,14 @@ import com.example.android.selfns.DailyView.Adapter.CalendarPinAdapter;
 import com.example.android.selfns.Data.DTO.Detail.CallDTO;
 import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
 import com.example.android.selfns.Data.DTO.Detail.DatePinDTO;
+import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
 import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
 import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
 import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
 import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
@@ -70,6 +74,7 @@ import com.example.android.selfns.R;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -80,16 +85,24 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static android.R.attr.data;
+import static android.R.attr.tag;
 
 public class MainActivity extends AppCompatActivity implements CardItemClickListener, DatePinClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -100,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     @BindView(R.id.cv_cardview)
     CardView cardView;
     @BindView(R.id.main_user_profile_pic)
-    ImageView profile;
+    CircleImageView profile;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -220,7 +233,11 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null && user.getPhotoUrl()!=null) {
-            Glide.with(this).load(user.getPhotoUrl()).into(profile);
+//            Glide.with(this).load(user.getPhotoUrl()).into(profile);
+//            GlideApp.with(this).load(user.getPhotoUrl()).transform(new CropCircleTransformation(this)).into(profile);
+            GlideApp.with(this).load(user.getPhotoUrl()).transform(new RoundedCornersTransformation(this,8,8)).into(profile);
+
+
         } else {
             // No user is signed in
         }
@@ -323,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            String a = SNSNotificationService.class.getName();
+            String b = service.service.getClassName();
             if (SNSNotificationService.class.getName().equals(service.service.getClassName())) {
                 return true;
             }
@@ -474,45 +493,35 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     private void getItemFromFB() {
-        DatabaseReference myRef = FirebaseHelper.getInstance(context).getCurrentUserRef().child("post");
+        DatabaseReference myRef = FirebaseHelper.getInstance(context).getCurrentUserRef().child("posts");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("firebasesync", snapshot.getValue().toString());
+                    Log.d("firebasesyncsnap", snapshot.getValue().toString());
                     DatabaseReference postRef = FirebaseHelper.getInstance(context).getPostsRef().child(snapshot.getValue().toString());
-                    postRef.addValueEventListener(new ValueEventListener() {
+
+
+                    postRef.addChildEventListener(new ChildEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                            int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
-                            String uid = dataSnapshot.child("uid").getValue().toString();
-                            Log.d("firebasesync", uid);
-                            BaseDTO item;
-                            switch (type) {
-                                case RealmClassHelper.CALL_DATA:
-                                    item = dataSnapshot.child("item").getValue(CallDTO.class);
-                                    break;
-                                case RealmClassHelper.CUSTOM_DATA:
-                                    item = dataSnapshot.child("item").getValue(CustomDTO.class);
-                                    break;
-                                case RealmClassHelper.PHOTO_DATA:
-                                    item = dataSnapshot.child("item").getValue(PhotoDTO.class);
-                                    break;
-                                case RealmClassHelper.PHOTO_GROUP_DATA:
-                                    item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
-                                    break;
-                                case RealmClassHelper.SMS_TRADE_DATA:
-                                    item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
-                                    break;
-                                default:
-                                    item = null;
-                            }
+                        }
 
-                            items.add(item);
-                            Collections.sort(items, new ItemComparator());
-                            adapter.updateItem(items);
-                            adapter.notifyDataSetChanged();
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
                         }
 
                         @Override
@@ -520,6 +529,49 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
                         }
                     });
+
+//                    postRef.addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                         if(dataSnapshot.hasChildren()){
+//                             int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
+//
+//                             BaseDTO item;
+//                             switch (type) {
+//                                 case RealmClassHelper.CALL_DATA:
+//                                     item = dataSnapshot.child("item").getValue(CallDTO.class);
+//                                     break;
+//                                 case RealmClassHelper.CUSTOM_DATA:
+//                                     item = dataSnapshot.child("item").getValue(CustomDTO.class);
+//                                     break;
+//                                 case RealmClassHelper.PHOTO_DATA:
+//                                     item = dataSnapshot.child("item").getValue(PhotoDTO.class);
+//                                     break;
+//                                 case RealmClassHelper.PHOTO_GROUP_DATA:
+//                                     item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
+//                                     break;
+//                                 case RealmClassHelper.SMS_TRADE_DATA:
+//                                     item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
+//                                     break;
+//                                 default:
+//                                     item = null;
+//                             }
+//
+//                             items.add(item);
+//                             Collections.sort(items, new ItemComparator());
+//                             adapter.updateItem(items);
+//                             adapter.notifyDataSetChanged();
+//                         }
+//
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
                 }
             }
 
@@ -551,72 +603,84 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
     @Override
+    public void onDatePinClick(BaseDTO item) {
+        Intent intent = new Intent(this, DayActivity.class);
+        intent.putExtra("date", item.getDate());
+        startActivity(intent);
+    }
+    @Override
     public void onNotifyItemClick(BaseDTO item) {
         Intent intent = new Intent(this, UnitActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().NOTIFY_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().NOTIFY_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((NotifyGroupDTO)item));
         startActivity(intent);
     }
 
     @Override
     public void onSmsGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, UnitActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().SMS_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().SMS_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((SmsGroupDTO)item));
         startActivity(intent);
     }
+
 
     @Override
     public void onSmsTradeItemClick(BaseDTO item) {
         Intent intent = new Intent(this, SmsTradeActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().SMS_TRADE_DATA);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onDatePinClick(BaseDTO item) {
-        Intent intent = new Intent(this, DayActivity.class);
-        intent.putExtra("date", item.getDate());
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().SMS_TRADE_DATA);
+        intent.putExtra("item", Parcels.wrap((SmsTradeDTO)item));
         startActivity(intent);
     }
 
     @Override
     public void onPhotoGroupItemClick(BaseDTO item) {
         Intent intent = new Intent(this, PhotoActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().PHOTO_GROUP_DATA);
-
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().PHOTO_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((PhotoGroupDTO)item));
         startActivity(intent);
     }
+
+
 
     @Override
     public void onGpsItemClick(BaseDTO item) {
         Intent intent = new Intent(this, GpsStillActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().GPS_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().GPS_DATA);
+        intent.putExtra("item", Parcels.wrap((GpsDTO)item));
         startActivity(intent);
     }
 
     @Override
     public void onCallItemClick(BaseDTO item) {
         Intent intent = new Intent(this, CallActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onGpsGroupItemClick(BaseDTO item) {
-
-        Intent intent = new Intent(this, GpsGroupActivity.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("type", RealmClassHelper.getInstance().GPS_GROUP_DATA);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
+        intent.putExtra("item", Parcels.wrap((CallDTO)item));
         startActivity(intent);
     }
 
     @Override
     public void onCustomItemClick(BaseDTO item) {
+        Intent intent = new Intent(this, CallActivity.class);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().CALL_DATA);
+        intent.putExtra("item", Parcels.wrap((CustomDTO)item));
+        startActivity(intent);
+    }
+    @Override
+    public void onGpsGroupItemClick(BaseDTO item) {
+        Intent intent = new Intent(this, GpsGroupActivity.class);
+//        intent.putExtra("id", item.getId());
+//        intent.putExtra("type", RealmClassHelper.getInstance().GPS_GROUP_DATA);
+        intent.putExtra("item", Parcels.wrap((GpsGroupDTO)item));
+
+        startActivity(intent);
 
     }
 

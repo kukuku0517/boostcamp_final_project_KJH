@@ -30,15 +30,19 @@ public class GpsGroupData extends RealmObject implements MyRealmCommentableObjec
 
     private boolean share;
     String originId;
-  List<String> friend=new ArrayList<>();
+    String friends="[]";
 
-    public List<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
+
 
     public String getOriginId() {
         return originId;

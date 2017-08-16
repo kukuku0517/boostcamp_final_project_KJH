@@ -31,7 +31,7 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         }
         this.highlight = data.isHighlight();
         this.share = data.isShare();
-        this.friend = data.getFriend();
+        this.friends=data.getFriends();
     }
 
 
@@ -40,16 +40,18 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     long start, end;
     String place, comment;
     ArrayList<PhotoDTO> photoss = new ArrayList<>();
-    ;
-    ArrayList<String> friend = new ArrayList<>();
+    String friends="[]";
 
-    public ArrayList<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
 
     boolean highlight = false;
     boolean share;

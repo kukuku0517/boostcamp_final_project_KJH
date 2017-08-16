@@ -25,16 +25,20 @@ public class PhotoData extends RealmObject implements MyRealmCommentableObject ,
     private boolean highlight = false;
     private long photoGroupId;
     private boolean share;
+    String friends="[]";
 
-   List<String> friend=new ArrayList<>();
-
-    public List<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
+
+
     @Override
     public boolean isShare() {
         return share;

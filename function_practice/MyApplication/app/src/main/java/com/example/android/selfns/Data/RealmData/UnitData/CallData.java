@@ -23,15 +23,18 @@ public class CallData extends RealmObject implements MyRealmCommentableObject, M
     private String person, number, comment;
     private boolean highlight = false;
     private boolean share = false;
-    List<String> friend = new ArrayList<>();
+    String friends="[]";
 
-    public List<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
 
     public boolean isShare() {
         return share;

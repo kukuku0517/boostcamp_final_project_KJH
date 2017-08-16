@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
@@ -125,6 +127,8 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
     public void onBindViewHolder(DayViewHolder holder, int position) {
         BaseDTO item = (BaseDTO) items.get(position);
         holder.bindType(item);
+        Animation animation = AnimationUtils.loadAnimation(context,R.anim.fade_in_item);
+        holder.itemView.startAnimation(animation);
 
     }
 

@@ -8,8 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -49,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.sign_up_facebook)
     LoginButton signUpFB;
 
+
     private FirebaseAuth mAuth;
     // ...
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -64,7 +68,9 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-        mAuth = FirebaseAuth.getInstance();
+
+
+    mAuth = FirebaseAuth.getInstance();
         mCallbackManager = CallbackManager.Factory.create();
         signUpFB.setReadPermissions("email", "public_profile");
 

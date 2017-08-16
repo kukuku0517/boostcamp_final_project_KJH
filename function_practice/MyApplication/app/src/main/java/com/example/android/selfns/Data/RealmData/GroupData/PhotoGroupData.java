@@ -17,26 +17,30 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-08-03.
  */
 
-public class PhotoGroupData extends RealmObject implements MyRealmCommentableObject,MyRealmShareableObject,MyRealmGpsObject {
+public class PhotoGroupData extends RealmObject implements MyRealmCommentableObject, MyRealmShareableObject, MyRealmGpsObject {
     @PrimaryKey
     private long id;
     private int count;
     private long start, end;
-    private String place,comment;
+    private String place, comment;
     private RealmList<PhotoData> photoss;
-String originId;
+    String originId;
     private boolean highlight = false;
     private boolean share;
+    String friends="[]";
 
-   List<String> friend=new ArrayList<>();
-
-    public List<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
+
+
     public String getOriginId() {
         return originId;
     }
@@ -45,7 +49,7 @@ String originId;
         this.originId = originId;
     }
 
-    public PhotoGroupData(){
+    public PhotoGroupData() {
 
     }
 
@@ -56,7 +60,7 @@ String originId;
 
     @Override
     public void setShare(boolean share) {
-        this.share=share;
+        this.share = share;
     }
 
     @Override
@@ -66,7 +70,7 @@ String originId;
 
     @Override
     public void setHighlight(boolean highlight) {
-        this.highlight=highlight;
+        this.highlight = highlight;
     }
 
 
@@ -146,7 +150,7 @@ String originId;
 
     @Override
     public void setComment(String comment) {
-this.comment = comment;
+        this.comment = comment;
     }
 
 

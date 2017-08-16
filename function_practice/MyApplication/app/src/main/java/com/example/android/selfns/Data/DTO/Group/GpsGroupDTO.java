@@ -1,4 +1,5 @@
 package com.example.android.selfns.Data.DTO.Group;
+
 import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.CommentableDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.GpsableDTO;
@@ -25,15 +26,18 @@ public class GpsGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     boolean highlight = false;
     long endId = -1, startId = -1;
     String originId;
-    ArrayList<String> friend=new ArrayList<>();
+    String friends="[]";
 
-    public ArrayList<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
 
     public String getOriginId() {
         return originId;
@@ -56,7 +60,7 @@ public class GpsGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.lat = data.getLat();
         this.lng = data.getLng();
         this.share = data.isShare();
-        this.friend=data.getFriend();
+        this.friends = data.getFriends();
         for (GpsData d : data.getGpsDatas()) {
             this.gpsDatas.add(new GpsDTO(d));
         }

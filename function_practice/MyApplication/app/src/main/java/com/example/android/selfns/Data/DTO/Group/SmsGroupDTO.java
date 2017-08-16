@@ -22,7 +22,7 @@ public class SmsGroupDTO implements BaseDTO {
 
     long id;
 
-    ArrayList<SmsUnitDTO> units;
+    ArrayList<SmsUnitDTO> units=new ArrayList<>();;
     long start, end;
 
     public SmsGroupDTO(SmsGroupData data) {

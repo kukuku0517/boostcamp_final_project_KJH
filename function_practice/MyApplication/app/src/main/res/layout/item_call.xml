@@ -95,9 +95,10 @@
 
         </FrameLayout>
 
-      <include layout="@layout/item_base_people"
-          android:id="@+id/item_people"/>
 
+        <include layout="@layout/item_base_people"
+            android:id="@+id/item_people"
+            />
     </LinearLayout>
 
 </LinearLayout>

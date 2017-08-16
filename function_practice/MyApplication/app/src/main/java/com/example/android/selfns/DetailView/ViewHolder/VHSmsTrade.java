@@ -111,7 +111,7 @@ public class VHSmsTrade extends DayViewHolder {
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemInteractionUtil.getInstance(context).shareItem(item);
+                ItemInteractionUtil.getInstance(context).shareItem(stData);
             }
         });
         view.setOnClickListener(new View.OnClickListener() {

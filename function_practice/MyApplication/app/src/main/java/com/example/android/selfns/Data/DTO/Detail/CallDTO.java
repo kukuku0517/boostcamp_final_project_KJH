@@ -22,15 +22,19 @@ public class CallDTO implements CommentableDTO, ShareableDTO {
     String person, number, comment;
     boolean highlight = false;
     boolean share = false;
-    ArrayList<String> friend=new ArrayList<>();
+    String friends="[]";
 
-    public ArrayList<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
+
     public CallDTO() {
 
     }
@@ -49,7 +53,7 @@ public class CallDTO implements CommentableDTO, ShareableDTO {
         this.comment = data.getComment();
         this.highlight = data.isHighlight();
         this.share = data.isShare();
-        this.friend=data.getFriend();
+        this.friends=data.getFriends();
     }
 
     public boolean isHighlight() {

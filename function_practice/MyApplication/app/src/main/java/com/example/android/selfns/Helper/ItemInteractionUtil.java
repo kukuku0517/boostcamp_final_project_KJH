@@ -27,11 +27,18 @@ import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
 import com.example.android.selfns.ExtraView.Comment.CommentDialogFragment;
 import com.example.android.selfns.ExtraView.Friend.FriendDialogFragment;
 import com.example.android.selfns.LoginView.UserDTO;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
+
+import java.io.FileNotFoundException;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -86,8 +93,12 @@ public class ItemInteractionUtil {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                Log.d("highlight", "asdf");
-                item.setHighlight(!item.isHighlight());
+                Class c = RealmClassHelper.getInstance().getClass(item.getType());
+                MyRealmCommentableObject myItem = (MyRealmCommentableObject) realm.where(c).equalTo("id", item.getId()).findFirst();
+
+                Log.d("highlight", String.valueOf(item.isHighlight()));
+                myItem.setHighlight(!item.isHighlight());
+                Log.d("highlight", String.valueOf(item.isHighlight()));
             }
         });
     }
@@ -231,14 +242,38 @@ public class ItemInteractionUtil {
         });
     }
 
-    public void shareItem(final BaseDTO item) {
+    public void shareItem(final ShareableDTO item) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-// Add the buttons
         builder.setPositiveButton("공유하기", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 int type = item.getType();
-                FirebaseHelper.getInstance(context).setPost(type, item);
+                item.setShare(true);
+
+                String key = null;
+                if (type == RealmClassHelper.PHOTO_GROUP_DATA) {
+                    try {
+                        key = FirebaseHelper.getInstance(context).setPostPhotoGroup(type,(PhotoGroupDTO) item);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    key = FirebaseHelper.getInstance(context).setPost(type, item);
+                }
+                JSONArray friends = null;
+                try {
+                    friends = new JSONArray(item.getFriends());
+                    for (int i = 0; i < friends.length(); i++) {
+                        JSONObject friend = friends.getJSONObject(i);
+                        String uid = friend.get("id").toString();
+                        FirebaseHelper.getInstance(context).sendPostMessage(uid, key);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -282,9 +317,17 @@ public class ItemInteractionUtil {
         dialogFragment.show(fm, "fragment_dialog_test");
     }
 
-    public void addFriend(final ShareableDTO item, UserDTO user) {
-        final String uid =user.getUid();
-        item.getFriend().add(uid);
+    public void addFriend(final ShareableDTO item, UserDTO user) throws JSONException {
+        final String uid = user.getUid();
+
+        JSONArray jsonArray = new JSONArray(item.getFriends());
+        JSONObject json = new JSONObject();
+        json.put("id", uid);
+        jsonArray.put(json);
+        final String friendsString = jsonArray.toString();
+        item.setFriends(friendsString);
+
+
         if (!item.isShare()) {
             final int type = item.getType();
             final Class c = RealmClassHelper.getInstance().getClass(type);
@@ -296,27 +339,27 @@ public class ItemInteractionUtil {
                     switch (type) {
                         case RealmClassHelper.CALL_DATA:
                             CallData callData = (CallData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            callData.getFriend().add(uid);
+                            callData.setFriends(friendsString);
                             break;
                         case RealmClassHelper.CUSTOM_DATA:
                             CustomData customData = (CustomData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            customData.getFriend().add(uid);
+                            customData.setFriends(friendsString);
                             break;
                         case RealmClassHelper.PHOTO_GROUP_DATA:
                             PhotoGroupData photoGroupData = (PhotoGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            photoGroupData.getFriend().add(uid);
+                            photoGroupData.setFriends(friendsString);
                             break;
                         case RealmClassHelper.PHOTO_DATA:
                             PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            photoData.getFriend().add(uid);
+                            photoData.setFriends(friendsString);
                             break;
                         case RealmClassHelper.SMS_TRADE_DATA:
                             SmsTradeData smsTradeData = (SmsTradeData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            smsTradeData.getFriend().add(uid);
+                            smsTradeData.setFriends(friendsString);
                             break;
                         case RealmClassHelper.GPS_GROUP_DATA:
                             GpsGroupData gpsGroupData = (GpsGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            gpsGroupData.getFriend().add(uid);
+                            gpsGroupData.setFriends(friendsString);
                             break;
                     }
                 }

@@ -27,15 +27,19 @@ public class SmsTradeDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
 
     boolean highlight = false;
     boolean share;
-    ArrayList<String> friend=new ArrayList<>();
+    String friends="[]";
 
-    public ArrayList<String> getFriend() {
-        return friend;
+    @Override
+    public String getFriends() {
+        return friends;
     }
 
-    public void setFriend(ArrayList<String> friend) {
-        this.friend = friend;
+    @Override
+    public void setFriends(String friends) {
+        this.friends = friends;
     }
+
+
     public SmsTradeDTO(SmsTradeData data) {
         this.id = data.getId();
         this.address = data.getAddress();
@@ -49,7 +53,7 @@ public class SmsTradeDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.date = data.getDate();
         this.lat = data.getLat();
         this.lng = data.getLng();
-        this.friend=data.getFriend();
+        this.friends=data.getFriends();
     }
 
 
