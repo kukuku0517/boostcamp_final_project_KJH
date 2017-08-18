@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.android.selfns.Data.DTO.Detail.SmsDTO;
 import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
@@ -76,7 +78,8 @@ public class SmsAdapter extends AbstractExpandableItemAdapter<VHSms, VHSmsChild>
     @Override
     public void onBindGroupViewHolder(VHSms holder, int groupPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
         SmsUnitDTO unitdata = items.getUnits().get(groupPosition);
-        holder.bindType(unitdata);
+        holder.bindType(unitdata);    Animation animation = AnimationUtils.loadAnimation(context,R.anim.fade_in_item);
+        holder.itemView.startAnimation(animation);
     }
 
     @Override

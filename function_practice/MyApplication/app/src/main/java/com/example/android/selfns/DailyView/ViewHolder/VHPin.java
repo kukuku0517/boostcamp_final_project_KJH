@@ -8,7 +8,11 @@ import com.example.android.selfns.Data.DTO.Detail.DatePinDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Interface.DatePinClickListener;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -48,4 +52,7 @@ public class VHPin extends DayViewHolder {
             }
         });
     }
-}
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+
+    }}

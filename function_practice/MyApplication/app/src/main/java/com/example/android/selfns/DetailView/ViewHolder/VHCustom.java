@@ -12,9 +12,13 @@ import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.LineType;
 import com.github.vipulasri.timelineview.TimelineView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -149,5 +153,9 @@ public class VHCustom extends DayViewHolder {
             }
         });
 
+    }   List<UserDTO> items = new ArrayList<>();
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+        this.items = users;
     }
 }

@@ -11,6 +11,7 @@ import com.example.android.selfns.Helper.RealmClassHelper;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by samsung on 2017-08-15.
@@ -84,9 +85,9 @@ public class GpsGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.share = share;
     }
 
-    ArrayList<GpsDTO> gpsDatas = new ArrayList<>();
+    List<GpsDTO> gpsDatas = new ArrayList<>();
 
-    public ArrayList<GpsDTO> getGpsDatas() {
+    public List<GpsDTO> getGpsDatas() {
         return gpsDatas;
     }
 

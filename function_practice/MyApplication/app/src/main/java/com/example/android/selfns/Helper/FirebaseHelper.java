@@ -64,6 +64,8 @@ public class FirebaseHelper {
     public final String UID = "uid";
     public final String ITEM = "item";
 
+    public final String COUNT = "count";
+
 
     public FirebaseHelper(Context context) {
         this.context = context;
@@ -234,9 +236,27 @@ public class FirebaseHelper {
         myRef.child(ITEM).setValue(item);
 
         DatabaseReference userRef = getCurrentUserRef().child(POSTS).push();
+//        userRef.runTransaction(new Transaction.Handler() {
+//            @Override
+//            public Transaction.Result doTransaction(MutableData mutableData) {
+//                if(mutableData.child(COUNT)==null){
+//                    mutableData.child(COUNT).setValue(1);
+//                }else{
+//                    int count = (int) mutableData.child(COUNT).getValue();
+//                    mutableData.child(COUNT).setValue(count+1);
+//                }
+//
+//                return null;
+//            }
+//
+//            @Override
+//            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+//
+//            }
+//        });
+
         String pushKey = userRef.getKey();
         userRef.setValue(key);
-
         return pushKey;
     }
 

@@ -6,6 +6,8 @@ import com.example.android.selfns.Data.RealmData.GroupData.NotifyUnitData;
 import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
 import com.example.android.selfns.Helper.RealmClassHelper;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 
 import io.realm.annotations.PrimaryKey;
@@ -14,9 +16,9 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-08-15.
  */
 
+@Parcel
 public class NotifyUnitDTO implements CommentableDTO{
 
-    @PrimaryKey
     private long id;
     private int count;
     private long start, end;

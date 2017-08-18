@@ -1,4 +1,5 @@
 package com.example.android.selfns.Data.DTO.Detail;
+
 import com.example.android.selfns.Data.DTO.interfaceDTO.CommentableDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.GpsableDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
@@ -13,17 +14,17 @@ import java.util.ArrayList;
  * Created by samsung on 2017-08-15.
  */
 @Parcel
-public class PhotoDTO implements CommentableDTO,ShareableDTO,GpsableDTO {
+public class PhotoDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
 
-long id;
+    long id;
 
-long date;
- double lat, lng;
-    String place, comment,originId;
- boolean highlight = false;
- long photoGroupId;
-  boolean share;
-    String friends="[]";
+    long date;
+    double lat, lng;
+    String place, comment, originId;
+    boolean highlight = false;
+    long photoGroupId;
+    boolean share;
+    String friends = "[]";
 
     @Override
     public String getFriends() {
@@ -39,6 +40,7 @@ long date;
     public PhotoDTO() {
 
     }
+
     public PhotoDTO(PhotoData data) {
         this.id = data.getId();
         this.date = data.getDate();
@@ -50,8 +52,8 @@ long date;
         this.photoGroupId = data.getPhotoGroupId();
         this.share = data.isShare();
         this.path = data.getPath();
-        this.originId=data.getOriginId();
-        this.friends=data.getFriends();
+        this.originId = data.getOriginId();
+        this.friends = data.getFriends();
     }
 
 
@@ -62,7 +64,7 @@ long date;
 
     @Override
     public void setShare(boolean share) {
-        this.share=share;
+        this.share = share;
     }
 
     public long getPhotoGroupId() {
@@ -72,6 +74,7 @@ long date;
     public void setPhotoGroupId(long photoGroupId) {
         this.photoGroupId = photoGroupId;
     }
+
     @Override
     public boolean isHighlight() {
         return highlight;
@@ -98,7 +101,7 @@ long date;
 
     @Override
     public void setOriginId(String originId) {
-this.originId=originId;
+        this.originId = originId;
     }
 
     public void setPlace(String place) {

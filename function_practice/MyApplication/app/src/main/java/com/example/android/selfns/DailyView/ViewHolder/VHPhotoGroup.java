@@ -196,5 +196,9 @@ public class VHPhotoGroup extends DayViewHolder {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }   List<UserDTO> items = new ArrayList<>();
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+        this.items = users;
     }
 }

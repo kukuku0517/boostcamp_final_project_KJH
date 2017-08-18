@@ -12,11 +12,14 @@ import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Interface.PhotoItemClickListener;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -69,5 +72,9 @@ public class VHPhoto extends DayViewHolder {
 //                ItemInteractionUtil.getInstance(context).shareItem(item);
 //            }
 //        });
+    }   List<UserDTO> items = new ArrayList<>();
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+        this.items = users;
     }
 }

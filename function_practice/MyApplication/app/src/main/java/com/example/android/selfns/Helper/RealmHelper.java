@@ -12,6 +12,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.example.android.selfns.Data.DTO.Group.NotifyUnitDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsUnitDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
 import com.example.android.selfns.Data.RealmData.DayData;
 import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
@@ -40,7 +43,7 @@ import io.realm.RealmResults;
  */
 
 public class RealmHelper {
-    public static Context context;
+    private static Context context;
     private static RealmHelper instance;
 
     public static RealmHelper getInstance() {
@@ -64,8 +67,8 @@ public class RealmHelper {
     public DayData getDayObject(Realm realm, long date) {
         final long[] today = DateHelper.getInstance().getStartEndDate(date);
         final DayData[] dayData = new DayData[1];
-
-        realm.executeTransaction(new Realm.Transaction() {
+        Realm realm2 = Realm.getDefaultInstance();
+        realm2.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 dayData[0] = realm.where(DayData.class).equalTo("start", today[0]).findFirst();
@@ -84,6 +87,7 @@ public class RealmHelper {
 
     //해당 realmObject class의 id auto-increment한 값
     public int nextId(Class c, Realm realm) {
+
         Number currentIdNum = realm.where(c).max("id");
         int nextId;
         if (currentIdNum == null) {
@@ -547,6 +551,19 @@ public class RealmHelper {
         });
     }
 
+    public RealmResults<RealmObject> DataCommentQuery(Class c, String commentQuery, String dateQuery, long start, long end) {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).contains("comment", commentQuery).between(dateQuery, start, end).findAll();
+        return cData;
+    }
+
+    public RealmResults<RealmObject> DataContentQuery(Class c, String contentQuery, String dateQuery, long start, long end) {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).contains("comment", contentQuery).between(dateQuery, start, end).findAll();
+        return cData;
+    }
+
+
     public RealmResults<RealmObject> DataLoad(Class c, String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).between(query, start, end).findAll();
@@ -626,38 +643,41 @@ public class RealmHelper {
         });
     }
 
-    public void notifyUnitDataDelete(final RealmObject item) {
+    public void notifyUnitDataDelete(final BaseDTO item) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
 
             @Override
             public void execute(Realm realm) {
-                NotifyUnitData notifyUnitData = (NotifyUnitData) item;
-                long id = notifyUnitData.getNotifyGroupId();
+                NotifyUnitDTO notifyUnitDTO = (NotifyUnitDTO) item;
+                long id = notifyUnitDTO.getNotifyGroupId();
                 NotifyGroupData notifyGroupData = realm.where(NotifyGroupData.class).equalTo("id", id).findFirst();
                 int count = notifyGroupData.getUnits().size();
 //                if(count==1){
 //                    notifyGroupData.deleteFromRealm();
 //                }
+                NotifyUnitData notifyUnitData = realm.where(NotifyUnitData.class).equalTo("id", item.getId()).findFirst();
                 notifyUnitData.getNotifys().deleteAllFromRealm();
                 notifyUnitData.deleteFromRealm();
             }
         });
     }
 
-    public void smsUnitDataDelete(final RealmObject item) {
+    public void smsUnitDataDelete(final BaseDTO item) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
 
             @Override
             public void execute(Realm realm) {
-                SmsUnitData smsUnitData = (SmsUnitData) item;
-                long id = smsUnitData.getSmsGroupId();
+                SmsUnitDTO smsUnitDTO = (SmsUnitDTO) item;
+                long id = smsUnitDTO.getSmsGroupId();
                 SmsGroupData smsGroupData = realm.where(SmsGroupData.class).equalTo("id", id).findFirst();
                 int count = smsGroupData.getUnits().size();
 //                if(count==1){
 //                    notifyGroupData.deleteFromRealm();
 //                }
+                SmsUnitData smsUnitData = realm.where(SmsUnitData.class).equalTo("id", item.getId()).findFirst();
+
                 smsUnitData.getSmss().deleteAllFromRealm();
                 smsUnitData.deleteFromRealm();
             }
@@ -674,7 +694,7 @@ public class RealmHelper {
         });
     }
 
-    public void setDate(){
+    public void setDate() {
 
     }
 

@@ -22,9 +22,12 @@ import com.example.android.selfns.DailyView.ViewHolder.VHPhotoGroup;
 import com.example.android.selfns.DailyView.ViewHolder.VHSmsGroup;
 import com.example.android.selfns.DetailView.ViewHolder.VHSmsTrade;
 import com.example.android.selfns.Helper.RealmClassHelper;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import io.realm.Realm;
 
@@ -38,7 +41,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
 
     private ArrayList<BaseDTO> items;
     private Realm realm;
-
+    HashMap<Integer, List<UserDTO>> usersHash;
     public DayAdapter(Context context, Realm realm) {
         this.context = context;
         this.realm = realm;
@@ -127,8 +130,9 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
     public void onBindViewHolder(DayViewHolder holder, int position) {
         BaseDTO item = (BaseDTO) items.get(position);
         holder.bindType(item);
-        Animation animation = AnimationUtils.loadAnimation(context,R.anim.fade_in_item);
-        holder.itemView.startAnimation(animation);
+        if (usersHash.containsKey(position)) {
+            holder.bindTag((ArrayList<UserDTO>) usersHash.get(position));
+        }
 
     }
 
@@ -143,11 +147,12 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
         return item.getType();
     }
 
-    public void updateItem(ArrayList<BaseDTO> item) {
+
+    public void updateItem(ArrayList<BaseDTO> item, HashMap<Integer, List<UserDTO>> usersHash) {
         this.items = item;
+        this.usersHash = usersHash;
         notifyDataSetChanged();
     }
-
 
     private Context context;
 

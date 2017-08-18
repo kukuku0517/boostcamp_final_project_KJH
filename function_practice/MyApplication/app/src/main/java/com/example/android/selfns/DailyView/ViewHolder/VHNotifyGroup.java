@@ -7,8 +7,12 @@ import android.widget.TextView;
 import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -68,5 +72,9 @@ public class VHNotifyGroup extends DayViewHolder {
                 mListener.onNotifyItemClick(item);
             }
         });
+    }
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+
     }
 }

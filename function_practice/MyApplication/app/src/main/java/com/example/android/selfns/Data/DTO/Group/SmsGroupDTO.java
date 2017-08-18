@@ -9,6 +9,7 @@ import com.example.android.selfns.Helper.RealmClassHelper;
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by samsung on 2017-08-15.
@@ -22,7 +23,7 @@ public class SmsGroupDTO implements BaseDTO {
 
     long id;
 
-    ArrayList<SmsUnitDTO> units=new ArrayList<>();;
+   List<SmsUnitDTO> units=new ArrayList<>();;
     long start, end;
 
     public SmsGroupDTO(SmsGroupData data) {
@@ -51,7 +52,7 @@ public class SmsGroupDTO implements BaseDTO {
         this.end = end;
     }
 
-    public ArrayList<SmsUnitDTO> getUnits() {
+    public List<SmsUnitDTO> getUnits() {
         return units;
     }
 

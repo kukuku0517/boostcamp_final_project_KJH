@@ -30,9 +30,7 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name=".LoginView.FriendActivity" >
-
-        </activity>
+        <activity android:name=".LoginView.FriendActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,9 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".DailyView.WriteActivity" />
-        <activity android:name=".LoginView.LoginActivity">
-
-        </activity>
+        <activity android:name=".LoginView.LoginActivity" />
         >
         <activity android:name=".LoginView.SignUpActivity" />
         <activity android:name=".DailyView.MainActivity" />
@@ -96,7 +92,8 @@
             android:enabled="true"
             android:exported="true" />
 
-
+        <activity android:name=".DailyView.StatsActivity" />
+        <activity android:name=".DailyView.SearchActivity"></activity>
     </application>
 
 </manifest>

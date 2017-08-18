@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.android.selfns.Data.DTO.Detail.NotifyDTO;
 import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
@@ -26,7 +28,7 @@ import io.realm.RealmChangeListener;
  * Created by samsung on 2017-08-02.
  */
 
-public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNotifyChild> implements CommentBtnClickListener {
+public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify, VHNotifyChild> implements CommentBtnClickListener {
 
     private NotifyGroupDTO items;
     private Context context;
@@ -36,7 +38,7 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
     public NotifyAdapter(Context context, Realm realm) {
         setHasStableIds(true);
         this.context = context;
-        this.realm=realm;
+        this.realm = realm;
         realm.addChangeListener(new RealmChangeListener<Realm>() {
             @Override
             public void onChange(Realm realm) {
@@ -45,9 +47,8 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
         });
     }
 
-    public void setItems(NotifyGroupDTO items)
-    {
-        this.items=items;
+    public void setItems(NotifyGroupDTO items) {
+        this.items = items;
     }
 
     @Override
@@ -72,9 +73,9 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public VHNotify onCreateGroupViewHolder(ViewGroup parent, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notify, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notify, parent, false);
 
-        return new VHNotify(v,this,context);
+        return new VHNotify(v, this, context);
     }
 
     @Override
@@ -85,10 +86,11 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public void onBindGroupViewHolder(VHNotify holder, int groupPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
-        NotifyUnitDTO unitdata =items.getUnits().get(groupPosition);
+        NotifyUnitDTO unitdata = items.getUnits().get(groupPosition);
 
-            holder.bindType(unitdata);
-
+        holder.bindType(unitdata);
+        Animation animation = AnimationUtils.loadAnimation(context,R.anim.fade_in_item);
+        holder.itemView.startAnimation(animation);
 
     }
 
@@ -106,7 +108,7 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
     public void onBindChildViewHolder(VHNotifyChild holder, int groupPosition, int childPosition, @IntRange(from = -8388608L, to = 8388607L) int viewType) {
         NotifyDTO child = items.getUnits().get(groupPosition).getNotifys().get(childPosition);
 
-            holder.bindType(child);
+        holder.bindType(child);
 
     }
 
@@ -118,17 +120,17 @@ public class NotifyAdapter extends AbstractExpandableItemAdapter<VHNotify,VHNoti
 
     @Override
     public void onClick(final Class c, final MyRealmObject item, final String text) {
-        Log.d("comments","onClick");
-        UnitActivity detail =  (UnitActivity)context;
+        Log.d("comments", "onClick");
+        UnitActivity detail = (UnitActivity) context;
         detail.setEditTextVisibility(View.VISIBLE);
 
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                MyRealmCommentableObject result = (MyRealmCommentableObject) realm.where(c).equalTo("id",item.getId()).findFirst();
-                if(result!=null){
-                    Log.d("comments","result");
+                MyRealmCommentableObject result = (MyRealmCommentableObject) realm.where(c).equalTo("id", item.getId()).findFirst();
+                if (result != null) {
+                    Log.d("comments", "result");
 
                     result.setComment(text);
 

@@ -1,9 +1,9 @@
 package com.example.android.selfns.DailyView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,16 +23,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.android.selfns.DailyView.Adapter.DayAdapter;
-import com.example.android.selfns.Background.ContentProviderData;
 import com.example.android.selfns.Data.DTO.Detail.CallDTO;
 import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
 import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
+import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
 import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
 import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
 import com.example.android.selfns.Data.RealmData.GroupData.NotifyGroupData;
 import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
@@ -45,6 +47,7 @@ import com.example.android.selfns.GroupView.PhotoActivity;
 import com.example.android.selfns.Data.RealmData.UnitData.CallData;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Helper.DateHelper;
+import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemComparator;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
@@ -52,6 +55,7 @@ import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.Interface.CardItemClickListener;
 import com.example.android.selfns.Helper.RealmClassHelper;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,12 +66,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.ui.IconGenerator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -77,6 +89,8 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+
+import static com.example.android.selfns.R.id.map;
 
 public class DayActivity extends AppCompatActivity implements CardItemClickListener, OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
@@ -91,66 +105,21 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
     @BindView(R.id.day_maplayout)
     View mapLayout;
 
-    Realm realmAsync;
     private Realm realm;
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
     private ArrayList<BaseDTO> items = new ArrayList<>();
     private List<MapItem> mapItems = new ArrayList<>();
+    HashMap<Integer, List<UserDTO>> usersHash = new HashMap<>();
+
     private long startMillis, endMillis, quarter;
     private boolean isMapOpen = false;
 
     private View marker_root_view;
     private ImageView iv_marker;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_day, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_map:
-                Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
-                        R.anim.slide_down);
-                Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
-                        R.anim.slide_up);
-                slide_up.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        mapLayout.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-
-                if (isMapOpen) {
-                    mapLayout.startAnimation(slide_up);
-                } else {
-                    mapLayout.setVisibility(View.VISIBLE);
-                    mapLayout.startAnimation(slide_down);
-                }
-                isMapOpen = !isMapOpen;
-                break;
-            case R.id.action_1:
-                rv.smoothScrollToPosition(1);
-                break;
-            case R.id.action_2:
-                rv.smoothScrollToPosition(10);
-                break;
-        }
-        return true;
-    }
+   private GoogleMap map;
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,30 +157,11 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         realm = Realm.getDefaultInstance();
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         adapter = new DayAdapter(this, realm);
+        adapter.setHasStableIds(true);
         pb.setVisibility(View.VISIBLE);
-//
-//        SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        getSharedPreferences("setting", Activity.MODE_PRIVATE);
-////        mPref.edit().putBoolean("init", true).commit();
-//
-//        if (!mPref.contains("init")) {
-//            Log.d("pref", "0");
-//            new RealmAsync().execute(0);
-//            new RealmAsync().execute(1);
-//            new RealmAsync().execute(2);
-//        } else if (!mPref.getBoolean("init", false)) {
-//            Log.d("pref", "1");
-//            new RealmAsync().execute(0);
-//            new RealmAsync().execute(1);
-//            new RealmAsync().execute(2);
-//        } else {
-//            Log.d("pref", "2");
-//            displayRecyclerView();
-//        }
         displayRecyclerView();
     }
 
-    GoogleMap map;
 
     @Override
     public void onMapReady(GoogleMap mMap) {
@@ -225,30 +175,6 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         map.setOnInfoWindowClickListener(this);
 
         setMarkerData(map);
-//        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-//            @Override
-//            public View getInfoWindow(Marker marker) {
-//                MapItem mapData = (MapItem) marker.getTag();
-//                MyRealmGpsObject data = mapData.getItem();
-//                marker_root_view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.map_marker_item, null);
-//                tv_marker = (TextView) marker_root_view.findViewById(R.id.marker_tv);
-//                tv_marker.setText(data.getPlace());
-//                Log.d("googleMarker", data.getPlace());
-//                if (data instanceof PhotoGroupData) {
-//                    PhotoGroupData photoData = (PhotoGroupData) data;
-//                    iv_marker = (ImageView) marker_root_view.findViewById(R.id.marker_iv);
-//                    iv_marker.setVisibility(View.VISIBLE);
-//                    Bitmap myBitmap = BitmapFactory.decodeFile(photoData.getPhotoss().get(0).getPath());
-//                    iv_marker.setImageBitmap(myBitmap);
-//                }
-//                return marker_root_view;
-//            }
-//
-//            @Override
-//            public View getInfoContents(Marker marker) {
-//                return null;
-//            }
-//        });
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -307,25 +233,155 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
 
     void displayRecyclerView() {
         pb.setVisibility(View.GONE);
-        getItemFromRealm();
-        adapter.updateItem(items);
+
+        adapter.updateItem(items,usersHash);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
+
+        updateItemFromDatabase(startMillis);
+
+        getItemFromRealm();
 
         realm.addChangeListener(new RealmChangeListener<Realm>() {
             @Override
             public void onChange(Realm realm) {
                 getItemFromRealm();
-                adapter.updateItem(items);
+                adapter.updateItem(items,usersHash);
                 adapter.notifyDataSetChanged();
 //                setMarkerData(map);
             }
         });
     }
 
-    private void getItemFromRealm() {
-        items.clear();
+    private void updateItemFromDatabase(final long millis) {
+        //공유한 posts의 id 가져오기
+        DatabaseReference myRef = FirebaseHelper.getInstance(context).getCurrentUserRef().child("posts");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int size = 0;
+                final int[] count = {0};
+
+                //posts의 count
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    size++;
+                }
+
+                //post id로 posts에서 글 찾아오기
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    DatabaseReference postRef = FirebaseHelper.getInstance(context).getPostsRef().child(snapshot.getValue().toString());
+                    final int finalSize = size;
+
+                    postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChildren()) {
+                                int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
+                                BaseDTO item;
+                                switch (type) {
+                                    case RealmClassHelper.CALL_DATA:
+                                        item = dataSnapshot.child("item").getValue(CallDTO.class);
+                                        break;
+                                    case RealmClassHelper.CUSTOM_DATA:
+                                        item = dataSnapshot.child("item").getValue(CustomDTO.class);
+                                        break;
+                                    case RealmClassHelper.PHOTO_DATA:
+                                        item = dataSnapshot.child("item").getValue(PhotoDTO.class);
+                                        break;
+                                    case RealmClassHelper.PHOTO_GROUP_DATA:
+                                        item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
+                                        break;
+                                    case RealmClassHelper.SMS_TRADE_DATA:
+                                        item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
+                                        break;
+                                    default:
+                                        item = null;
+                                }
+                                items.add(item);
+                                count[0]++;
+
+                                //posts 갯수만큼 가져온 후 items에 저장
+                                if (count[0] == finalSize) {
+
+                                    items.addAll(getItemFromRealm());
+                                    Collections.sort(items, new ItemComparator());
+
+                                    //--------------------------------------------------------------------------//
+
+                                    //friends값 있는 item의 친구리스트 index와 함께 저장하기
+
+                                    final int[] iCount = {0};
+                                    for (int i = 0; i < items.size(); i++) {
+                                        if (items.get(i) instanceof ShareableDTO) {
+                                            ShareableDTO sItem = (ShareableDTO) items.get(i);
+                                            try {
+                                                JSONArray friends = new JSONArray(sItem.getFriends());
+                                                final int fsize = friends.length();
+                                                final int[] fcount = {0};
+
+                                                for (int j = 0; j < fsize; j++) {
+                                                    final ArrayList<UserDTO> users = new ArrayList<>();
+                                                    JSONObject friend = friends.getJSONObject(j);
+                                                    String uid = friend.get("id").toString();
+                                                    DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
+                                                    final int finalI = i;
+                                                    fRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
+                                                            users.add(friend);
+                                                            fcount[0]++;
+                                                            Log.d("###Fire useradd", fcount[0] + " : " + fsize);
+                                                            if (fcount[0] == fsize) {
+                                                                usersHash.put(finalI, users);
+                                                                iCount[0]++;
+                                                                Log.d("###Fire userhashadd", finalI + ":" + iCount[0] + "/" + items.size());
+                                                                adapter.updateItem(items, usersHash);
+                                                                adapter.notifyItemChanged(finalI);
+                                                                if (iCount[0] == items.size()) {
+                                                                    Log.d("###Fire ended", "finished");
+                                                                    adapter.notifyDataSetChanged();
+                                                                }
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+                                                        }
+                                                    });
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else {
+                                            iCount[0]++;
+                                            Log.d("###Fire userhashadd", ":" + iCount[0] + "/" + items.size());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private ArrayList<BaseDTO>  getItemFromRealm() {
+
+
+
+        final ArrayList<BaseDTO> items = new ArrayList<>();
         RealmResults<RealmObject> cData = RealmHelper.getInstance().DataLoad(CallData.class, "date", startMillis, endMillis);
         RealmResults<RealmObject> pgData = RealmHelper.getInstance().DataLoad(PhotoGroupData.class, "start", startMillis, endMillis);
         RealmResults<RealmObject> smsTradeDatas = RealmHelper.getInstance().DataLoad(SmsTradeData.class, "date", startMillis, endMillis);
@@ -374,7 +430,10 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
                 mapItems.add(new MapItem(i, RealmClassHelper.PHOTO_GROUP_DATA, (MyRealmGpsObject) items.get(i)));
             }
         }
+
+        return items;
     }
+
 
 
     @Override
@@ -452,6 +511,57 @@ public class DayActivity extends AppCompatActivity implements CardItemClickListe
         startActivity(intent);
 
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_day, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_map:
+                Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
+                        R.anim.slide_down);
+                Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
+                        R.anim.slide_up);
+                slide_up.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mapLayout.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                if (isMapOpen) {
+                    mapLayout.startAnimation(slide_up);
+                } else {
+                    mapLayout.setVisibility(View.VISIBLE);
+                    mapLayout.startAnimation(slide_down);
+                }
+                isMapOpen = !isMapOpen;
+                break;
+            case R.id.action_1:
+                rv.smoothScrollToPosition(1);
+                break;
+            case R.id.action_2:
+                rv.smoothScrollToPosition(10);
+                break;
+        }
+        return true;
+    }
+
 
     class MapItem {
         private int position;

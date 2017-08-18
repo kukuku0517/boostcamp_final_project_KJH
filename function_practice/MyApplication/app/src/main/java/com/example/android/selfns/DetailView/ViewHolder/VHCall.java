@@ -136,9 +136,10 @@ public class VHCall extends DayViewHolder {
         if (callData.isHighlight()) {
             highlightBtn.setColorFilter(Color.YELLOW);
             highlightBtnAnim.setBtnColor(Color.YELLOW);
-            Log.d("highlight","yellow");
+            Log.d("highlight", "yellow");
         } else {
-            highlightBtn.setColorFilter(Color.BLACK);  Log.d("highlight","blcak");
+            highlightBtn.setColorFilter(Color.BLACK);
+            Log.d("highlight", "blcak");
             highlightBtnAnim.setBtnColor(Color.BLACK);
         }
 
@@ -203,7 +204,6 @@ public class VHCall extends DayViewHolder {
                 ItemInteractionUtil.getInstance(context).shareItem(callData);
             }
         });
-        final List<UserDTO> items = new ArrayList<>();
         layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         adapter = new TagAdapter(context);
         adapter.updateItem(items);
@@ -215,16 +215,16 @@ public class VHCall extends DayViewHolder {
             JSONArray friends = new JSONArray(callData.getFriends());
             for (int i = 0; i < friends.length(); i++) {
                 JSONObject friend = friends.getJSONObject(i);
-                String uid=friend.get("id").toString();
-                DatabaseReference fRef =  FirebaseHelper.getInstance(context).getUserRef(uid);
+                String uid = friend.get("id").toString();
+                DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
                 fRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                           UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                           items.add(friend);
-                           adapter.updateItem(items);
-                           adapter.notifyDataSetChanged();
+                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
+                        items.add(friend);
+                        adapter.updateItem(items);
+                        adapter.notifyDataSetChanged();
 
                     }
 
@@ -239,5 +239,11 @@ public class VHCall extends DayViewHolder {
         }
 
 
+    }
+
+    List<UserDTO> items = new ArrayList<>();
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+        this.items = users;
     }
 }

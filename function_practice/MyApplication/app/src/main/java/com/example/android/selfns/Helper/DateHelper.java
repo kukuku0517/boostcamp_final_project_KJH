@@ -87,5 +87,17 @@ public class DateHelper {
         return today.getTimeInMillis();
     }
 
+    public Calendar getMonth(long today) {
+        Date date = new Date(today);
+        Calendar c = new GregorianCalendar();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, 0);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c;
+    }
+
+
 
 }

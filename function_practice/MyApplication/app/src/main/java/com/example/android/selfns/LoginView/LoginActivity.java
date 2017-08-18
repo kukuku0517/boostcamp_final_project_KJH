@@ -104,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     FirebaseHelper.getInstance(context).setCurrentUser(FirebaseAuth.getInstance().getCurrentUser());
+                    finish();
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");

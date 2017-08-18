@@ -7,12 +7,15 @@ import android.widget.TextView;
 import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.SmsUnitDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -68,7 +71,7 @@ public class VHSmsGroup extends DayViewHolder {
         for (SmsUnitDTO sud : callData.getUnits()) {
             count += sud.getSmss().size();
         }
-        mcount.setText(String.format("총 %d개의 메세지",count));
+        mcount.setText(String.format("총 %d개의 메세지", count));
 
 
         view.setOnClickListener(new View.OnClickListener() {
@@ -77,5 +80,10 @@ public class VHSmsGroup extends DayViewHolder {
                 mListener.onSmsGroupItemClick(item);
             }
         });
+    }
+
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+
     }
 }

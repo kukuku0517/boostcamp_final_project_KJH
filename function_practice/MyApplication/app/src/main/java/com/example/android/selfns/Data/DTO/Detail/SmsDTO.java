@@ -26,8 +26,8 @@ public class SmsDTO implements BaseDTO {
         this.smsUnitId = data.getSmsUnitId();
     }
 
-    private boolean isSent;
-    private long smsUnitId;
+   boolean isSent;
+ long smsUnitId;
 
     public long getSmsUnitId() {
         return smsUnitId;

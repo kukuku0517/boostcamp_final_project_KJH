@@ -3,94 +3,102 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
+    android:layout_height="72dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
 
     >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:orientation="horizontal"
+
+        android:paddingRight="16dp"
+
         >
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@android:color/holo_blue_light">
+            android:layout_gravity="center_vertical">
 
-            <ImageView
-                android:id="@+id/sms_iv"
-                android:layout_width="match_parent"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/notify_iv"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/icon_account"
+                android:tint="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/notify_count"
+                style="@style/MyTheme.Textview.caption.black"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_person_black_24dp"
-                android:layout_gravity="center_vertical"
-                />
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@+id/notify_person"
+                android:background="@drawable/chip"
+                android:textColor="@android:color/white"
+                android:text="0" />
+        </FrameLayout>
 
-
-
-        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="8dp"
+
+            >
 
             <TextView
                 android:id="@+id/notify_person"
+                style="@style/MyTheme.Textview.title.black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/notify_delete"
                 android:layout_alignParentTop="true"
-                android:textStyle="bold"
+                android:singleLine="true"
                 android:text="TextView" />
 
-            <TextView
-                android:id="@+id/notify_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
 
-                android:layout_below="@id/notify_person"
-
-                android:text="TextView" />
 
             <TextView
                 android:id="@+id/notify_content"
+                style="@style/MyTheme.Textview.body.black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/notify_number"
-                android:text=""
+                android:layout_below="@id/notify_person"
                 android:hint="메모가 없습니다"
+                android:text=""
                 android:visibility="visible" />
 
-
-
-
-            <Button
-                android:id="@+id/notify_write"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                android:textColor="@android:color/holo_blue_light"
-                android:textStyle="bold"
-                android:text="Comment" />
-
-            <Button
+            <ImageButton
                 android:id="@+id/notify_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/notify_write"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/notify_write"
                 android:background="@android:color/transparent"
-                android:textColor="@android:color/holo_blue_light"
-                android:textStyle="bold"
-                android:text="delete" />
+                android:tint="@android:color/darker_gray"
+                app:srcCompat="@drawable/ic_delete_black_24dp" />
+
+            <ImageButton
+                android:id="@+id/notify_write"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:tint="@android:color/darker_gray"
+                app:srcCompat="@drawable/ic_message_black_24dp" />
+
 
         </RelativeLayout>
 

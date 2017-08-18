@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Helper.DateHelper;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.Calendar;
 
@@ -44,10 +46,10 @@ import io.realm.RealmResults;
 
 public class WriteActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     @BindView(R.id.write_title)
-    EditText title;
+    MaterialEditText title;
 
     @BindView(R.id.write_comment)
-    EditText comment;
+    MaterialEditText comment;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -86,6 +88,14 @@ public class WriteActivity extends AppCompatActivity implements OnMapReadyCallba
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(title.getText().equals("")){
+                    Toast.makeText(context,"제목을 입력하세요",Toast.LENGTH_SHORT).show();
+                    return;
+                }else if(comment.getText().equals("")){
+                    Toast.makeText(context,"내용을 입력하세요",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 RealmHelper.getInstance().customDataSave(title.getText().toString(), comment.getText().toString(),
                         placename, lat, lng, dateMIllis, tag.getText().toString());
                 onBackPressed();

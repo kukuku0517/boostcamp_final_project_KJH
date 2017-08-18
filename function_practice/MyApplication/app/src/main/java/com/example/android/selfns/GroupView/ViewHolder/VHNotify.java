@@ -4,8 +4,13 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
+import com.example.android.selfns.Data.DTO.Group.NotifyUnitDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.RealmData.GroupData.NotifyUnitData;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
@@ -25,16 +30,21 @@ import butterknife.ButterKnife;
 public class VHNotify extends AbstractExpandableItemViewHolder {
     @BindView(R.id.notify_person)
     TextView person;
-    @BindView(R.id.notify_number)
-    TextView number;
+
     @BindView(R.id.notify_content)
     TextView content;
 
+    @BindView(R.id.notify_count)
+    TextView count;
 
     @BindView(R.id.notify_write)
-    Button commentBtn;
+    ImageButton commentBtn;
+
     @BindView(R.id.notify_delete)
-    Button deleteBtn;
+    ImageButton deleteBtn;
+    @BindView(R.id.notify_iv)
+    ImageView iv;
+
     private Context context;
     private CommentBtnClickListener mListener;
 
@@ -42,21 +52,21 @@ public class VHNotify extends AbstractExpandableItemViewHolder {
         super(itemView);
         ButterKnife.bind(this, itemView);
         mListener = listener;
-        this.context=context;
+        this.context = context;
     }
 
     public void bindType(final BaseDTO item) {
-        final NotifyUnitData notifyUnitData = (NotifyUnitData) item;
+        final NotifyUnitDTO notifyUnitData = (NotifyUnitDTO) item;
+        GlideApp.with(context).load(R.drawable.icon_account).into(iv);
         person.setText(notifyUnitData.getName());
-        number.setText(notifyUnitData.getName());
         content.setText(notifyUnitData.getComment());
-
-       commentBtn.setOnClickListener(new View.OnClickListener() {
+        count.setText(String.valueOf(notifyUnitData.getCount()));
+        commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                content.setText(comment.getText());
 //                mListener.onClick(NotifyUnitData.class,item, comment.getText().toString());
-                ItemInteractionUtil.getInstance(context).show((AppCompatActivity)  context, notifyUnitData.getId(), RealmClassHelper.getInstance().NOTIFY_UNIT_DATA);
+                ItemInteractionUtil.getInstance(context).show((AppCompatActivity) context, notifyUnitData.getId(), RealmClassHelper.getInstance().NOTIFY_UNIT_DATA);
             }
         });
 

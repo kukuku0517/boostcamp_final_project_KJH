@@ -12,12 +12,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.example.android.selfns.LoginView.LoginActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
-public class SplashActivity extends AppCompatActivity{
+public class SplashActivity extends AppCompatActivity {
 
     @BindView(R.id.splash_layout)
     View view;
@@ -52,8 +53,9 @@ public class SplashActivity extends AppCompatActivity{
 
                     @Override
                     public void run() {
-                   Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                         startActivity(intent);
+                        finish();
                     }
 
                 }, 1000);

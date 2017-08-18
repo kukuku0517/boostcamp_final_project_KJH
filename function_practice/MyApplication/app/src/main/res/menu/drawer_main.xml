@@ -3,9 +3,13 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_friend_search"
+            android:id="@+id/nav_search"
             android:icon="@drawable/ic_search_black_24dp"
-            android:title="친구 찾기" />
+            android:title="검색" />
+        <item
+            android:id="@+id/nav_statistic"
+            android:icon="@drawable/ic_search_black_24dp"
+            android:title="통계" />
         <item
             android:id="@+id/nav_friend_list"
             android:icon="@drawable/ic_people_black_24dp"

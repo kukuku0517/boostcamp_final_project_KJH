@@ -62,12 +62,17 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.16'
     compile 'jp.wasabeef:glide-transformations:2.0.2'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
+    compile 'com.sackcentury:shinebutton:0.1.9'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    compile 'com.github.lutvie72:RackMonthPicker:1.2'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
-    compile 'com.sackcentury:shinebutton:0.1.9'
-    compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    compile 'com.borax12.materialdaterangepicker:library:1.9'
 }
 
 apply plugin: 'com.google.gms.google-services'

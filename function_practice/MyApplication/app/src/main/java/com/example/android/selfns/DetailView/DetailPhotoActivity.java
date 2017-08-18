@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,25 +19,50 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
+import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.ExtraView.Friend.TagAdapter;
+import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmClassHelper;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
-public class DetailPhotoActivity extends AppCompatActivity {
+public class DetailPhotoActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @BindView(R.id.photo_detail_iv)
     ImageView iv;
@@ -44,21 +73,32 @@ public class DetailPhotoActivity extends AppCompatActivity {
     @BindView(R.id.photo_detail_place)
     TextView place;
 
+    @BindView(R.id.photo_detail_people)
+    TextView tag;
 
-    @BindView(R.id.photo_detail_place_button)
-    Button placeBtn;
 
-    @BindView(R.id.photo_detail_date_button)
-    Button dateBtn;
-
-    @BindView(R.id.photo_detail_comment_button)
-    Button commentBtn;
-    @BindView(R.id.photo_detail_delete_button)
-    Button deleteBtn;
+    //
+//    @BindView(R.id.photo_detail_place_button)
+//    Button placeBtn;
+//    @BindView(R.id.photo_detail_date_button)
+//    Button dateBtn;
+//    @BindView(R.id.photo_detail_comment_button)
+//    Button commentBtn;
+    @BindView(R.id.photo_detail_delete)
+    TextView deleteBtn;
 
     private Context context = this;
-
     PhotoDTO photoData;
+    private GoogleApiClient mGoogleApiClient;
+    private GoogleMap mMap;
+    private double lat, lng;
+    Realm realm;
+    private String placename;
+
+    @BindView(R.id.rv_tag)
+    RecyclerView rvTag;
+    RecyclerView.LayoutManager layoutManager;
+    TagAdapter adapter;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -71,7 +111,6 @@ public class DetailPhotoActivity extends AppCompatActivity {
                 photoData.setLat(place.getLatLng().longitude);
                 photoData.setPlace(place.getName().toString());
                 photoData.setOriginId(place.getId());
-
                 ItemInteractionUtil.getInstance(context).setPlace(photoData);
 
             }
@@ -84,6 +123,8 @@ public class DetailPhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_photo);
         ButterKnife.bind(this);
 
+
+        realm = Realm.getDefaultInstance();
 //        final Realm realm = Realm.getDefaultInstance();
 //        Class c = RealmClassHelper.getInstance().getClass(getIntent().getIntExtra("type", -1));
 //        long id = getIntent().getLongExtra("id", -1);
@@ -98,27 +139,66 @@ public class DetailPhotoActivity extends AppCompatActivity {
             place.setText(photoData.getPlace());
         }
 
+        initMap();
+        initBtnListener();
 
-        placeBtn.setOnClickListener(new View.OnClickListener() {
+        final List<UserDTO> items = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        adapter = new TagAdapter(context);
+        adapter.updateItem(items);
+        rvTag.setHasFixedSize(true);
+        rvTag.setLayoutManager(layoutManager);
+        rvTag.setAdapter(adapter);
+
+        try {
+            JSONArray friends = new JSONArray(photoData.getFriends());
+            for (int i = 0; i < friends.length(); i++) {
+                JSONObject friend = friends.getJSONObject(i);
+                String uid=friend.get("id").toString();
+                DatabaseReference fRef =  FirebaseHelper.getInstance(context).getUserRef(uid);
+                fRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
+                        items.add(friend);
+                        adapter.updateItem(items);
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void initMap() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
+
+    }
+
+
+    private void initBtnListener() {
+        place.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-//                        getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-//
-//                autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//                    @Override
-//                    public void onPlaceSelected(Place place) {
-//                        // TODO: Get info about the selected place.
-//                        Log.i("placeauto", "Place: " + place.getName());
-//                    }
-//
-//                    @Override
-//                    public void onError(Status status) {
-//                        // TODO: Handle the error.
-//                        Log.i("placeauto", "An error occurred: " + status);
-//                    }
-//                });
-
                 LatLng latlng = new LatLng(photoData.getLat(), photoData.getLng());
                 Intent intent = null;
                 try {
@@ -132,9 +212,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
             }
         });
 
-
         final Calendar cal = DateHelper.getInstance().toDate(photoData.getDate());
-
         TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -143,8 +221,7 @@ public class DetailPhotoActivity extends AppCompatActivity {
             }
         };
         final TimePickerDialog dialog = new TimePickerDialog(this, listener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
-
-        dateBtn.setOnClickListener(new View.OnClickListener() {
+        date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.show();
@@ -152,21 +229,61 @@ public class DetailPhotoActivity extends AppCompatActivity {
 
 
         });
-
-        commentBtn.setOnClickListener(new View.OnClickListener() {
+        comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ItemInteractionUtil.getInstance(context).show((AppCompatActivity) context, photoData.getId(), RealmClassHelper.PHOTO_DATA);
             }
         });
-
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ItemInteractionUtil.getInstance(context).deletePhotoItem(photoData);
             }
         });
+        tag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemInteractionUtil.getInstance(context).tagFriend((AppCompatActivity) context,photoData);
+            }
+        });
     }
 
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+
+                lat = photoData.getLat();
+                lng = photoData.getLng();
+                placename = photoData.getPlace();
+                place.setText(placename);
+
+                LatLng sydney = new LatLng(lat, lng);
+                mMap.addMarker(new MarkerOptions().position(sydney)
+                        .title(placename));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14));
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 }

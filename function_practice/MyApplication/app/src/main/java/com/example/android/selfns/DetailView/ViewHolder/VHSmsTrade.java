@@ -12,8 +12,12 @@ import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.TimelineView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -125,6 +129,10 @@ public class VHSmsTrade extends DayViewHolder {
                 isExpanded = !isExpanded;
             }
         });
+    }
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
+
     }
 
 }

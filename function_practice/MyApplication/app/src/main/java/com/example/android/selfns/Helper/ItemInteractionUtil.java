@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telecom.Call;
 import android.util.Log;
 
 import com.example.android.selfns.Data.DTO.Detail.CallDTO;
@@ -62,23 +61,11 @@ public class ItemInteractionUtil {
         return instance;
     }
 
-    //    public void show(AppCompatActivity activity, long id, Class c){
-//        FragmentManager fm = activity.getSupportFragmentManager();
-//        Bundle args = new Bundle();
-//        args.putString("class", c.getCanonicalName());
-//        args.putLong("id", id);
-//        args.putParcelable();
-//        Log.d("dialog", SmsUnitData.class.getCanonicalName());
-//        CommentDialogFragment dialogFragment = new CommentDialogFragment();
-//        dialogFragment.setArguments(args);
-//        dialogFragment.show(fm, "fragment_dialog_test");
-//    }
+    //댓글
     public void show(AppCompatActivity activity, long id, int type) {
 
         FragmentManager fm = activity.getSupportFragmentManager();
         Bundle args = new Bundle();
-//        args.putString("class", c.getCanonicalName());
-//        args.putLong("id", id);
         args.putLong("id", id);
         args.putInt("type", type);
         Log.d("dialog", SmsUnitData.class.getCanonicalName());
@@ -87,6 +74,7 @@ public class ItemInteractionUtil {
         dialogFragment.show(fm, "fragment_dialog_test");
     }
 
+    //하이라이트
     public void highlight(final CommentableDTO item) {
 
         Realm realm = Realm.getDefaultInstance();
@@ -103,33 +91,22 @@ public class ItemInteractionUtil {
         });
     }
 
+    //아이템삭제 (일반)
     public void deleteItem(final BaseDTO item) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                Class c = RealmClassHelper.getInstance().getClass(item.getType());
-
-                RealmObject myItem = (RealmObject) realm.where(c).equalTo("id", item.getId()).findFirst();
-                myItem.deleteFromRealm();
-            }
-        });
-    }
-
-    public void deletePhotoItem(final PhotoDTO item) {
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-// Add the buttons
         builder.setPositiveButton("삭제하기", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+
+
                 Realm realm = Realm.getDefaultInstance();
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         Class c = RealmClassHelper.getInstance().getClass(item.getType());
+
                         RealmObject myItem = (RealmObject) realm.where(c).equalTo("id", item.getId()).findFirst();
-                        RealmHelper.getInstance().photodataDelete(myItem);
+                        myItem.deleteFromRealm();
                     }
                 });
             }
@@ -143,6 +120,32 @@ public class ItemInteractionUtil {
 
     }
 
+    //아이템삭제 (photo)
+    public void deletePhotoItem(final PhotoDTO item) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+// Add the buttons
+        builder.setPositiveButton("삭제하기", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Realm realm = Realm.getDefaultInstance();
+
+                Class c = RealmClassHelper.getInstance().getClass(item.getType());
+                RealmObject myItem = (RealmObject) realm.where(c).equalTo("id", item.getId()).findFirst();
+                RealmHelper.getInstance().photodataDelete(myItem);
+
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        builder.create().show();
+
+    }
+
+    //아이템 삭제 (photogroup)
     public void deletePhotoGroupItem(final PhotoGroupDTO item) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -171,6 +174,7 @@ public class ItemInteractionUtil {
 
     }
 
+    //시간 수정
     public void setDate(final BaseDTO item, final long date) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -194,11 +198,16 @@ public class ItemInteractionUtil {
                         PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", item.getId()).findFirst();
                         photoData.setDate(date);
                         break;
+                    case RealmClassHelper.PHOTO_GROUP_DATA:
+                        PhotoGroupData photoGroupData = (PhotoGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
+                        photoGroupData.setStart(date);
+                        break;
                 }
             }
         });
     }
 
+    //장소 수정
     public void setPlace(final GpsableDTO place) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -242,6 +251,7 @@ public class ItemInteractionUtil {
         });
     }
 
+    //아이템 공유
     public void shareItem(final ShareableDTO item) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -253,7 +263,7 @@ public class ItemInteractionUtil {
                 String key = null;
                 if (type == RealmClassHelper.PHOTO_GROUP_DATA) {
                     try {
-                        key = FirebaseHelper.getInstance(context).setPostPhotoGroup(type,(PhotoGroupDTO) item);
+                        key = FirebaseHelper.getInstance(context).setPostPhotoGroup(type, (PhotoGroupDTO) item);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }

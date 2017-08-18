@@ -218,3 +218,18 @@ https://stackoverflow.com/questions/39966099/realm-query-which-also-filters-cust
 4.	static method자제
 
 5.
+
+#170817
+
+1.	친구태그삭제
+2.	친구공유
+3.	수락시 post반영
+4.	image올리기
+5.	공유 수정
+6.	공유 탈퇴
+
+#ㅇ
+
+1.	detail + edit 페이지
+2.	수정시 refresh
+3.	무한로딩

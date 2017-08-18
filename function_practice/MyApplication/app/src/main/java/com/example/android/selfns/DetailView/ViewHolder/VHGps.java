@@ -11,11 +11,14 @@ import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.RealmClassHelper;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,6 +107,10 @@ public class VHGps extends DayViewHolder {
                 ItemInteractionUtil.getInstance(context).deleteItem(gpsData);
             }
         });
+
+    }
+    @Override
+    public void bindTag(ArrayList<UserDTO> users) {
 
     }
 }
