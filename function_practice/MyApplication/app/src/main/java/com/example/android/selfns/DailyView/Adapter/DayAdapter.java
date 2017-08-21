@@ -12,15 +12,21 @@ import android.view.animation.AnimationUtils;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
 import com.example.android.selfns.DetailView.ViewHolder.VHCall;
 import com.example.android.selfns.DetailView.ViewHolder.VHCustom;
 import com.example.android.selfns.DetailView.ViewHolder.VHGps;
 import com.example.android.selfns.DailyView.ViewHolder.VHGpsGroup;
 import com.example.android.selfns.DailyView.ViewHolder.VHNotifyGroup;
+import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
+import com.example.android.selfns.GroupView.ViewHolder.VHNotify;
+import com.example.android.selfns.GroupView.ViewHolder.VHNotifyChild;
 import com.example.android.selfns.GroupView.ViewHolder.VHPhoto;
 import com.example.android.selfns.DailyView.ViewHolder.VHPhotoGroup;
 import com.example.android.selfns.DailyView.ViewHolder.VHSmsGroup;
 import com.example.android.selfns.DetailView.ViewHolder.VHSmsTrade;
+import com.example.android.selfns.GroupView.ViewHolder.VHSms;
+import com.example.android.selfns.GroupView.ViewHolder.VHSmsChild;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
@@ -37,32 +43,16 @@ import static android.media.CamcorderProfile.get;
  * Created by samsung on 2017-07-26.
  */
 
-public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
+public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements CommentBtnClickListener {
+
+    private Context context;
 
     private ArrayList<BaseDTO> items;
     private Realm realm;
-    HashMap<Integer, List<UserDTO>> usersHash;
+    HashMap<Integer, List<UserDTO>> usersHash=new HashMap<>();
     public DayAdapter(Context context, Realm realm) {
         this.context = context;
         this.realm = realm;
-        final Handler handler = new Handler();
-//        realm.addChangeListener(new RealmChangeListener<Realm>() {
-//            @Override
-//            public void onChange(Realm realm) {
-//                Thread t = new Thread(new Runnable(){
-//
-//                    @Override
-//                    public void run() {
-//                        handler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                notifyDataSetChanged();
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        });
 
     }
 
@@ -120,6 +110,21 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
                 layoutIdForListItem = R.layout.item_custom;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHCustom(view, context);
+            case RealmClassHelper.SMS_DATA: //custom
+                layoutIdForListItem = R.layout.item_sms_child;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                return new VHSmsChild(view);
+            case RealmClassHelper.NOTIFY_DATA: //custom
+                layoutIdForListItem = R.layout.item_sms_child;
+                view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
+                return new VHNotifyChild(view);
+            case RealmClassHelper.SMS_UNIT_DATA:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms, parent, false);
+                return new VHSms(view, this, context);
+            case RealmClassHelper.NOTIFY_UNIT_DATA:
+                view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms, parent, false);
+                return new VHNotify(view, this, context);
+
             default:
                 return null;
         }
@@ -148,12 +153,17 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> {
     }
 
 
-    public void updateItem(ArrayList<BaseDTO> item, HashMap<Integer, List<UserDTO>> usersHash) {
+    public void updateItem(ArrayList<BaseDTO> item) {
         this.items = item;
-        this.usersHash = usersHash;
         notifyDataSetChanged();
     }
 
-    private Context context;
+    public void updateHashItem(HashMap<Integer, List<UserDTO>> usersHash){
+        this.usersHash = usersHash;
+    }
 
+    @Override
+    public void onClick(Class c, MyRealmObject item, String text) {
+
+    }
 }

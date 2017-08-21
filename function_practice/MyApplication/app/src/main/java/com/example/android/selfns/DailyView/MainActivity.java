@@ -53,12 +53,14 @@ import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
 import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
 import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
 import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
+import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
 import com.example.android.selfns.DetailView.GpsGroupActivity;
 import com.example.android.selfns.DetailView.CallActivity;
 import com.example.android.selfns.Data.RealmData.UnitData.CallData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.DetailView.GpsStillActivity;
 import com.example.android.selfns.DetailView.SmsTradeActivity;
+import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
 import com.example.android.selfns.GroupView.PhotoActivity;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.Helper.DateHelper;
@@ -108,7 +110,8 @@ import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 
-public class MainActivity extends AppCompatActivity implements CardItemClickListener, DatePinClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements CardItemClickListener,
+        DatePinClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.rv_day2)
     RecyclerView rv;
@@ -252,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         } else {
             state = mPref.getInt("init", 0);
         }
-        Log.d("checkstate", String.valueOf(state));
+        Log.d("fblog", String.valueOf(state));
         switch (state) {
             case 0://TODO 초기화 중지시 처리
             case 1:
@@ -363,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     private void updateItemsFromRealm(long millis) {
 
         items.clear();
+        pb.setVisibility(View.VISIBLE);
         getItemFromFB(millis);
     }
 
@@ -416,112 +420,122 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     size++;
                 }
+                if (dataSnapshot.getValue() != null) {
+                    //post id로 posts에서 글 찾아오기
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        DatabaseReference postRef = FirebaseHelper.getInstance(context).getPostsRef().child(snapshot.getValue().toString());
+                        final int finalSize = size;
 
-                //post id로 posts에서 글 찾아오기
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    DatabaseReference postRef = FirebaseHelper.getInstance(context).getPostsRef().child(snapshot.getValue().toString());
-                    final int finalSize = size;
+                        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.hasChildren()) {
+                                    int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
+                                    BaseDTO item;
+                                    switch (type) {
+                                        case RealmClassHelper.CALL_DATA:
+                                            item = dataSnapshot.child("item").getValue(CallDTO.class);
+                                            break;
+                                        case RealmClassHelper.CUSTOM_DATA:
+                                            item = dataSnapshot.child("item").getValue(CustomDTO.class);
+                                            break;
+                                        case RealmClassHelper.PHOTO_DATA:
+                                            item = dataSnapshot.child("item").getValue(PhotoDTO.class);
+                                            break;
+                                        case RealmClassHelper.PHOTO_GROUP_DATA:
+                                            item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
+                                            break;
+                                        case RealmClassHelper.SMS_TRADE_DATA:
+                                            item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
+                                            break;
+                                        default:
+                                            item = null;
+                                    }
+                                    items.add(item);
+                                    count[0]++;
 
-                    postRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChildren()) {
-                                int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
-                                BaseDTO item;
-                                switch (type) {
-                                    case RealmClassHelper.CALL_DATA:
-                                        item = dataSnapshot.child("item").getValue(CallDTO.class);
-                                        break;
-                                    case RealmClassHelper.CUSTOM_DATA:
-                                        item = dataSnapshot.child("item").getValue(CustomDTO.class);
-                                        break;
-                                    case RealmClassHelper.PHOTO_DATA:
-                                        item = dataSnapshot.child("item").getValue(PhotoDTO.class);
-                                        break;
-                                    case RealmClassHelper.PHOTO_GROUP_DATA:
-                                        item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
-                                        break;
-                                    case RealmClassHelper.SMS_TRADE_DATA:
-                                        item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
-                                        break;
-                                    default:
-                                        item = null;
-                                }
-                                items.add(item);
-                                count[0]++;
+                                    //posts 갯수만큼 가져온 후 items에 저장
+                                    if (count[0] == finalSize) {
+                                        long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
+                                        long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
+                                        long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
+                                        items.addAll(getItemFromRealm(minusDay3));
+                                        items.addAll(getItemFromRealm(minusDay2));
+                                        items.addAll(getItemFromRealm(minusDay1));
+                                        items.addAll(getItemFromRealm(millis));
+                                        Collections.sort(items, new ItemComparator());
 
-                                //posts 갯수만큼 가져온 후 items에 저장
-                                if (count[0] == finalSize) {
-                                    long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
-                                    long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
-                                    long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
-                                    items.addAll(getItemFromRealm(minusDay3));
-                                    items.addAll(getItemFromRealm(minusDay2));
-                                    items.addAll(getItemFromRealm(minusDay1));
-                                    items.addAll(getItemFromRealm(millis));
-                                    Collections.sort(items, new ItemComparator());
+                                        //--------------------------------------------------------------------------//
 
-                                    //--------------------------------------------------------------------------//
+                                        //friends값 있는 item의 친구리스트 index와 함께 저장하기
 
-                                    //friends값 있는 item의 친구리스트 index와 함께 저장하기
+                                        final int[] iCount = {0};
+                                        for (int i = 0; i < items.size(); i++) {
+                                            if (items.get(i) instanceof ShareableDTO) {
+                                                ShareableDTO sItem = (ShareableDTO) items.get(i);
+                                                try {
+                                                    JSONArray friends = new JSONArray(sItem.getFriends());
+                                                    final int fsize = friends.length();
+                                                    final int[] fcount = {0};
 
-                                    final int[] iCount = {0};
-                                    for (int i = 0; i < items.size(); i++) {
-                                        if (items.get(i) instanceof ShareableDTO) {
-                                            ShareableDTO sItem = (ShareableDTO) items.get(i);
-                                            try {
-                                                JSONArray friends = new JSONArray(sItem.getFriends());
-                                                final int fsize = friends.length();
-                                                final int[] fcount = {0};
+                                                    for (int j = 0; j < fsize; j++) {
+                                                        final ArrayList<UserDTO> users = new ArrayList<>();
+                                                        JSONObject friend = friends.getJSONObject(j);
+                                                        String uid = friend.get("id").toString();
+                                                        DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
+                                                        final int finalI = i;
+                                                        fRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
+                                                                users.add(friend);
+                                                                fcount[0]++;
+                                                                Log.d("###Fire useradd", fcount[0] + " : " + fsize);
+                                                                if (fcount[0] == fsize) {
+                                                                    usersHash.put(finalI, users);
+                                                                    iCount[0]++;
+                                                                    Log.d("###Fire userhashadd", finalI + ":" + iCount[0] + "/" + items.size());
 
-                                                for (int j = 0; j < fsize; j++) {
-                                                    final ArrayList<UserDTO> users = new ArrayList<>();
-                                                    JSONObject friend = friends.getJSONObject(j);
-                                                    String uid = friend.get("id").toString();
-                                                    DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
-                                                    final int finalI = i;
-                                                    fRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                                            UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                                                            users.add(friend);
-                                                            fcount[0]++;
-                                                            Log.d("###Fire useradd", fcount[0] + " : " + fsize);
-                                                            if (fcount[0] == fsize) {
-                                                                usersHash.put(finalI, users);
-                                                                iCount[0]++;
-                                                                Log.d("###Fire userhashadd", finalI + ":" + iCount[0] + "/" + items.size());
-                                                                adapter.updateItem(items, usersHash);
-                                                                adapter.notifyItemChanged(finalI);
-                                                                if (iCount[0] == items.size()) {
-                                                                    Log.d("###Fire ended", "finished");
-                                                                    adapter.notifyDataSetChanged();
                                                                 }
                                                             }
-                                                        }
 
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
-                                                        }
-                                                    });
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+                                                            }
+                                                        });
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
                                                 }
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
+                                            } else {
+                                                iCount[0]++;
+                                                Log.d("###Fire userhashadd", ":" + iCount[0] + "/" + items.size());
                                             }
-                                        } else {
-                                            iCount[0]++;
-                                            Log.d("###Fire userhashadd", ":" + iCount[0] + "/" + items.size());
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                    }
+                } else {
+                    long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
+                    long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
+                    long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
+                    items.addAll(getItemFromRealm(minusDay3));
+                    items.addAll(getItemFromRealm(minusDay2));
+                    items.addAll(getItemFromRealm(minusDay1));
+                    items.addAll(getItemFromRealm(millis));
+                    Collections.sort(items, new ItemComparator());
+                    pb.setVisibility(View.GONE);
+                    adapter.updateItem(items, usersHash);
+                    adapter.notifyDataSetChanged();
+
                 }
+
             }
 
             @Override
@@ -647,6 +661,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         return true;
     }
 
+
     private class RealmAsync extends AsyncTask<Integer, Void, Void> {
 
         @Override
@@ -671,13 +686,14 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             pb.setVisibility(View.GONE);
+            Toast.makeText(context,"데이터 로딩 성공",Toast.LENGTH_SHORT).show();
             SharedPreferences mPref = getSharedPreferences("setting", Activity.MODE_PRIVATE);
             SharedPreferences.Editor editor = mPref.edit();
             editor.putInt("init", 3);
             editor.commit();
-            items.clear();
-            updateItemsFromRealm(System.currentTimeMillis());
             displayRecyclerView();
+            updateItemsFromRealm(System.currentTimeMillis());
+
 
         }
     }

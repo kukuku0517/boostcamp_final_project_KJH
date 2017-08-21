@@ -233,3 +233,31 @@ https://stackoverflow.com/questions/39966099/realm-query-which-also-filters-cust
 1.	detail + edit 페이지
 2.	수정시 refresh
 3.	무한로딩
+
+#170821
+
+##프로젝트 마지막주
+
+1.	서버관련
+
+	-	**FB 중복로딩**
+	-	FB post에 date(+timestamp)추가
+	-	검색,통계에 Fb추가시키기
+
+2.	클라관련
+
+	-	**검색 : 사람검색 구현, notify, sms 검색시 클릭이벤트**
+	-	**adapter별로 shared, commentable 처리 설정**
+	-	item detail/edit 화면. crash
+
+	-	통계 : ' '
+
+	-	**무한스크롤**
+
+	-	contentProvider data 삭제시 처리
+
+	-	GpsData, SmsTradeData 받아오기
+
+	-	item 날짜 표시
+
+	-	기타 UIUX

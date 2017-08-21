@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
  * Created by samsung on 2017-08-02.
  */
 
-public class VHNotify extends AbstractExpandableItemViewHolder {
+public class VHNotify extends  MyExpandableItemViewHolder{
     @BindView(R.id.notify_person)
     TextView person;
 

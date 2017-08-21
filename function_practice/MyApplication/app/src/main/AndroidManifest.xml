@@ -31,7 +31,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".LoginView.FriendActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".LoginView.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

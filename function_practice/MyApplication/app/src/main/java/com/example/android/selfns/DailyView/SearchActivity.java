@@ -20,7 +20,9 @@ import com.example.android.selfns.DailyView.Adapter.DayAdapter;
 import com.example.android.selfns.Data.DTO.Detail.CallDTO;
 import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
 import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
+import com.example.android.selfns.Data.DTO.Detail.NotifyDTO;
 import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
+import com.example.android.selfns.Data.DTO.Detail.SmsDTO;
 import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
@@ -36,7 +38,9 @@ import com.example.android.selfns.Data.RealmData.GroupData.SmsUnitData;
 import com.example.android.selfns.Data.RealmData.UnitData.CallData;
 import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
 import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.DetailView.CallActivity;
 import com.example.android.selfns.DetailView.DetailPhotoActivity;
@@ -47,9 +51,11 @@ import com.example.android.selfns.GroupView.PhotoActivity;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.ItemComparator;
+import com.example.android.selfns.Helper.JsonUtil;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.Interface.CardItemClickListener;
 import com.example.android.selfns.Interface.PhotoItemClickListener;
+import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
 
 import org.parceler.Parcels;
@@ -58,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,7 +73,7 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
-public class SearchActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, CardItemClickListener,PhotoItemClickListener {
+public class SearchActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, CardItemClickListener, PhotoItemClickListener {
 
     @BindView(R.id.spinner)
     Spinner spinner;
@@ -89,10 +97,7 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
     Realm realm;
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
-
-
     private ArrayList<BaseDTO> items = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +110,9 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
         adapter = new DayAdapter(this, realm);
         adapter.setHasStableIds(true);
 
+
         adapter.updateItem(items);
+
         rv.setHasFixedSize(true);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);
@@ -190,6 +197,18 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
                 RealmResults<RealmObject> nuData = RealmHelper.getInstance().DataCommentQuery(NotifyUnitData.class, query, "start", startMillis, endMillis - 1);
                 RealmResults<RealmObject> suData = RealmHelper.getInstance().DataCommentQuery(SmsUnitData.class, query, "start", startMillis, endMillis - 1);
 
+                RealmResults<RealmObject> nData = RealmHelper.getInstance().DataContentQuery(NotifyData.class, query, "date", startMillis, endMillis - 1);
+                RealmResults<RealmObject> sData = RealmHelper.getInstance().DataContentQuery(SmsData.class, query, "date", startMillis, endMillis - 1);
+
+
+                for (RealmObject cd : nData) {
+                    items.add(new NotifyDTO((NotifyData) cd));
+                }
+                for (RealmObject cd : sData) {
+                    items.add(new SmsDTO((SmsData) cd));
+                }
+
+
                 for (RealmObject cd : customData) {
                     items.add(new CustomDTO((CustomData) cd));
                 }
@@ -215,7 +234,9 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
                     items.add(new SmsUnitDTO((SmsUnitData) std));
                 }
                 Collections.sort(items, new ItemComparator());
+
                 adapter.updateItem(items);
+
                 adapter.notifyDataSetChanged();
 
             }
@@ -233,47 +254,120 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
             @Override
             public void execute(Realm realm) {
 
+                RealmResults<NotifyUnitData> nuData = realm.where(NotifyUnitData.class)
+                        .contains("name", query)
+                        .between("end", startMillis, endMillis)
+                        .findAll();
+                RealmResults<SmsUnitData> suData = realm.where(SmsUnitData.class)
+                        .contains("name", query)
+                        .between("end", startMillis, endMillis)
+                        .findAll();
+//                RealmResults<SmsUnitData> suData2 = realm.where(SmsUnitData.class)
+//                        .contains("name", query)
+//                        .findAll();
+                RealmResults<CallData> cData = realm.where(CallData.class)
+                        .contains("person", query)
+                        .between("date", startMillis, endMillis)
+                        .findAll();
+
+                for (NotifyUnitData g : nuData) {
+                    NotifyUnitDTO data = new NotifyUnitDTO(g);
+                    items.add(data);
+                }
+                for (SmsUnitData g : suData) {
+                    SmsUnitDTO data = new SmsUnitDTO(g);
+                    items.add(data);
+                }
+                for (CallData g : cData) {
+                    CallDTO data = new CallDTO(g);
+                    items.add(data);
+                }
+
 
                 RealmResults<GpsGroupData> gpsGroupData = realm.where(GpsGroupData.class)
                         .notEqualTo("friends", "[]")
-                        .between("date", startMillis, endMillis)
+                        .between("start", startMillis, endMillis)
                         .findAll();
                 for (GpsGroupData ggd : gpsGroupData) {
-//                    ggd.getFriends()
+                    GpsGroupDTO data = new GpsGroupDTO(ggd);
+                    ArrayList<UserDTO> users = JsonUtil.getInstance().friendJsonTOArray(data);
+                    for(UserDTO user: users){
+                        if(user.getName().contains(query)){
+                            items.add(data);
+                            break;
+                        }
+                    }
                 }
 
 
-                RealmResults<GpsData> results = realm.where(GpsData.class)
-                        .contains("place", query)
+                RealmResults<CallData> callDatas= realm.where(CallData.class)
+                        .notEqualTo("friends", "[]")
                         .between("date", startMillis, endMillis)
                         .findAll();
-                for (GpsData g : results) {
-                    Log.d("QueryGps", g.getPlace());
-                    GpsDTO gpsDTO = new GpsDTO(g);
-                    items.add(gpsDTO);
-                }
-                RealmResults<SmsTradeData> smsTradeResults = realm.where(SmsTradeData.class)
-                        .contains("place", query)
-                        .between("date", startMillis, endMillis)
-                        .findAll();
-                for (SmsTradeData g : smsTradeResults) {
-                    Log.d("QuerySms", g.getPlace());
-                    SmsTradeDTO smsTradeDTO = new SmsTradeDTO(g);
-                    items.add(smsTradeDTO);
+                for (CallData cd : callDatas) {
+                    CallDTO data = new CallDTO(cd);
+                    ArrayList<UserDTO> users = JsonUtil.getInstance().friendJsonTOArray(data);
+                    for(UserDTO user: users){
+                        if(user.getName().contains(query)){
+                            items.add(data);
+                            break;
+                        }
+                    }
                 }
 
-                RealmResults<PhotoData> photoDatas = realm.where(PhotoData.class)
-                        .contains("place", query)
+
+                RealmResults<CustomData> customDatas= realm.where(CustomData.class)
+                        .notEqualTo("friends", "[]")
                         .between("date", startMillis, endMillis)
                         .findAll();
-                for (PhotoData g : photoDatas) {
-                    Log.d("QueryPhoto", g.getPlace());
-                    PhotoDTO photoDTO = new PhotoDTO(g);
-                    items.add(photoDTO);
+                for (CustomData cd : customDatas) {
+                    CustomDTO data = new CustomDTO(cd);
+                    ArrayList<UserDTO> users = JsonUtil.getInstance().friendJsonTOArray(data);
+                    for(UserDTO user: users){
+                        if(user.getName().contains(query)){
+                            items.add(data);
+                            break;
+                        }
+                    }
                 }
+
+
+
+                RealmResults<PhotoGroupData> photoGroupDatas= realm.where(PhotoGroupData.class)
+                        .notEqualTo("friends", "[]")
+                        .between("start", startMillis, endMillis)
+                        .findAll();
+                for (PhotoGroupData cd : photoGroupDatas) {
+                    PhotoGroupDTO data = new PhotoGroupDTO(cd);
+                    ArrayList<UserDTO> users = JsonUtil.getInstance().friendJsonTOArray(data);
+                    for(UserDTO user: users){
+                        if(user.getName().contains(query)){
+                            items.add(data);
+                            break;
+                        }
+                    }
+                }
+
+                RealmResults<SmsTradeData> smsTradeDatas= realm.where(SmsTradeData.class)
+                        .notEqualTo("friends", "[]")
+                        .between("date", startMillis, endMillis)
+                        .findAll();
+                for (SmsTradeData cd : smsTradeDatas) {
+                    SmsTradeDTO data = new SmsTradeDTO(cd);
+                    ArrayList<UserDTO> users = JsonUtil.getInstance().friendJsonTOArray(data);
+                    for(UserDTO user: users){
+                        if(user.getName().contains(query)){
+                            items.add(data);
+                            break;
+                        }
+                    }
+                }
+
 
                 Collections.sort(items, new ItemComparator());
+
                 adapter.updateItem(items);
+
                 adapter.notifyDataSetChanged();
 
 
@@ -316,7 +410,10 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
                 }
 
                 Collections.sort(items, new ItemComparator());
+
+
                 adapter.updateItem(items);
+
                 adapter.notifyDataSetChanged();
 
 

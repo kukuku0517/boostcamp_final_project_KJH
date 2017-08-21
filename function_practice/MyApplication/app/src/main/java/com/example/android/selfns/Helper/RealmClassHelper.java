@@ -10,7 +10,9 @@ import com.example.android.selfns.Data.RealmData.UnitData.CallData;
 import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.Data.RealmData.UnitData.DatePinData;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
 import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
+import com.example.android.selfns.Data.RealmData.UnitData.SmsData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 
 /**
@@ -31,6 +33,10 @@ public class RealmClassHelper {
     public static final int GPS_GROUP_DATA = 9;
     public static final int CUSTOM_DATA = 10;
     public static final int DATE_PIN_DATA = 11;
+
+    public static final int SMS_DATA = 12;
+    public static final int NOTIFY_DATA = 13;
+
 
     public static RealmClassHelper getInstance() {
         if (instance == null) {
@@ -65,6 +71,10 @@ public class RealmClassHelper {
                 return CustomData.class;
             case DATE_PIN_DATA:
                 return DatePinData.class;
+            case SMS_DATA:
+                return SmsData.class;
+            case NOTIFY_DATA:
+                return NotifyData.class;
             default:
                 return null;
         }

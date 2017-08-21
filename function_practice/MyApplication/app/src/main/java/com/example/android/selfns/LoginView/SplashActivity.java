@@ -1,22 +1,18 @@
-package com.example.android.selfns;
+package com.example.android.selfns.LoginView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.example.android.selfns.LoginView.LoginActivity;
+import com.example.android.selfns.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class SplashActivity extends AppCompatActivity {
 

@@ -328,11 +328,13 @@ public class ItemInteractionUtil {
     }
 
     public void addFriend(final ShareableDTO item, UserDTO user) throws JSONException {
-        final String uid = user.getUid();
+
 
         JSONArray jsonArray = new JSONArray(item.getFriends());
         JSONObject json = new JSONObject();
-        json.put("id", uid);
+        json.put("id", user.getUid());
+        json.put("name",user.getName());
+        json.put("photoUrl",user.getPhotoUrl());
         jsonArray.put(json);
         final String friendsString = jsonArray.toString();
         item.setFriends(friendsString);

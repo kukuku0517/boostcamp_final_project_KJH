@@ -1,9 +1,12 @@
 package com.example.android.selfns.Helper;
 
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
 import com.example.android.selfns.LoginView.UserDTO;
 import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -15,26 +18,33 @@ import java.util.ArrayList;
 public class JsonUtil {
     private static JsonUtil instance;
 
-    public static JsonUtil getInstance(){
-        if(instance!=null){
-            instance=new JsonUtil();
+    public static JsonUtil getInstance() {
+        if (instance == null) {
+            instance = new JsonUtil();
         }
         return instance;
     }
 
-//    public
-//
-//
-//    JSONArray friends = new JSONArray(sItem.getFriends());
-//    final int fsize = friends.length();
-//    final int[] fcount = {0};
-//
-//                                                for (int j = 0; j < fsize; j++) {
-//        final ArrayList<UserDTO> users = new ArrayList<>();
-//        JSONObject friend = friends.getJSONObject(j);
-//        String uid = friend.get("id").toString();
-//        DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
-//
-//
+    public ArrayList<UserDTO> friendJsonTOArray(ShareableDTO item) {
+        ArrayList<UserDTO> users = new ArrayList<>();
+
+        try {
+            JSONArray friends = new JSONArray(item.getFriends());
+
+            for (int j = 0; j < friends.length(); j++) {
+                JSONObject friend = friends.getJSONObject(j);
+                UserDTO user = new UserDTO();
+                user.setUid(friend.get("id").toString());
+                user.setPhotoUrl(friend.get("photoUrl").toString());
+                user.setName(friend.get("name").toString());
+                users.add(user);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return users;
 
     }
+}

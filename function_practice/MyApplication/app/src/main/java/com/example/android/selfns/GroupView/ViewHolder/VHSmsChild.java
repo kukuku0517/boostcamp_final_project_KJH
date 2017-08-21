@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.android.selfns.Data.DTO.Detail.SmsDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
@@ -18,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by samsung on 2017-08-02.
  */
 
-public class VHSmsChild extends AbstractExpandableItemViewHolder {
+public class VHSmsChild extends MyExpandableItemViewHolder {
 
     @BindView(R.id.sms_child_content)
     TextView content;
@@ -30,8 +31,9 @@ public class VHSmsChild extends AbstractExpandableItemViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindType(SmsDTO child) {
-
+    @Override
+    public void bindType(BaseDTO base) {
+        SmsDTO child = (SmsDTO) base;
         content.setText(child.getContent());
         DateFormat sdFormat = new SimpleDateFormat("HH:mm");
         Date d = new Date(child.getDate());

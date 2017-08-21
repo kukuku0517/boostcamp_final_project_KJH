@@ -1,6 +1,7 @@
 package com.example.android.selfns.Data.RealmData.UnitData;
 
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
+import com.example.android.selfns.Helper.RealmClassHelper;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -74,7 +75,7 @@ public class SmsData extends RealmObject implements MyRealmObject {
     public int getType() {
 
 
-        return 1;
+        return RealmClassHelper.SMS_DATA;
     }
 
     public void setAddress(String address) {

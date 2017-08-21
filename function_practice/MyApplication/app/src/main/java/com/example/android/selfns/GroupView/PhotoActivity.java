@@ -46,6 +46,9 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -76,6 +79,8 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
     private ArrayList<BaseDTO> items = new ArrayList<>();
+
+    HashMap<Integer, List<UserDTO>> usersHash = new HashMap<>();
 
     private RecyclerView.LayoutManager friendlayoutManager;
     private TagAdapter friendadapter;
@@ -179,7 +184,10 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
         for (PhotoDTO p : pgData.getPhotoss()) {
             items.add(p);
         }
+
         adapter.updateItem(items);
+        adapter.updateHashItem(usersHash);
+
         rv.setHasFixedSize(true);
         rv.setLayoutManager(layoutManager);
         rv.setAdapter(adapter);

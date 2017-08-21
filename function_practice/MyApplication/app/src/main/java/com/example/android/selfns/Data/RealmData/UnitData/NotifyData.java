@@ -1,6 +1,7 @@
 package com.example.android.selfns.Data.RealmData.UnitData;
 
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
+import com.example.android.selfns.Helper.RealmClassHelper;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -57,7 +58,8 @@ public class NotifyData extends RealmObject implements MyRealmObject {
 
     @Override
     public int getType() {
-        return 0;
+
+        return RealmClassHelper.NOTIFY_DATA;
     }
 
 }

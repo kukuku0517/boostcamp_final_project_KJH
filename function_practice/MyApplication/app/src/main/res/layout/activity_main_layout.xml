@@ -14,16 +14,19 @@
         <!--android:text="로딩 1-2분정도 걸림 취소하지마세요/SelfNS 알림받기 설정해주세요" />-->
 
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:visibility="visible" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_day2"

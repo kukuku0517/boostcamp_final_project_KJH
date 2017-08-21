@@ -1,6 +1,8 @@
 package com.example.android.selfns.Data.DTO.Detail;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsData;
+import com.example.android.selfns.Helper.RealmClassHelper;
+
 import org.parceler.Parcel;
 
 /**
@@ -84,7 +86,7 @@ public class SmsDTO implements BaseDTO {
     @Override
     public int getType() {
 
-        return 1;
+        return RealmClassHelper.SMS_DATA;
     }
 
     public void setAddress(String address) {

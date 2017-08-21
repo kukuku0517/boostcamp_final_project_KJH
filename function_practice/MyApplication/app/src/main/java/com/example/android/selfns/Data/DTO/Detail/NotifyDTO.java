@@ -1,6 +1,7 @@
 package com.example.android.selfns.Data.DTO.Detail;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
+import com.example.android.selfns.Helper.RealmClassHelper;
 
 import org.parceler.Parcel;
 
@@ -64,7 +65,8 @@ long notifyUnitId;
 
     @Override
     public int getType() {
-        return 0;
+
+        return RealmClassHelper.NOTIFY_DATA;
     }
 
 }

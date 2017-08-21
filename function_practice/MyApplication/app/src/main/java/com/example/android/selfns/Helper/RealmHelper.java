@@ -559,7 +559,7 @@ public class RealmHelper {
 
     public RealmResults<RealmObject> DataContentQuery(Class c, String contentQuery, String dateQuery, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).contains("comment", contentQuery).between(dateQuery, start, end).findAll();
+        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).contains("content", contentQuery).between(dateQuery, start, end).findAll();
         return cData;
     }
 

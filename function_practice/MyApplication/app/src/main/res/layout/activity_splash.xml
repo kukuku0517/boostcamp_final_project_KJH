@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/splash_background"
 
-    tools:context="com.example.android.selfns.SplashActivity">
+    tools:context="com.example.android.selfns.LoginView.SplashActivity">
 
 
     <LinearLayout
