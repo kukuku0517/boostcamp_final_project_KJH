@@ -130,6 +130,10 @@ public class RealmHelper {
             place[0] = last.getPlace();
 
 //            type[0] = last.getOriginType();
+        }else{
+            lat[0] = 37.5609532;
+            lng[0] = 126.9795367;
+            place[0] = "";
         }
     }
 
@@ -161,7 +165,7 @@ public class RealmHelper {
             public void execute(Realm realm) {
 
                 dayData.setPhotoLast(0);
-                dayData.setGpsNew(0);
+//                dayData.setGpsNew(0);
                 CallData callData = realm.createObject(CallData.class, nextId(CallData.class, realm));
                 String name = getContactName(phone);
                 callData.setPerson(name);
@@ -193,6 +197,9 @@ public class RealmHelper {
                 gd.setOriginId(originId);
 
                 GpsGroupData gpsGroupData;
+
+                //gpsNew : 0이 아니면 gpsNew에 저장되어있는 id값의 gpsgroup으로 gpsData가 저장됨
+                //gpsNew는 15분동안 아무 기록이 없으면 갱신됨
                 if (dayData.getGpsNew() == 0) {
                     //create new group
                     gpsGroupData = realm.createObject(GpsGroupData.class, nextId(GpsGroupData.class, realm));
@@ -204,6 +211,7 @@ public class RealmHelper {
                     gpsGroupData.setPlace(place);
                     gpsGroupData.setLat(lat);
                     gpsGroupData.setLng(lng);
+
                     dayData.setGpsNew(gpsGroupData.getId());
                 } else {
                     gpsGroupData = realm.where(GpsGroupData.class).equalTo("id", dayData.getGpsNew()).findFirst();
@@ -218,6 +226,9 @@ public class RealmHelper {
                             gpsGroupDataEnd.setPlace(last.getPlace());
                             gpsGroupDataEnd.setLat(last.getLat());
                             gpsGroupDataEnd.setLng(last.getLng());
+//
+                            gpsGroupDataEnd.setStartId(gpsGroupData.getId());
+                            gpsGroupData.setEndId(gpsGroupDataEnd.getId());
 
                             //create new group
                             GpsGroupData gpsGroupData2 = realm.createObject(GpsGroupData.class, nextId(GpsGroupData.class, realm));
@@ -267,6 +278,17 @@ public class RealmHelper {
                 if (lat[0] == 0.0) { //TODO for contentProviderData
                     getPlaceName(realm, lat, lng, place);
                     //TODO for contentProviderData
+                }else{
+                    RealmResults<GpsData> gpsDatas = realm.where(GpsData.class).findAll();
+                    if (gpsDatas.size() != 0) {
+                        GpsData last = gpsDatas.last();
+
+                        place[0] = last.getPlace();
+
+                    }else{
+
+                        place[0] = "";
+                    }
                 }
 
                 photo.setDate(date);
@@ -294,7 +316,7 @@ public class RealmHelper {
                 }
                 photo.setPhotoGroupId(photoGroupData.getId());
                 dayData.setCallNew(0);
-                dayData.setGpsNew(0);
+//                dayData.setGpsNew(0);
             }
         });
     }
@@ -367,32 +389,55 @@ public class RealmHelper {
                         smsData.setSent(true);
                     }
 
-                    //3
-                    RealmResults<SmsGroupData> smsGroupDatas = smsGroupDataLoad("start", start, end - 1);
-                    if (smsGroupDatas.size() == 0) {
-                        SmsGroupData sgData1 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
-                        SmsGroupData sgData2 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
-                        SmsGroupData sgData3 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
-                        SmsGroupData sgData4 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
-                        sgData1.setTime(start, start + QUARTER);
-                        sgData2.setTime(start + QUARTER, start + QUARTER * 2);
-                        sgData3.setTime(start + QUARTER * 2, start + QUARTER * 3);
-                        sgData4.setTime(start + QUARTER * 3, start + QUARTER * 4);
-                        smsGroupDatas = smsGroupDataLoad("start", start, end - 1);
+                    long rangeMillis = 0;
+                    switch (DateHelper.getInstance().getRangeOfDay(date)) {
+                        case 0:
+                            rangeMillis = start;
+                            break;
+                        case 1:
+                            rangeMillis = start + QUARTER;
+                            break;
+                        case 2:
+                            rangeMillis = start + QUARTER * 2;
+                            break;
+                        case 3:
+                            rangeMillis = start + QUARTER * 3;
+                            break;
+
                     }
 
-                    //4
-                    int index;
-                    if (smsData.getDate() < start + QUARTER) {
-                        index = 0;
-                    } else if (smsData.getDate() < start + QUARTER * 2) {
-                        index = 1;
-                    } else if (smsData.getDate() < start + QUARTER * 3) {
-                        index = 2;
-                    } else {
-                        index = 3;
+                    SmsGroupData sgData = realm.where(SmsGroupData.class).equalTo("start", rangeMillis).findFirst();
+                    if (sgData == null) {
+                        sgData = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+                        sgData.setTime(rangeMillis, rangeMillis + QUARTER);
                     }
-                    SmsGroupData sgData = smsGroupDatas.get(index);
+
+                    //3
+//                    RealmResults<SmsGroupData> smsGroupDatas = smsGroupDataLoad("start", start, end - 1);
+//                    if (smsGroupDatas.size() == 0) {
+//                        SmsGroupData sgData1 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+//                        SmsGroupData sgData2 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+//                        SmsGroupData sgData3 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+//                        SmsGroupData sgData4 = realm.createObject(SmsGroupData.class, nextId(SmsGroupData.class, realm));
+//                        sgData1.setTime(start, start + QUARTER);
+//                        sgData2.setTime(start + QUARTER, start + QUARTER * 2);
+//                        sgData3.setTime(start + QUARTER * 2, start + QUARTER * 3);
+//                        sgData4.setTime(start + QUARTER * 3, start + QUARTER * 4);
+//                        smsGroupDatas = smsGroupDataLoad("start", start, end - 1);
+//                    }
+//
+//                    //4
+//                    int index;
+//                    if (smsData.getDate() < start + QUARTER) {
+//                        index = 0;
+//                    } else if (smsData.getDate() < start + QUARTER * 2) {
+//                        index = 1;
+//                    } else if (smsData.getDate() < start + QUARTER * 3) {
+//                        index = 2;
+//                    } else {
+//                        index = 3;
+//                    }
+//                    SmsGroupData sgData = smsGroupDatas.get(index);
 
                     //5
                     int i = sgData.checkName(smsData.getPerson());
@@ -477,32 +522,58 @@ public class RealmHelper {
                 long start = today[0];
                 long end = today[1];
 
-                RealmResults<RealmObject> ngDatas = DataLoad(NotifyGroupData.class, "start", start, end - 1);
+                long rangeMillis = 0;
+                switch (DateHelper.getInstance().getRangeOfDay(date)) {
+                    case 0:
+                        rangeMillis = start;
+                        break;
+                    case 1:
+                        rangeMillis = start + QUARTER;
+                        break;
+                    case 2:
+                        rangeMillis = start + QUARTER * 2;
+                        break;
+                    case 3:
+                        rangeMillis = start + QUARTER * 3;
+                        break;
 
-                if (ngDatas.size() == 0) {
-                    NotifyGroupData ngData1 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
-                    NotifyGroupData ngData2 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
-                    NotifyGroupData ngData3 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
-                    NotifyGroupData ngData4 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
-                    ngData1.setTime(start, start + QUARTER);
-                    ngData2.setTime(start + QUARTER, start + QUARTER * 2);
-                    ngData3.setTime(start + QUARTER * 2, start + QUARTER * 3);
-                    ngData4.setTime(start + QUARTER * 3, start + QUARTER * 4);
-
-                    ngDatas = DataLoad(NotifyGroupData.class, "start", start, end - 1);
-                }
-                int index;
-                if (notifyData.getDate() < start + QUARTER) {
-                    index = 0;
-                } else if (notifyData.getDate() < start + QUARTER * 2) {
-                    index = 1;
-                } else if (notifyData.getDate() < start + QUARTER * 3) {
-                    index = 2;
-                } else {
-                    index = 3;
                 }
 
-                NotifyGroupData ngData = (NotifyGroupData) ngDatas.get(index);
+                NotifyGroupData ngData = realm.where(NotifyGroupData.class).equalTo("start", rangeMillis).findFirst();
+                if (ngData == null) {
+                    ngData = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+                    ngData.setTime(rangeMillis, rangeMillis + QUARTER);
+                }
+
+//
+//                RealmResults<RealmObject> ngDatas = DataLoad(NotifyGroupData.class, "start", start, end - 1);
+//
+//                if (ngDatas.size() == 0) {
+//                    NotifyGroupData ngData1 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+//                    NotifyGroupData ngData2 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+//                    NotifyGroupData ngData3 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+//                    NotifyGroupData ngData4 = realm.createObject(NotifyGroupData.class, nextId(NotifyGroupData.class, realm));
+//                    ngData1.setTime(start, start + QUARTER);
+//                    ngData2.setTime(start + QUARTER, start + QUARTER * 2);
+//                    ngData3.setTime(start + QUARTER * 2, start + QUARTER * 3);
+//                    ngData4.setTime(start + QUARTER * 3, start + QUARTER * 4);
+//
+//                    ngDatas = DataLoad(NotifyGroupData.class, "start", start, end - 1);
+//                }
+//                int index;
+//                if (notifyData.getDate() < start + QUARTER) {
+//                    index = 0;
+//                } else if (notifyData.getDate() < start + QUARTER * 2) {
+//                    index = 1;
+//                } else if (notifyData.getDate() < start + QUARTER * 3) {
+//                    index = 2;
+//                } else {
+//                    index = 3;
+//                }
+//
+//                NotifyGroupData ngData = (NotifyGroupData) ngDatas.get(index);
+
+
                 if (notifyData.getPerson() == null) {
                     return;
                 }
@@ -572,10 +643,15 @@ public class RealmHelper {
 
     public RealmResults<RealmObject> DataHighlightLoad(Class c, String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).between(query, start, end).equalTo("highlight", true).findAll();
+        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).between(query, start, end).equalTo("highlight", 1).findAll();
         return cData;
     }
 
+    public RealmResults<RealmObject> DataHighlightAndShareLoad(Class c, String query, long start, long end) {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmObject> cData = (RealmResults<RealmObject>) realm.where(c).between(query, start, end).equalTo("highlight", 1).or().between(query, start, end).equalTo("share", 1).findAll();
+        return cData;
+    }
 
     public RealmResults<GpsData> gpsDataLoad(String query, long start, long end) {
         Realm realm = Realm.getDefaultInstance();
@@ -629,15 +705,28 @@ public class RealmHelper {
         Realm realm = Realm.getDefaultInstance();
         final PhotoGroupData photoGroupData = (PhotoGroupData) item;
         final DayData dayData = getDayObject(realm, photoGroupData.getDate());
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
 
                 photoGroupData.getPhotoss().deleteAllFromRealm();
                 if (photoGroupData.getStart() == dayData.getPhotoLast()) {
                     dayData.setPhotoLast(0);
                 }
                 photoGroupData.deleteFromRealm();
+
+    }
+
+    public void gpsGroupDataDelete(RealmObject item) {
+        Realm realm = Realm.getDefaultInstance();
+        final GpsGroupData gpsGroupData = (GpsGroupData) item;
+        final DayData dayData = getDayObject(realm, gpsGroupData.getDate());
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+
+                gpsGroupData.getGpsDatas().deleteAllFromRealm();
+                if (gpsGroupData.getStart() == dayData.getGpsNew()) {
+                    dayData.setGpsNew(0);
+                }
+                gpsGroupData.deleteFromRealm();
 
             }
         });

@@ -1,5 +1,6 @@
 package com.example.android.selfns.Data.RealmData.UnitData;
 
+import com.example.android.selfns.Data.DTO.Detail.CustomDTO;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
@@ -16,16 +17,91 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class CustomData extends RealmObject implements MyRealmCommentableObject, MyRealmShareableObject, MyRealmGpsObject {
-    @PrimaryKey
-    private long id;
+    public CustomData() {
 
+    }
+
+    public CustomData(CustomDTO data) {this.id = data.getId();
+        this._id=data.get_id();
+        this.date = data.getDate();
+        this.title = data.getTitle();
+        this.comment = data.getComment();
+        this.tag = data.getTag();
+        this.lat = data.getLat();
+        this.lng = data.getLng();
+        this.place = data.getPlace();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
+        this.friends = data.getFriends();
+    }
+
+    @PrimaryKey
+  long id;
+
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
     private long date;
     private String title, comment, tag;
     double lat, lng;
     private String place;
-    private boolean share;
+
     String originId;
-    String friends="[]";
+    String friends = "[]";
+    String fid;
+    long timestamp = 0;
+
+    int highlight = 0;
+
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+
+    @Override
+    public int getShare() {
+        return share;
+    }
+
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    int share = 0;
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
 
     @Override
     public String getFriends() {
@@ -38,16 +114,10 @@ public class CustomData extends RealmObject implements MyRealmCommentableObject,
     }
 
 
-
-    @Override
-    public boolean isShare() {
-        return share;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    @Override
-    public void setShare(boolean share) {
-        this.share = share;
-    }
 
     public double getLat() {
         return lat;
@@ -83,13 +153,13 @@ public class CustomData extends RealmObject implements MyRealmCommentableObject,
         this.place = place;
     }
 
-    private boolean highlight = false;
 
     @Override
     public int getType() {
-        return RealmClassHelper.CUSTOM_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.CUSTOM_DATA;
     @Override
     public long getDate() {
         return date;
@@ -97,7 +167,7 @@ public class CustomData extends RealmObject implements MyRealmCommentableObject,
 
     @Override
     public long getId() {
-        return 0;
+        return id;
     }
 
     public void setDate(long date) {
@@ -119,16 +189,6 @@ public class CustomData extends RealmObject implements MyRealmCommentableObject,
     @Override
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
     }
 
 

@@ -1,5 +1,7 @@
 package com.example.android.selfns.Data.RealmData.GroupData;
 
+import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
+import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
@@ -17,20 +19,91 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-08-11.
  */
 
-public class GpsGroupData extends RealmObject implements MyRealmCommentableObject,MyRealmShareableObject,MyRealmGpsObject {
+public class GpsGroupData extends RealmObject implements MyRealmCommentableObject, MyRealmShareableObject, MyRealmGpsObject {
+    public GpsGroupData() {
+
+    }
+
+    public GpsGroupData(GpsGroupDTO data) {
+        this._id=data.get_id(); this.id = data.getId();
+        this.start = data.getStart();
+        this.end = data.getEnd();
+        this.comment = data.getComment();
+        this.place = data.getPlace();
+
+        this.endId = data.getEndId();
+        this.startId = data.getStartId();
+        this.lat = data.getLat();
+        this.lng = data.getLng();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
+        this.friends = data.getFriends();
+        for (GpsDTO d : data.getGpsDatas()) {
+            this.gpsDatas.add(new GpsData(d));
+        }
+    }
+
 
     @PrimaryKey
     private long id;
 
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
     private long start = -1, end = -1;
     private String comment, place;
-    private boolean highlight = false;
     private long endId = -1, startId = -1;
     private double lat, lng;
 
-    private boolean share;
     String originId;
-    String friends="[]";
+    String friends = "[]";
+    long timestamp = 0;
+
+    int highlight = 0;
+
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+
+    @Override
+    public int getShare() {
+        return share;
+    }
+
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    int share = 0;
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     @Override
     public String getFriends() {
@@ -42,6 +115,17 @@ public class GpsGroupData extends RealmObject implements MyRealmCommentableObjec
         this.friends = friends;
     }
 
+    String fid;
+
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
 
 
     public String getOriginId() {
@@ -50,16 +134,6 @@ public class GpsGroupData extends RealmObject implements MyRealmCommentableObjec
 
     public void setOriginId(String originId) {
         this.originId = originId;
-    }
-
-    @Override
-    public boolean isShare() {
-        return share;
-    }
-
-    @Override
-    public void setShare(boolean share) {
-        this.share=share;
     }
 
     private RealmList<GpsData> gpsDatas;
@@ -71,6 +145,7 @@ public class GpsGroupData extends RealmObject implements MyRealmCommentableObjec
     public void setGpsDatas(RealmList<GpsData> gpsDatas) {
         this.gpsDatas = gpsDatas;
     }
+
     public boolean isStart() {
         if (start > 0) {
             return true;
@@ -87,21 +162,15 @@ public class GpsGroupData extends RealmObject implements MyRealmCommentableObjec
     public void setComment(String comment) {
         this.comment = comment;
     }
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
 
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
+
 
     @Override
     public int getType() {
-        return RealmClassHelper.GPS_GROUP_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.GPS_GROUP_DATA;
     @Override
     public long getDate() {
         if (isStart()) {
@@ -175,7 +244,6 @@ public class GpsGroupData extends RealmObject implements MyRealmCommentableObjec
     public void setLng(double lng) {
         this.lng = lng;
     }
-
 
 
 }

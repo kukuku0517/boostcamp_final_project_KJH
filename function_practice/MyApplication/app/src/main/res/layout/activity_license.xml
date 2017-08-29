@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.selfns.ExtraView.LicenseActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="ButterKnife\nCopyright 2013 Jake Wharton\nhttp://www.apache.org/licenses/LICENSE-2.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="material-calendarview\nCopyright (c) 2017 Prolific Interactive\nhttps://github.com/prolificinteractive/material-calendarview/blob/master/LICENSE" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Glide\nCopyright 2014 Google, Inc. All rights reserved.\nhttps://github.com/bumptech/glide/blob/master/LICENSE" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Google Awareness API\nCopyright 2016 Google Inc\nhttps://developers.google.com/awareness/" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Google Places API\nCopyright 2016 Google Inc\nhttps://developers.google.com/places/?hl=ko" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Parceler\nVersion 2.0, January 2004\nhttp://www.apache.org/licenses/" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Parceler\nVersion 2.0, January 2004\nhttp://www.apache.org/licenses/" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Timelineview\nVersion 2.0, January 2004\nhttp://www.apache.org/licenses/" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="SlideUp\nCopyright (c) 2017 Mansur\nhttps://github.com/mancj/SlideUp-Android/blob/master/LICENSE" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="Firebase-auth\nCopyright 2016 Google Inc\nhttps://firebase.google.com/docs/auth/?hl=ko
+        " />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="facebook-android-sdk\nCopyright (c) 2014-present, Facebook, Inc. All rights reserved.\nhttps://developers.facebook.com/docs/android/" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="shinebutton\nThe MIT License (MIT)
+    Copyright (c) 2016 Chad Song\nhttps://github.com/ChadCSong/ShineButton/blob/master/LICENSE" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="materialedittext\nCopyright 2014 rengwuxian\nhttp://www.apache.org/licenses/LICENSE-2.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="RackMonthPicker\nGNU GENERAL PUBLIC LICENSE
+                Version 3, 29 June 2007\nhttps://github.com/lutvie72/RackMonthPicker/blob/master/LICENSE.md" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="MPAndroidChart\nApache License Version 2.0, January 2004\n http://www.apache.org/licenses/" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="retrofit\nCopyright 2013 Square, Inc.\nhttp://www.apache.org/licenses/LICENSE-2.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autoLink="web"
+                android:text="materialdaterangepicker\nApache License Version 2.0, January 2004\nhttp://www.apache.org/licenses/" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

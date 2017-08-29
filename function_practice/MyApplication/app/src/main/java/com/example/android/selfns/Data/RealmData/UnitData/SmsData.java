@@ -71,12 +71,13 @@ public class SmsData extends RealmObject implements MyRealmObject {
     }
 
 
+
     @Override
     public int getType() {
-
-
-        return RealmClassHelper.SMS_DATA;
+        return type;
     }
+
+    int type=RealmClassHelper.SMS_DATA;
 
     public void setAddress(String address) {
         this.address = address;

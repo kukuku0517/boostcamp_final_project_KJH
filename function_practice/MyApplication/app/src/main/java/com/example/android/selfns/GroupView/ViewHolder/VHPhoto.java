@@ -9,10 +9,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Interface.PhotoItemClickListener;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 
 import java.text.DateFormat;
@@ -34,8 +36,10 @@ public class VHPhoto extends DayViewHolder {
     TextView date;
     @BindView(R.id.photo_location)
     TextView location;
-    @BindView(R.id.photo_button)
-    Button button;
+    @BindView(R.id.photo_comment)
+    TextView comment;
+    @BindView(R.id.photo_delete)
+    ImageView button;
     Context context;
 
     public VHPhoto(View view, Context context) {
@@ -51,18 +55,25 @@ public class VHPhoto extends DayViewHolder {
         String tempDate = sdFormat.format(d);
         date.setText(tempDate);
         location.setText(callData.getPlace());
-        Glide.with(context).load(callData.getPath()).into(iv);
+        comment.setText(callData.getComment());
+        if (callData.getShare() == 1) {
+            String path = String.format("https://selfns-taejoonhong.c9users.io:8080/images/photos-%d.jpg", callData.get_id());
+            GlideApp.with(context).load(path).centerCrop().into(iv);
+        } else {
+            GlideApp.with(context).load(callData.getPath()).centerCrop().into(iv);
+
+        }
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               PhotoItemClickListener listener = (PhotoItemClickListener) context;
+                PhotoItemClickListener listener = (PhotoItemClickListener) context;
                 listener.onPhotoItemClick(item);
             }
         });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               ItemInteractionUtil.getInstance(context).deletePhotoItem(callData);
+                ItemInteractionUtil.getInstance(context).deletePhotoItem(callData);
             }
         });
         //TODO sharebtn
@@ -72,9 +83,12 @@ public class VHPhoto extends DayViewHolder {
 //                ItemInteractionUtil.getInstance(context).shareItem(item);
 //            }
 //        });
-    }   List<UserDTO> items = new ArrayList<>();
+    }
+
+    List<FriendDTO> items = new ArrayList<>();
+
     @Override
-    public void bindTag(ArrayList<UserDTO> users) {
+    public void bindTag(ArrayList<FriendDTO> users) {
         this.items = users;
     }
 }

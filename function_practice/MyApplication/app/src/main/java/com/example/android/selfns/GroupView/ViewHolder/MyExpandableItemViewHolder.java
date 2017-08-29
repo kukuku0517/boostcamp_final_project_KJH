@@ -3,11 +3,11 @@ package com.example.android.selfns.GroupView.ViewHolder;
 import android.view.View;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.ExpandableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.annotation.ExpandableItemStateFlags;
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ public abstract class MyExpandableItemViewHolder extends DayViewHolder implement
     }
 
     @Override
-    public void bindTag(ArrayList<UserDTO> users) {
+    public void bindTag(ArrayList<FriendDTO> users) {
 
     }
     @ExpandableItemStateFlags

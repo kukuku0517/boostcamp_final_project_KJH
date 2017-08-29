@@ -4,26 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageButton
-        android:id="@+id/item_highlight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:padding="4dp"
-        app:srcCompat="@drawable/ic_star_black_24dp" />
 
     <com.sackcentury.shinebuttonlib.ShineButton
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_margin="8dp"
         android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:src="@android:color/darker_gray"
-        android:id="@+id/item_highlight_anim"
+        android:id="@+id/item_highlight"
         app:btn_color="@android:color/darker_gray"
-        app:btn_fill_color="@android:color/holo_green_dark"
+        app:btn_fill_color="@android:color/holo_orange_light"
         app:allow_random_color="false"
         app:siShape="@raw/star"/>
+
     <LinearLayout
         android:id="@+id/item_hide_menu"
         android:layout_width="wrap_content"

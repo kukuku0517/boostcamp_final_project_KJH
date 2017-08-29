@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_date"
+            style="@style/MyTheme.Textview.time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="07:00" />
+
+        <TextView
+            android:id="@+id/item_am_pm"
+            style="@style/MyTheme.Textview.ampm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+
+            android:text="AM" />
+
+        <TextView
+            style="@style/MyTheme.Textview.time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+
+            android:text="~" />
+        <TextView
+            android:id="@+id/item_date_to"
+            style="@style/MyTheme.Textview.time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="07:00" />
+
+
+
+
+        <TextView
+            android:id="@+id/item_am_pm_to"
+            style="@style/MyTheme.Textview.ampm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+
+            android:text="AM" />
+
+    </LinearLayout>
+
+    <com.github.vipulasri.timelineview.TimelineView
+        android:id="@+id/item_time_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
+        android:layout_marginRight="16dp"
+        app:line="#E0E0E0"
+        app:lineSize="2dp"
+
+        app:markerSize="16dp"
+
+        />
+
+    <ImageView
+        android:id="@+id/item_time_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:minHeight="40dp"
+        android:minWidth="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:tint="#E0E0E0"
+        android:layout_marginRight="16dp"
+       />
+
+</LinearLayout>

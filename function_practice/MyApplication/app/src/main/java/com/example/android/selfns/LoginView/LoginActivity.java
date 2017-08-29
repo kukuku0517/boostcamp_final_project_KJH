@@ -8,16 +8,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.example.android.selfns.DailyView.MainActivity;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.Helper.FirebaseHelper;
+import com.example.android.selfns.Helper.RetrofitHelper;
 import com.example.android.selfns.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -32,8 +34,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.sign_up)
     Button signUp;
+    @BindView(R.id.login_logo)
+    ImageView logo;
 
     @BindView(R.id.sign_in_id)
     EditText id;
@@ -67,10 +69,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        Glide.with(this).load(R.drawable.facebook_logo_text).into(logo);
 
+        signUpFB.setBackgroundResource(R.drawable.mybuttonfb);
+        signUp.setCompoundDrawablePadding(8);
 
-
-    mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         mCallbackManager = CallbackManager.Factory.create();
         signUpFB.setReadPermissions("email", "public_profile");
 
@@ -120,6 +124,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = id.getText().toString();
                 String password = pw.getText().toString();
+                if (email.length() == 0) {
+                    Toast.makeText(context, "이메일을 입력하세요", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (password.length() == 0) {
+                    Toast.makeText(context, "비밀번호를 입력하세요", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -174,8 +185,14 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
 
-                            FirebaseHelper.getInstance(context).setUserData();
+//                            FirebaseHelper.getInstance(context).setUserData();
 
+                            FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
+                            UserDTO user = new UserDTO();
+                            user.setId(u.getEmail());
+                            user.setName(u.getDisplayName());
+                            user.setPhotoUrl(u.getPhotoUrl().toString());
+                            RetrofitHelper.getInstance(context).saveUser(user);
 
                         }
                     }

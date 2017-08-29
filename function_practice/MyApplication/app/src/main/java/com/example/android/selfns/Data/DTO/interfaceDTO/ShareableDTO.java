@@ -8,14 +8,25 @@ import java.util.ArrayList;
 
 public interface ShareableDTO extends BaseDTO {
 
-    boolean isShare();
 
-    void setShare(boolean share);
+ long get_id() ;
 
-
- String getFriends() ;
-
-void setFriends(String friends) ;
+void set_id(long _id);
 
 
+int getShare();
+
+void setShare(int share) ;
+
+    String getFriends();
+
+    void setFriends(String friends);
+
+    String getFid();
+
+    void setFid(String fid);
+
+    long getTimestamp() ;
+
+    void setTimestamp(long timestamp);
 }

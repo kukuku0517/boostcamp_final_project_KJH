@@ -14,6 +14,7 @@ import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
 import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.CommentableDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.GpsableDTO;
@@ -27,22 +28,19 @@ import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
-import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
 import com.example.android.selfns.ExtraView.Comment.CommentDialogFragment;
 import com.example.android.selfns.ExtraView.Friend.FriendDialogFragment;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.io.FileNotFoundException;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
 
-import static android.R.attr.id;
+import static android.R.attr.tag;
 
 
 /**
@@ -68,11 +66,27 @@ public class ItemInteractionUtil {
         Bundle args = new Bundle();
         args.putLong("id", id);
         args.putInt("type", type);
+        args.putInt("title", 0);
         Log.d("dialog", SmsUnitData.class.getCanonicalName());
         CommentDialogFragment dialogFragment = new CommentDialogFragment();
         dialogFragment.setArguments(args);
         dialogFragment.show(fm, "fragment_dialog_test");
     }
+
+    //제목
+    public void editTitle(AppCompatActivity activity, long id, int type) {
+
+        FragmentManager fm = activity.getSupportFragmentManager();
+        Bundle args = new Bundle();
+        args.putLong("id", id);
+        args.putInt("type", type);
+        args.putInt("title", 1);
+        Log.d("dialog", SmsUnitData.class.getCanonicalName());
+        CommentDialogFragment dialogFragment = new CommentDialogFragment();
+        dialogFragment.setArguments(args);
+        dialogFragment.show(fm, "fragment_dialog_test");
+    }
+
 
     //하이라이트
     public void highlight(final CommentableDTO item) {
@@ -83,10 +97,9 @@ public class ItemInteractionUtil {
             public void execute(Realm realm) {
                 Class c = RealmClassHelper.getInstance().getClass(item.getType());
                 MyRealmCommentableObject myItem = (MyRealmCommentableObject) realm.where(c).equalTo("id", item.getId()).findFirst();
-
-                Log.d("highlight", String.valueOf(item.isHighlight()));
-                myItem.setHighlight(!item.isHighlight());
-                Log.d("highlight", String.valueOf(item.isHighlight()));
+                Log.d("highlight", String.valueOf(item.getHighlight() == 1));
+                myItem.setHighlight(1 - item.getHighlight());
+                Log.d("highlight", String.valueOf(item.getHighlight() == 1));
             }
         });
     }
@@ -104,7 +117,6 @@ public class ItemInteractionUtil {
                     @Override
                     public void execute(Realm realm) {
                         Class c = RealmClassHelper.getInstance().getClass(item.getType());
-
                         RealmObject myItem = (RealmObject) realm.where(c).equalTo("id", item.getId()).findFirst();
                         myItem.deleteFromRealm();
                     }
@@ -159,6 +171,34 @@ public class ItemInteractionUtil {
                         Class c = RealmClassHelper.getInstance().getClass(item.getType());
                         RealmObject myItem = (RealmObject) realm.where(c).equalTo("id", item.getId()).findFirst();
                         RealmHelper.getInstance().photoGroupDataDelete(myItem);
+                    }
+                });
+
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        builder.create().show();
+
+
+    }
+
+    public void deleteGpsGroupItem(final GpsGroupDTO item) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+// Add the buttons
+        builder.setPositiveButton("삭제하기", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Class c = RealmClassHelper.getInstance().getClass(item.getType());
+                        RealmObject myItem = (RealmObject) realm.where(c).equalTo("id", item.getId()).findFirst();
+                        RealmHelper.getInstance().gpsGroupDataDelete(myItem);
                     }
                 });
 
@@ -237,6 +277,12 @@ public class ItemInteractionUtil {
                         photoData.setPlace(place.getPlace());
                         photoData.setOriginId(place.getOriginId());
                         break;
+                    case RealmClassHelper.PHOTO_GROUP_DATA:
+                        PhotoGroupData photoGroupData  = (PhotoGroupData) realm.where(c).equalTo("id", id).findFirst();
+
+                        photoGroupData.setPlace(place.getPlace());
+                        photoGroupData.setOriginId(place.getOriginId());
+                        break;
                     case RealmClassHelper.GPS_DATA:
                         GpsData gpsData = (GpsData) realm.where(c).equalTo("id", id).findFirst();
                         gpsData.setLat(place.getLat());
@@ -258,30 +304,36 @@ public class ItemInteractionUtil {
         builder.setPositiveButton("공유하기", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 int type = item.getType();
-                item.setShare(true);
+                item.setShare(1);
+
 
                 String key = null;
-                if (type == RealmClassHelper.PHOTO_GROUP_DATA) {
-                    try {
-                        key = FirebaseHelper.getInstance(context).setPostPhotoGroup(type, (PhotoGroupDTO) item);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                RetrofitHelper.getInstance(context).shareData(item, FirebaseHelper.getInstance(context).getCurrentUser().getEmail());
 
-                } else {
-                    key = FirebaseHelper.getInstance(context).setPost(type, item);
-                }
+//                if (type == RealmClassHelper.PHOTO_GROUP_DATA) {
+//                    try {
+//                        key = FirebaseHelper.getInstance(context).setPostPhotoGroup(type, (PhotoGroupDTO) item);
+//
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                } else {
+//                    key = FirebaseHelper.getInstance(context).setPost(type, item);
+//                }
                 JSONArray friends = null;
-                try {
-                    friends = new JSONArray(item.getFriends());
-                    for (int i = 0; i < friends.length(); i++) {
-                        JSONObject friend = friends.getJSONObject(i);
-                        String uid = friend.get("id").toString();
-                        FirebaseHelper.getInstance(context).sendPostMessage(uid, key);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                item.setFid(key); TODO
+//
+//                try {
+//                    friends = new JSONArray(item.getFriends());
+//                    for (int i = 0; i < friends.length(); i++) {
+//                        JSONObject friend = friends.getJSONObject(i);
+//                        String uid = friend.get("id").toString();
+//                        FirebaseHelper.getInstance(context).sendPostMessage(uid, key);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
 
 
             }
@@ -327,55 +379,55 @@ public class ItemInteractionUtil {
         dialogFragment.show(fm, "fragment_dialog_test");
     }
 
-    public void addFriend(final ShareableDTO item, UserDTO user) throws JSONException {
+    public void addFriend(final ShareableDTO item, FriendDTO user) throws JSONException {
 
 
         JSONArray jsonArray = new JSONArray(item.getFriends());
         JSONObject json = new JSONObject();
-        json.put("id", user.getUid());
-        json.put("name",user.getName());
-        json.put("photoUrl",user.getPhotoUrl());
+        json.put("id", user.getId());
+        json.put("name", user.getName());
+        json.put("photoUrl", user.getPhotoUrl());
         jsonArray.put(json);
         final String friendsString = jsonArray.toString();
-        item.setFriends(friendsString);
+//        item.setFriends(friendsString);
 
 
-        if (!item.isShare()) {
+        if (item.getShare() == 1) {
             final int type = item.getType();
             final Class c = RealmClassHelper.getInstance().getClass(type);
 
-            Realm realm = Realm.getDefaultInstance();
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    switch (type) {
-                        case RealmClassHelper.CALL_DATA:
-                            CallData callData = (CallData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            callData.setFriends(friendsString);
-                            break;
-                        case RealmClassHelper.CUSTOM_DATA:
-                            CustomData customData = (CustomData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            customData.setFriends(friendsString);
-                            break;
-                        case RealmClassHelper.PHOTO_GROUP_DATA:
-                            PhotoGroupData photoGroupData = (PhotoGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            photoGroupData.setFriends(friendsString);
-                            break;
-                        case RealmClassHelper.PHOTO_DATA:
-                            PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            photoData.setFriends(friendsString);
-                            break;
-                        case RealmClassHelper.SMS_TRADE_DATA:
-                            SmsTradeData smsTradeData = (SmsTradeData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            smsTradeData.setFriends(friendsString);
-                            break;
-                        case RealmClassHelper.GPS_GROUP_DATA:
-                            GpsGroupData gpsGroupData = (GpsGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
-                            gpsGroupData.setFriends(friendsString);
-                            break;
-                    }
-                }
-            });
+//            Realm realm = Realm.getDefaultInstance();
+//            realm.executeTransaction(new Realm.Transaction() {
+//                @Override
+//                public void execute(Realm realm) {
+//                    switch (type) {
+//                        case RealmClassHelper.CALL_DATA:
+//                            CallData callData = (CallData) realm.where(c).equalTo("id", item.getId()).findFirst();
+//                            callData.setFriends(friendsString);
+//                            break;
+//                        case RealmClassHelper.CUSTOM_DATA:
+//                            CustomData customData = (CustomData) realm.where(c).equalTo("id", item.getId()).findFirst();
+//                            customData.setFriends(friendsString);
+//                            break;
+//                        case RealmClassHelper.PHOTO_GROUP_DATA:
+//                            PhotoGroupData photoGroupData = (PhotoGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
+//                            photoGroupData.setFriends(friendsString);
+//                            break;
+//                        case RealmClassHelper.PHOTO_DATA:
+//                            PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", item.getId()).findFirst();
+//                            photoData.setFriends(friendsString);
+//                            break;
+//                        case RealmClassHelper.SMS_TRADE_DATA:
+//                            SmsTradeData smsTradeData = (SmsTradeData) realm.where(c).equalTo("id", item.getId()).findFirst();
+//                            smsTradeData.setFriends(friendsString);
+//                            break;
+//                        case RealmClassHelper.GPS_GROUP_DATA:
+//                            GpsGroupData gpsGroupData = (GpsGroupData) realm.where(c).equalTo("id", item.getId()).findFirst();
+//                            gpsGroupData.setFriends(friendsString);
+//                            break;
+//                    }
+//                }
+//            });
 
 
 //            RealmHelper.getInstance().addFriend(item,uid);
@@ -385,5 +437,6 @@ public class ItemInteractionUtil {
 
         }
     }
+
 
 }

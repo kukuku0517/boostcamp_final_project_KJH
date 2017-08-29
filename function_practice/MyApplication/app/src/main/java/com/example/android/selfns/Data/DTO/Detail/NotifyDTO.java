@@ -1,4 +1,5 @@
 package com.example.android.selfns.Data.DTO.Detail;
+
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
 import com.example.android.selfns.Helper.RealmClassHelper;
@@ -11,13 +12,14 @@ import org.parceler.Parcel;
 
 @Parcel
 public class NotifyDTO implements BaseDTO {
-public NotifyDTO(){
+    public NotifyDTO() {
 
-}
-  long  id;
+    }
+
+    long id;
     long date;
-  String content,person;
-long notifyUnitId;
+    String content, person;
+    long notifyUnitId;
 
     public NotifyDTO(NotifyData data) {
         this.id = data.getId();
@@ -59,14 +61,15 @@ long notifyUnitId;
         this.person = person;
     }
 
-    public long  getId() {
+    public long getId() {
         return id;
     }
 
+
     @Override
     public int getType() {
-
-        return RealmClassHelper.NOTIFY_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.NOTIFY_DATA;
 }

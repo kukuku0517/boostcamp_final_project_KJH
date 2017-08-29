@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.R;
@@ -26,6 +27,7 @@ public class CommentDialogFragment extends DialogFragment {
 
     private MyRealmCommentableObject item;
     private Realm realm;
+    private int title;
 
     public CommentDialogFragment() {
 
@@ -46,7 +48,7 @@ public class CommentDialogFragment extends DialogFragment {
             Class c = RealmClassHelper.getInstance().getClass(args.getInt("type"));
             long id = args.getLong("id");
             item = (MyRealmCommentableObject) realm.where(c).equalTo("id", id).findFirst();
-
+title=args.getInt("title");
 
         }
     }
@@ -61,16 +63,21 @@ public class CommentDialogFragment extends DialogFragment {
         WindowManager.LayoutParams p = getDialog().getWindow().getAttributes();
         p.width = ViewGroup.LayoutParams.MATCH_PARENT;
         p.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE;
+        p.setTitle("댓글 달기");
 
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        item.setComment(String.valueOf(et.getText()));
+                        if(title==0){
+
+                            item.setComment(String.valueOf(et.getText()));
+                        }else{
+                            ((CustomData)item).setTitle(String.valueOf(et.getText()));
+                        }
                         dismiss();
                     }
                 });

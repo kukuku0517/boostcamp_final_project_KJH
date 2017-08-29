@@ -22,13 +22,60 @@ public class SmsTradeDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     String originId,address, content,person,place,comment;
     long date;
     double lat, lng;
-
     long id;
 
-    boolean highlight = false;
-    boolean share;
     String friends="[]";
+    String fid;
+    long timestamp = 0;
 
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+    @Override
+    public int getShare() {
+        return share;
+    }
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    int  share = 0;
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
     @Override
     public String getFriends() {
         return friends;
@@ -41,41 +88,23 @@ public class SmsTradeDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
 
 
     public SmsTradeDTO(SmsTradeData data) {
-        this.id = data.getId();
+        this._id=data.get_id(); this.id = data.getId();
         this.address = data.getAddress();
         this.content = data.getContent();
         this.person = data.getPerson();
         this.place = data.getPlace();
         this.comment = data.getComment();
-        this.highlight = data.isHighlight();
-        this.share = data.isShare();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
         this.originId = data.getOriginId();
         this.date = data.getDate();
         this.lat = data.getLat();
         this.lng = data.getLng();
-        this.friends=data.getFriends();
+        this.friends=data.getFriends();   this.fid=data.getFid();
+        this.timestamp=data.getTimestamp();
     }
 
 
-    @Override
-    public boolean isShare() {
-        return share;
-    }
-
-    @Override
-    public void setShare(boolean share) {
-        this.share = share;
-    }
-
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     public String getOriginId() {
         return originId;
@@ -157,11 +186,13 @@ public class SmsTradeDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     }
 
 
+
     @Override
     public int getType() {
-
-        return RealmClassHelper.SMS_TRADE_DATA;
+        return type;
     }
+
+    int type=RealmClassHelper.SMS_TRADE_DATA;
 
     public void setAddress(String address) {
         this.address = address;

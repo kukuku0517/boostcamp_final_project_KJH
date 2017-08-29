@@ -1,5 +1,6 @@
 package com.example.android.selfns.Data.RealmData.UnitData;
 
+import com.example.android.selfns.Data.DTO.Detail.GpsDTO;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
 
@@ -24,7 +25,26 @@ public class GpsData extends RealmObject implements MyRealmGpsObject {
     private String place, originId;
     private int change, moveState;
 
+    long _groupId;
 
+    public long get_groupId() {
+        return _groupId;
+    }
+
+    public void set_groupId(long _groupId) {
+        this._groupId = _groupId;
+    }
+
+    public GpsData(GpsDTO data) {   this._groupId=data.get_groupId();
+        this.id = data.getId();
+        this.lat = data.getLat();
+        this.lng = data.getLng();
+        this.date = data.getDate();
+        this.place = data.getPlace();
+        this.originId = data.getOriginId();
+        this.change = data.getChange();
+        this.moveState = data.getMoveState();
+    }
     public GpsData() {
 
     }
@@ -83,10 +103,13 @@ public class GpsData extends RealmObject implements MyRealmGpsObject {
         this.place = place;
     }
 
+
+    @Override
     public int getType() {
-        return RealmClassHelper.GPS_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.GPS_DATA;
     public long getDate() {
         return date;
     }

@@ -44,14 +44,11 @@ public class SNSNotificationService extends NotificationListenerService{
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.i("NotificationListener", "[snowdeer] onNotificationPosted() - " + sbn.toString());
-        Log.i("NotificationListener", "[snowdeer] PackageName:" + sbn.getPackageName());
-        Log.i("NotificationListener", "[snowdeer] PostTime:" + sbn.getPostTime());
+
 
         Notification notificatin = sbn.getNotification();
         Bundle extras = notificatin.extras;
 
-        Log.i("NotificationListener", "[snowdeer] bundle:"+extras);
         String title = extras.getString(Notification.EXTRA_TITLE);
         int smallIconRes = extras.getInt(Notification.EXTRA_SMALL_ICON);
         Bitmap largeIcon = ((Bitmap) extras.getParcelable(Notification.EXTRA_LARGE_ICON));
@@ -59,23 +56,9 @@ public class SNSNotificationService extends NotificationListenerService{
         CharSequence text = extras.getString(Notification.EXTRA_TEXT);
         CharSequence subText = extras.getCharSequence(Notification.EXTRA_SUB_TEXT);
 
-        Log.i("NotificationListener", "[snowdeer] Title:" + title);
-//        extras.get
         CharSequence people =extras.getCharSequence(Notification.EXTRA_PEOPLE);
-        Log.i("NotificationListener", "[snowdeer] people:" +people);
 
-        Log.i("NotificationListener", "[snowdeer] Text:" + text);;
         String convtitle = (String) extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE);
-        Log.i("NotificationListener", "[snowdeer] conv title:" + convtitle);
-        Log.i("NotificationListener", "[snowdeer] Sub Text:" + subText);
-
-        Log.i("NotificationListener", "[snowdeer] BIG TEXT:" + extras.getString(Notification.EXTRA_BIG_TEXT));
-
-        Log.i("NotificationListener", "[snowdeer] id:" + extras.getString("uuid"));
-        Log.i("NotificationListener", "[snowdeer] intfo :" + extras.getString(Notification.EXTRA_INFO_TEXT));
-//        Log.i("NotificationListener", "[snowdeer] Group:" + notificatin.getGroup());
-//        Log.i("NotificationListener", "[snowdeer] Title:" + notificatin.getSortKey());
-//
 
         RealmHelper.getInstance().notifyDataSave(title, String.valueOf(text), String.valueOf(subText), when);
 
@@ -83,7 +66,7 @@ public class SNSNotificationService extends NotificationListenerService{
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.i("NotificationListener", "[snowdeer] onNotificationRemoved() - " + sbn.toString());
+
     }
 
 }

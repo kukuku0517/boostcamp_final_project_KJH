@@ -19,7 +19,7 @@ import java.util.ArrayList;
 @Parcel
 public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     public PhotoGroupDTO(PhotoGroupData data) {
-        this.id = data.getId();
+        this._id=data.get_id();   this.id = data.getId();
         this.count = data.getCount();
         this.start = data.getStart();
         this.end = data.getEnd();
@@ -29,9 +29,11 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         for (PhotoData d : data.getPhotoss()) {
             this.photoss.add(new PhotoDTO(d));
         }
-        this.highlight = data.isHighlight();
-        this.share = data.isShare();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
         this.friends=data.getFriends();
+        this.fid=data.getFid();
+        this.timestamp=data.getTimestamp();
     }
 
 
@@ -41,7 +43,57 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     String place, comment;
     ArrayList<PhotoDTO> photoss = new ArrayList<>();
     String friends="[]";
+    String fid;
+    long timestamp = 0;
 
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+    @Override
+    public int getShare() {
+        return share;
+    }
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    int  share = 0;
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
     @Override
     public String getFriends() {
         return friends;
@@ -53,8 +105,6 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
     }
 
 
-    boolean highlight = false;
-    boolean share;
     String originId;
 
 
@@ -70,15 +120,6 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.originId = originId;
     }
 
-    @Override
-    public boolean isShare() {
-        return share;
-    }
-
-    @Override
-    public void setShare(boolean share) {
-        this.share = share;
-    }
 
 
     public int getCount() {
@@ -140,11 +181,13 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.id = id;
     }
 
+
     @Override
     public int getType() {
-        return RealmClassHelper.PHOTO_GROUP_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.PHOTO_GROUP_DATA;
     @Override
     public long getDate() {
         return start;
@@ -160,14 +203,5 @@ public class PhotoGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.comment = comment;
     }
 
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
 }

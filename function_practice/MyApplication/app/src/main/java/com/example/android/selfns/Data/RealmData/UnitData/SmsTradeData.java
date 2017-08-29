@@ -1,5 +1,6 @@
 package com.example.android.selfns.Data.RealmData.UnitData;
 
+import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
@@ -15,19 +16,89 @@ import io.realm.annotations.PrimaryKey;
  * Created by samsung on 2017-08-04.
  */
 public class SmsTradeData extends RealmObject implements MyRealmCommentableObject,MyRealmShareableObject,MyRealmGpsObject {
+
+    public SmsTradeData(SmsTradeDTO data) {
+        this._id=data.get_id();
+        this.id = data.getId();
+        this.address = data.getAddress();
+        this.content = data.getContent();
+        this.person = data.getPerson();
+        this.place = data.getPlace();
+        this.comment = data.getComment();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
+        this.originId = data.getOriginId();
+        this.date = data.getDate();
+        this.lat = data.getLat();
+        this.lng = data.getLng();
+        this.friends=data.getFriends();
+
+    }
+
     @PrimaryKey
     long id;
 
 
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
 
     private String address;
     private String content;
     private String person;
     private String place;
     private String comment;
-    private boolean highlight = false;
-    private boolean share;
+
     String friends="[]";
+    String fid;
+    long timestamp = 0;
+
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+    @Override
+    public int getShare() {
+        return share;
+    }
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    int  share = 0;
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
+
 
     @Override
     public String getFriends() {
@@ -40,24 +111,6 @@ public class SmsTradeData extends RealmObject implements MyRealmCommentableObjec
     }
 
 
-    @Override
-    public boolean isShare() {
-        return share;
-    }
-
-    @Override
-    public void setShare(boolean share) {
-        this.share=share;
-    }
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     public String getOriginId() {
         return originId;
@@ -148,10 +201,10 @@ public class SmsTradeData extends RealmObject implements MyRealmCommentableObjec
 
     @Override
     public int getType() {
-
-        return RealmClassHelper.SMS_TRADE_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.SMS_TRADE_DATA;
     public void setAddress(String address) {
         this.address = address;
     }

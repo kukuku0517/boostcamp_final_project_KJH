@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- 액션 버튼으로써 나타나는 "서치" 아이템  -->
-    <item android:id="@+id/action_map"
+    <item
+        android:id="@+id/action_map"
         android:icon="@drawable/ic_map_black_24dp"
+        android:title="지도 보기"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_date_range_black_24dp"
         android:title="날짜 선택"
         app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_1"
 
-        android:title="날짜 선택1"
-        app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_2"
-        android:title="날짜 선택2"
-        app:showAsAction="ifRoom" />
 
 </menu>

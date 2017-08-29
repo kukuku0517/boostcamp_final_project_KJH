@@ -6,11 +6,11 @@ package com.example.android.selfns.Data.RealmData.interfaceRealmData;
 
 public interface MyRealmCommentableObject extends MyRealmObject {
 
+ int getHighlight();
+ void setHighlight(int highlight) ;
+
 
     void setComment(String comment);
 
-    boolean isHighlight();
-
-    void setHighlight(boolean highlight);
 
 }

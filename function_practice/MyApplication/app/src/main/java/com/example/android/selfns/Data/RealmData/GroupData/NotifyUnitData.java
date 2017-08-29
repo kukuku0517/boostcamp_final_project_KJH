@@ -23,9 +23,18 @@ public class NotifyUnitData extends RealmObject implements MyRealmCommentableObj
     private long start, end;
     private String name, comment;
     private RealmList<NotifyData> notifys;
-    private boolean highlight = false;
+
     private long notifyGroupId;
 
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
     public long getNotifyGroupId() {
         return notifyGroupId;
     }
@@ -33,15 +42,7 @@ public class NotifyUnitData extends RealmObject implements MyRealmCommentableObj
     public void setNotifyGroupId(long notifyGroupId) {
         this.notifyGroupId = notifyGroupId;
     }
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
 
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     public NotifyUnitData() {
     }
@@ -90,11 +91,13 @@ public class NotifyUnitData extends RealmObject implements MyRealmCommentableObj
         this.notifys = notifys;
     }
 
+
     @Override
     public int getType() {
-        return RealmClassHelper.NOTIFY_UNIT_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.NOTIFY_UNIT_DATA;
     @Override
     public long getDate() {
         return start;

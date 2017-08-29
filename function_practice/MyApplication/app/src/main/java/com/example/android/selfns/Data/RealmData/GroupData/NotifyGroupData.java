@@ -64,9 +64,10 @@ public class NotifyGroupData extends RealmObject implements MyRealmObject {
 
     @Override
     public int getType() {
-        return RealmClassHelper.NOTIFY_GROUP_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.NOTIFY_GROUP_DATA;
     @Override
     public long getDate() {
         return end;

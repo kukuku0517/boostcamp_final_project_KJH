@@ -1,18 +1,21 @@
 package com.example.android.selfns.LoginView;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.selfns.Data.DTO.Retrofit.FriendAddDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
 import com.example.android.selfns.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by samsung on 2017-08-14.
@@ -20,7 +23,7 @@ import java.util.List;
 
 public class FriendAdapter extends RecyclerView.Adapter<VHFriendBase> {
 
-    private List<UserDTO> items;
+    private List<FriendDTO> items=new ArrayList<>();
     private Context context;
     private int type;
     ShareableDTO item;
@@ -37,15 +40,15 @@ public class FriendAdapter extends RecyclerView.Adapter<VHFriendBase> {
 
     @Override
     public VHFriendBase onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+
         int layoutIdForListItem;
         View view;
         switch (viewType) {
-            case 0: //call
+            case 0: //friendList
                 layoutIdForListItem = R.layout.item_friend;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHFriend(view, context);
-            case 1: //call
+            case 1: //friendTagList
                 layoutIdForListItem = R.layout.item_friend_add;
                 view = LayoutInflater.from(context).inflate(layoutIdForListItem, parent, false);
                 return new VHFriendAdd(view, context,item);
@@ -57,7 +60,7 @@ public class FriendAdapter extends RecyclerView.Adapter<VHFriendBase> {
 
     @Override
     public void onBindViewHolder(VHFriendBase holder, int position) {
-        UserDTO item = items.get(position);
+        FriendDTO item = items.get(position);
 
         holder.bindType(item);
 
@@ -76,9 +79,9 @@ public class FriendAdapter extends RecyclerView.Adapter<VHFriendBase> {
         return type;
     }
 
-    public void updateItem(ArrayList<UserDTO> items) {
+    public void updateItem(ArrayList<FriendDTO> items) {
         this.items = items;
-        notifyDataSetChanged();
+
     }
 
 }

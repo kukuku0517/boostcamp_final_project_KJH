@@ -1,16 +1,14 @@
 package com.example.android.selfns.DailyView.Adapter;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
 import com.example.android.selfns.DetailView.ViewHolder.VHCall;
@@ -28,7 +26,7 @@ import com.example.android.selfns.DetailView.ViewHolder.VHSmsTrade;
 import com.example.android.selfns.GroupView.ViewHolder.VHSms;
 import com.example.android.selfns.GroupView.ViewHolder.VHSmsChild;
 import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 
 import java.util.ArrayList;
@@ -49,7 +47,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements C
 
     private ArrayList<BaseDTO> items;
     private Realm realm;
-    HashMap<Integer, List<UserDTO>> usersHash=new HashMap<>();
+    HashMap<Integer, List<FriendDTO>> usersHash=new HashMap<>();
     public DayAdapter(Context context, Realm realm) {
         this.context = context;
         this.realm = realm;
@@ -122,7 +120,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements C
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms, parent, false);
                 return new VHSms(view, this, context);
             case RealmClassHelper.NOTIFY_UNIT_DATA:
-                view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms, parent, false);
+                view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notify, parent, false);
                 return new VHNotify(view, this, context);
 
             default:
@@ -131,12 +129,13 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements C
 
     }
 
+
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
         BaseDTO item = (BaseDTO) items.get(position);
         holder.bindType(item);
         if (usersHash.containsKey(position)) {
-            holder.bindTag((ArrayList<UserDTO>) usersHash.get(position));
+            holder.bindTag((ArrayList<FriendDTO>) usersHash.get(position));
         }
 
     }
@@ -158,7 +157,7 @@ public class DayAdapter extends RecyclerView.Adapter<DayViewHolder> implements C
         notifyDataSetChanged();
     }
 
-    public void updateHashItem(HashMap<Integer, List<UserDTO>> usersHash){
+    public void updateHashItem(HashMap<Integer, List<FriendDTO>> usersHash){
         this.usersHash = usersHash;
     }
 

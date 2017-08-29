@@ -6,10 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.DetailView.ViewHolder.VHCall;
 import com.example.android.selfns.DetailView.ViewHolder.VHCustom;
@@ -22,7 +21,7 @@ import com.example.android.selfns.DetailView.ViewHolder.VHSmsTrade;
 import com.example.android.selfns.GroupView.ViewHolder.VHPhoto;
 import com.example.android.selfns.Helper.PinnedHeaderItemDecoration;
 import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> impl
     private ArrayList<BaseDTO> items;
     private Realm realm;
 
-    HashMap<Integer, List<UserDTO>> usersHash = new HashMap<>();
+    HashMap<Integer, List<FriendDTO>> usersHash = new HashMap<>();
     private Context context;
 
     public CalendarPinAdapter(Context context, Realm realm) {
@@ -121,10 +120,11 @@ public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> impl
     @Override
     public void onBindViewHolder(DayViewHolder holder, int position) {
         BaseDTO item = (BaseDTO) items.get(position);
-        holder.bindType(item);
+
         if (usersHash.containsKey(position)) {
-            holder.bindTag((ArrayList<UserDTO>) usersHash.get(position));
+            holder.bindTag((ArrayList<FriendDTO>) usersHash.get(position));
         }
+        holder.bindType(item);
 //        Animation animation = AnimationUtils.loadAnimation(context, R.anim.fade_in_item);
 //        holder.itemView.startAnimation(animation);
     }
@@ -141,10 +141,10 @@ public class CalendarPinAdapter extends RecyclerView.Adapter<DayViewHolder> impl
     }
 
 
-    public void updateItem(ArrayList<BaseDTO> item, HashMap<Integer, List<UserDTO>> usersHash) {
+    public void updateItem(ArrayList<BaseDTO> item, HashMap<Integer, List<FriendDTO>> usersHash) {
         this.items = item;
         this.usersHash = usersHash;
-        notifyDataSetChanged();
+
     }
 
 

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/splash_background"
+    android:orientation="vertical"
     tools:context="com.example.android.selfns.LoginView.LoginActivity">
 
 
@@ -13,84 +13,122 @@
         android:id="@+id/splash_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/sign_in_id"
         android:layout_centerHorizontal="true"
-        android:paddingTop="100dp"
+        android:orientation="horizontal"
+android:paddingTop="100dp"
 
-     >
+        >
 
-        <TextView
-
-            android:id="@+id/splash_s"
+        <ImageView
+            android:id="@+id/login_logo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="56sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:text="S" />
-        <TextView
-            android:id="@+id/splash_elf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/splash_s"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:text="elf"/>
+            android:layout_height="100dp"
+
+         />
+
+        <!--<TextView-->
+
+            <!--android:id="@+id/splash_s"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="S"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="56sp"-->
+            <!--android:textStyle="bold" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/splash_elf"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toRightOf="@id/splash_s"-->
+            <!--android:text="elf"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="24sp"-->
+            <!--android:textStyle="bold" />-->
 
 
-        <TextView
-            android:id="@+id/splash_ns"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/splash_elf"
-            android:textSize="56sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:text="NS" />
+        <!--<TextView-->
+            <!--android:id="@+id/splash_ns"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_toRightOf="@id/splash_elf"-->
+            <!--android:text="NS"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="56sp"-->
+            <!--android:textStyle="bold" />-->
     </LinearLayout>
 
 
-    <EditText
-        android:id="@+id/sign_in_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:layout_above="@+id/sign_in_password"
-        android:hint="아이디"/>
-
-    <EditText
-        android:id="@+id/sign_in_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:layout_above="@+id/sign_in"
-        android:hint="비밀번호"/>
-
-    <Button
-        android:id="@+id/sign_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/sign_up"
-        android:text="이메일로 로그인"
-        />
-
-    <Button
-        android:id="@+id/sign_up"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/sign_up_facebook"
-        android:text="가입하기"/>
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/sign_up_facebook"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Facebook으로 로그인"
-       />
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/sign_in_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sign_in_password"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="아이디"
+            android:inputType="textEmailAddress"
+            app:met_baseColor="#fff"
+            app:met_floatingLabel="normal" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/sign_in_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sign_in"
+            android:layout_marginBottom="32dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="비밀번호"
+            android:inputType="textPassword"
+            app:met_baseColor="#fff"
+            app:met_floatingLabel="normal" />
+
+        <Button
+            android:id="@+id/sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sign_up"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="이메일로 로그인"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/sign_up_facebook"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="가입하기"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+
+        <com.facebook.login.widget.LoginButton
+
+            android:id="@+id/sign_up_facebook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:text="Facebook으로 로그인" />
+
+    </LinearLayout>
+
 </RelativeLayout>

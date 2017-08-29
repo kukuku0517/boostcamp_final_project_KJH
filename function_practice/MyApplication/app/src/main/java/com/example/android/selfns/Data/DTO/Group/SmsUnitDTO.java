@@ -18,7 +18,7 @@ import io.realm.annotations.PrimaryKey;
 @Parcel
 public class SmsUnitDTO implements CommentableDTO {
 
-    private long id;
+   long id;
 
     public SmsUnitDTO(SmsUnitData data) {
         this.id = data.getId();
@@ -28,7 +28,8 @@ public class SmsUnitDTO implements CommentableDTO {
         this.name = data.getName();
         this.content = data.getContent();
         this.comment = data.getComment();
-        this.highlight = data.isHighlight();
+        this.highlight = data.getHighlight();
+
         this.smsGroupId = data.getId();
         this.address = data.getAddress();
 
@@ -38,14 +39,24 @@ public class SmsUnitDTO implements CommentableDTO {
         }
     }
 
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+
     ArrayList<SmsDTO> smss=new ArrayList<>();
-    private int count;
-    private long start, end;
-    private String name;
-    private String content = "";
-    private String comment;
-    private boolean highlight = false;
-    private long smsGroupId;
+    int count;
+    long start, end;
+    String name;
+    String content = "";
+    String comment;
+
+    long smsGroupId;
 
     public long getSmsGroupId() {
         return smsGroupId;
@@ -55,15 +66,6 @@ public class SmsUnitDTO implements CommentableDTO {
         this.smsGroupId = smsGroupId;
     }
 
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     public SmsUnitDTO() {
 
@@ -94,9 +96,10 @@ public class SmsUnitDTO implements CommentableDTO {
 
     @Override
     public int getType() {
-        return RealmClassHelper.SMS_UNIT_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.SMS_UNIT_DATA;
     @Override
     public long getDate() {
         return start;

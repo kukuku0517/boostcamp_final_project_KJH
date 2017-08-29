@@ -19,13 +19,14 @@
             android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Name" />
+            android:hint="댓글을 입력하세요"/>
 
         <Button
             android:id="@+id/comment_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Button" />
+            android:background="@drawable/chat"
+            android:text="완료" />
     </LinearLayout>
 </FrameLayout>

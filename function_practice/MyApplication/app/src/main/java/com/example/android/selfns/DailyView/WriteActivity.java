@@ -12,11 +12,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.R;
@@ -44,6 +48,8 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
+import static com.example.android.selfns.R.drawable.write;
+
 public class WriteActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     @BindView(R.id.write_title)
     MaterialEditText title;
@@ -61,6 +67,8 @@ public class WriteActivity extends AppCompatActivity implements OnMapReadyCallba
     FloatingActionButton fab;
     @BindView(R.id.write_date)
     TextView date;
+    @BindView(R.id.write_iv)
+    ImageView iv;
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
@@ -78,21 +86,27 @@ public class WriteActivity extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_write);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-
-        toolbar.setTitle("새로운 글");
+        getSupportActionBar().setTitle("새로운 글");
+        Glide.with(this).load(R.drawable.write).into(iv);
         realm = Realm.getDefaultInstance();
 
         initMap();
         initBtnListener();
-
+        long d = getIntent().getLongExtra("date", System.currentTimeMillis());
+        if (DateHelper.getInstance().isToday(d)) {
+            dateMIllis = System.currentTimeMillis();
+        } else {
+            dateMIllis = d;
+        }
+        date.setText(DateHelper.getInstance().toDateString("HH:mm", dateMIllis));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(title.getText().equals("")){
-                    Toast.makeText(context,"제목을 입력하세요",Toast.LENGTH_SHORT).show();
+                if (title.getText().length() == 0) {
+                    Toast.makeText(context, "제목을 입력하세요", Toast.LENGTH_SHORT).show();
                     return;
-                }else if(comment.getText().equals("")){
-                    Toast.makeText(context,"내용을 입력하세요",Toast.LENGTH_SHORT).show();
+                } else if (comment.getText().length() == 0) {
+                    Toast.makeText(context, "내용을 입력하세요", Toast.LENGTH_SHORT).show();
                     return;
                 }
 

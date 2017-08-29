@@ -29,6 +29,29 @@ public class DateHelper {
         return tempDate;
     }
 
+    public String toWeekdayString(long millis) {
+        Calendar c = toDate(millis);
+        switch (c.get(Calendar.DAY_OF_WEEK)) {
+            case 1:
+                return "Sunday";
+            case 2:
+                return "Monday";
+            case 3:
+                return "Tuesday";
+            case 4:
+                return "Wednesday";
+            case 5:
+                return "Thursday";
+            case 6:
+                return "Friday";
+            case 7:
+                return "Saturday";
+            default:
+                return "";
+        }
+    }
+
+
     public String isAm(long millis) {
         Date d = new Date(millis);
         Calendar c = new GregorianCalendar();
@@ -40,6 +63,23 @@ public class DateHelper {
         }
 
     }
+
+    public int getRangeOfDay(long millis) {
+        Date d = new Date(millis);
+        Calendar c = new GregorianCalendar();
+        c.setTime(d);
+        if (c.get(Calendar.HOUR_OF_DAY) < 6) {
+            return 0;
+        } else if (c.get(Calendar.HOUR_OF_DAY) < 12) {
+            return 1;
+        } else if (c.get(Calendar.HOUR_OF_DAY) < 18) {
+            return 2;
+        } else {
+            return 3;
+        }
+
+    }
+
 
     public String toDurationString(long millis) {
         long dur = millis;
@@ -79,6 +119,17 @@ public class DateHelper {
         return new long[]{start, end};
     }
 
+    public boolean isToday(long millis) {
+        long start = getStartEndDate(System.currentTimeMillis())[0];
+        long start2 = getStartEndDate(millis)[0];
+
+        if (start == start2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public long getDayAfter(long millis, int days) {
         Date date = new Date(millis);
         GregorianCalendar today = new GregorianCalendar();
@@ -98,6 +149,13 @@ public class DateHelper {
         return c;
     }
 
+    public int getMonthNow(long today) {
+        Date date = new Date(today);
+        Calendar c = new GregorianCalendar();
+        c.setTime(date);
+        return c.get(Calendar.MONTH);
+
+    }
 
 
 }

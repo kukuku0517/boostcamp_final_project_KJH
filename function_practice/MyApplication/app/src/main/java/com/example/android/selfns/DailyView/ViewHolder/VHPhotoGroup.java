@@ -1,7 +1,10 @@
 package com.example.android.selfns.DailyView.ViewHolder;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,19 +14,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.selfns.Data.DTO.Detail.CallDTO;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
 import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.ExtraView.Friend.TagAdapter;
 import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
+import com.example.android.selfns.Helper.RetrofitHelper;
+import com.example.android.selfns.Interface.DataReceiveListener;
 import com.example.android.selfns.R;
+import com.github.vipulasri.timelineview.LineType;
 import com.github.vipulasri.timelineview.TimelineView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.sackcentury.shinebuttonlib.ShineButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static java.lang.System.load;
 
 /**
  * Created by samsung on 2017-08-03.
@@ -50,7 +62,7 @@ public class VHPhotoGroup extends DayViewHolder {
 
     //공통 버튼
     @BindView(R.id.item_highlight)
-    ImageButton highlightBtn;
+    ShineButton highlightBtn;
     @BindView(R.id.item_delete)
     ImageButton deleteBtn;
     @BindView(R.id.item_edit)
@@ -59,7 +71,8 @@ public class VHPhotoGroup extends DayViewHolder {
     ImageButton shareBtn;
     @BindView(R.id.item_tag)
     ImageButton tagBtn;
-
+    @BindView(R.id.item_time_icon)
+    ImageView icon;
     //공통 메뉴
     @BindView(R.id.item_people)
     View peopleView;
@@ -81,49 +94,72 @@ public class VHPhotoGroup extends DayViewHolder {
     @BindView(R.id.photo_group_comment)
     TextView comment;
 
-    boolean isExpanded=false;
+    boolean isExpanded = false;
 
     RecyclerView.LayoutManager layoutManager;
     TagAdapter adapter;
-
+    List<FriendDTO> items = new ArrayList<>();
     private Context context;
+
     public VHPhotoGroup(View view, Context context) {
         super(view);
-        this.context=context;
+        this.context = context;
         setmListener(context, nListener);
+        tlv.initLine(LineType.NORMAL);
+        tlv.setMarker(ResourcesCompat.getDrawable(context.getResources(), R.drawable.circle, null));
+        icon.setImageResource(R.drawable.ic_image_black_24dp);
+
     }
 
     @Override
     public void bindType(final BaseDTO item) {
         final PhotoGroupDTO callData = (PhotoGroupDTO) item;
+        if (callData.getPhotoss().size() > 0) {
+            if (callData.getShare() == 1) {
+                String path = String.format("https://selfns-taejoonhong.c9users.io:8080/images/photos-%d.jpg",
+                        callData.getPhotoss().get(0).get_id());
+                GlideApp.with(context).load(path).centerCrop().into(iv);
+            } else {
+                GlideApp.with(context).load(callData.getPhotoss().get(0).getPath()).centerCrop().into(iv);
 
-        date.setText(DateHelper.getInstance().toDateString("hh:mm",callData.getDate()));
+            }
+        }
+
+        date.setText(DateHelper.getInstance().toDateString("hh:mm", callData.getDate()));
         ampm.setText(DateHelper.getInstance().isAm(callData.getDate()));
-
         location.setText(callData.getPlace());
         int photoNum = callData.getPhotoss().size();
         number.setText(String.valueOf(photoNum) + "장");
+
+        //commentable
         comment.setText(callData.getComment());
-        if (callData.isHighlight()) {
 
-            highlightBtn.setColorFilter(Color.YELLOW);
+        highlightBtn.init((Activity) context);
+
+        //shareable
+        if (callData.getShare() == 1) {
+            highlightBtn.setBtnFillColor(Color.RED);
+            highlightBtn.setBtnColor(Color.RED);
+            highlightBtn.setChecked(true);
+        } else if (callData.getHighlight() == 1) {
+            highlightBtn.setBtnFillColor(Color.rgb(249, 168, 37));
+            highlightBtn.setBtnColor(Color.rgb(189, 189, 189));
+            highlightBtn.setChecked(true);
         } else {
-
-            highlightBtn.setColorFilter(Color.BLACK);
+            highlightBtn.setBtnFillColor(Color.rgb(249, 168, 37));
+            highlightBtn.setBtnColor(Color.rgb(189, 189, 189));
+            highlightBtn.setChecked(false);
         }
+
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (callData.isHighlight()) {
-                    highlightBtn.setColorFilter(Color.BLACK);
-                } else {
-
-                    highlightBtn.setColorFilter(Color.YELLOW);
+                if (callData.getShare() != 1) {
+                    ItemInteractionUtil.getInstance(context).highlight(callData);
                 }
-
-                ItemInteractionUtil.getInstance(context).highlight(callData);
             }
         });
+
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,34 +171,39 @@ public class VHPhotoGroup extends DayViewHolder {
                 isExpanded = !isExpanded;
             }
         });
-        Glide.with((Context) mListener).load(callData.getPhotoss().get(0).getPath()).into(iv);
+
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ItemInteractionUtil.getInstance(context).deletePhotoGroupItem(callData);
             }
         });
-
-
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onPhotoGroupItemClick(callData);
             }
         });
+
         tagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemInteractionUtil.getInstance(context).tagFriend((AppCompatActivity) context, item);
+                if (callData.getShare() == 1) {
+                    ItemInteractionUtil.getInstance(context).tagFriend((AppCompatActivity) context, item);
+
+                }
             }
         });
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemInteractionUtil.getInstance(context).shareItem(callData);
+                if (callData.getShare() == 0) {
+                    ItemInteractionUtil.getInstance(context).shareItem(callData);
+                }
             }
         });
-        final List<UserDTO> items = new ArrayList<>();
+
+
         layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         adapter = new TagAdapter(context);
         adapter.updateItem(items);
@@ -170,35 +211,11 @@ public class VHPhotoGroup extends DayViewHolder {
         rvTag.setLayoutManager(layoutManager);
         rvTag.setAdapter(adapter);
 
-        try {
-            JSONArray friends = new JSONArray(callData.getFriends());
-            for (int i = 0; i < friends.length(); i++) {
-                JSONObject friend = friends.getJSONObject(i);
-                String uid=friend.get("id").toString();
-                DatabaseReference fRef =  FirebaseHelper.getInstance(context).getUserRef(uid);
-                fRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                        items.add(friend);
-                        adapter.updateItem(items);
-                        adapter.notifyDataSetChanged();
+    }
 
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }   List<UserDTO> items = new ArrayList<>();
     @Override
-    public void bindTag(ArrayList<UserDTO> users) {
+    public void bindTag(ArrayList<FriendDTO> users) {
         this.items = users;
     }
 }

@@ -13,7 +13,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.selfns.DailyView.MainActivity;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.Helper.FirebaseHelper;
+import com.example.android.selfns.Helper.RetrofitHelper;
 import com.example.android.selfns.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -82,6 +84,11 @@ public class SignUpActivity extends AppCompatActivity {
                 String password = pw.getText().toString();
                 String password_confirm = pw_confirm.getText().toString();
 
+                if(password.length()<6){
+                    Toast.makeText(context, "비밀번호는 6자 이상입니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (password.equals(password_confirm)) {
                     mAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
@@ -93,7 +100,17 @@ public class SignUpActivity extends AppCompatActivity {
                                         Toast.makeText(context, "SignUp Failed", Toast.LENGTH_SHORT).show();
                                     }else{
 
-                                        FirebaseHelper.getInstance(context).setUserData();
+//                                        FirebaseHelper.getInstance(context).setUserData();
+
+                                        FirebaseUser u =  FirebaseAuth.getInstance().getCurrentUser();
+                                        UserDTO user = new UserDTO();
+                                        user.setId(u.getEmail());
+                                        user.setName(u.getDisplayName());
+                                        if(u.getPhotoUrl()!=null){
+
+                                            user.setPhotoUrl(u.getPhotoUrl().toString());
+                                        }
+                                        RetrofitHelper.getInstance(context).saveUser(user);
                                     }
 
                                 }

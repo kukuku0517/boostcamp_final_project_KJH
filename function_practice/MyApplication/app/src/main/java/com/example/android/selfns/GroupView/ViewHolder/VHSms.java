@@ -3,25 +3,18 @@ package com.example.android.selfns.GroupView.ViewHolder;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.selfns.Data.DTO.Group.GlideApp;
 import com.example.android.selfns.Data.DTO.Group.SmsUnitDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
-import com.example.android.selfns.Data.RealmData.GroupData.SmsUnitData;
 import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Helper.RealmHelper;
-import com.example.android.selfns.LoginView.UserDTO;
 import com.example.android.selfns.R;
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

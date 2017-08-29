@@ -58,8 +58,8 @@ public class NotifyData extends RealmObject implements MyRealmObject {
 
     @Override
     public int getType() {
-
-        return RealmClassHelper.NOTIFY_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.NOTIFY_DATA;
 }

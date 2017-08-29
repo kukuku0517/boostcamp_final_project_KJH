@@ -19,14 +19,25 @@ import io.realm.annotations.PrimaryKey;
 @Parcel
 public class NotifyUnitDTO implements CommentableDTO{
 
-    private long id;
-    private int count;
-    private long start, end;
-    private String name, comment;
-    private ArrayList<NotifyDTO> notifys=new ArrayList<>();;
-    private boolean highlight = false;
-    private long notifyGroupId;
-    private boolean share;
+    long id;
+   int count;
+ long start, end;
+String name, comment;
+ArrayList<NotifyDTO> notifys=new ArrayList<>();;
+
+long notifyGroupId;
+
+
+
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
 
 
     public long getNotifyGroupId() {
@@ -35,10 +46,6 @@ public class NotifyUnitDTO implements CommentableDTO{
 
     public void setNotifyGroupId(long notifyGroupId) {
         this.notifyGroupId = notifyGroupId;
-    }
-    @Override
-    public boolean isHighlight() {
-        return highlight;
     }
 
     public NotifyUnitDTO(NotifyUnitData data) {
@@ -52,15 +59,12 @@ public class NotifyUnitDTO implements CommentableDTO{
         for(NotifyData d:data.getNotifys()){
             this.notifys.add(new NotifyDTO(d));
         }
-        this.highlight = data.isHighlight();
+        this.highlight = data.getHighlight();
+
         this.notifyGroupId = data.getNotifyGroupId();
 
     }
 
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     public NotifyUnitDTO() {
     }
@@ -109,11 +113,13 @@ public class NotifyUnitDTO implements CommentableDTO{
         this.notifys = notifys;
     }
 
+
     @Override
     public int getType() {
-        return RealmClassHelper.NOTIFY_UNIT_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.NOTIFY_UNIT_DATA;
     @Override
     public long getDate() {
         return start;

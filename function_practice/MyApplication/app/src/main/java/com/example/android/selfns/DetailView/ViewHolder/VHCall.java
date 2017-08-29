@@ -3,23 +3,32 @@ package com.example.android.selfns.DetailView.ViewHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.android.selfns.DailyView.ViewHolder.DayViewHolder;
 import com.example.android.selfns.Data.DTO.Detail.CallDTO;
+import com.example.android.selfns.Data.DTO.Group.GlideApp;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendAddDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.ExtraView.Friend.TagAdapter;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
+import com.example.android.selfns.Helper.RetrofitHelper;
+import com.example.android.selfns.Interface.DataReceiveListener;
 import com.example.android.selfns.R;
 import com.github.vipulasri.timelineview.LineType;
 import com.github.vipulasri.timelineview.TimelineView;
@@ -39,8 +48,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-
 /**
  * Created by samsung on 2017-07-26.
  */
@@ -54,10 +61,12 @@ public class VHCall extends DayViewHolder {
     TextView date;
     @BindView(R.id.item_time_marker)
     TimelineView tlv;
+    @BindView(R.id.item_time_icon)
+    ImageView icon;
 
     //공통 버튼
     @BindView(R.id.item_highlight)
-    ImageButton highlightBtn;
+    ShineButton highlightBtn;
     @BindView(R.id.item_delete)
     ImageButton deleteBtn;
     @BindView(R.id.item_edit)
@@ -67,15 +76,12 @@ public class VHCall extends DayViewHolder {
     @BindView(R.id.item_tag)
     ImageButton tagBtn;
 
-    @BindView(R.id.item_highlight_anim)
-    ShineButton highlightBtnAnim;
 
     //공통 메뉴
     @BindView(R.id.item_people)
     View peopleView;
     @BindView(R.id.item_hide_menu)
     View hideMenu;
-
     @BindView(R.id.rv_tag)
     RecyclerView rvTag;
 
@@ -84,8 +90,8 @@ public class VHCall extends DayViewHolder {
     View view;
 
     //고유 뷰
-    @BindView(R.id.call_iv)
-    ImageView iv;
+//    @BindView(R.id.call_iv)
+//    ImageView iv;
     @BindView(R.id.call_person)
     TextView person;
     @BindView(R.id.call_duration)
@@ -98,8 +104,11 @@ public class VHCall extends DayViewHolder {
     private Context context;
     private boolean isExpanded = false;
 
+    //for shareables
     RecyclerView.LayoutManager layoutManager;
     TagAdapter adapter;
+    DataReceiveListener<ArrayList<FriendDTO>> listener;
+    List<FriendDTO> items = new ArrayList<>();
 
     public VHCall(View view, Context context) {
         super(view);
@@ -107,8 +116,25 @@ public class VHCall extends DayViewHolder {
         this.context = context;
         setmListener(context, nListener);
         tlv.initLine(LineType.NORMAL);
+        tlv.setMarker(ResourcesCompat.getDrawable(context.getResources(), R.drawable.circle, null));
+        icon.setImageResource(R.drawable.ic_call_black_24dp);
+//        listener = new DataReceiveListener<ArrayList<FriendDTO>>() {
+//            @Override
+//            public void onReceive(ArrayList<FriendDTO> response) {
+//                items.clear();
+//                for (FriendDTO friend : response) {
+//                    UserDTO user = new UserDTO();
+//                    user.setId(friend.getId());
+//                    user.setName(friend.getName());
+//                    user.setPhotoUrl(friend.getPhotoUrl());
+//                    items.add(user);
+//                }
+//
+//                adapter.updateItem(items);
+//                adapter.notifyDataSetChanged();
+//            }
+//        };
     }
-
 
     @Override
     public void bindType(final BaseDTO item) {
@@ -131,38 +157,26 @@ public class VHCall extends DayViewHolder {
                 break;
         }
 
-        highlightBtnAnim.init((Activity) context);
+        highlightBtn.init((Activity) context);
         number.setText(callData.getNumber());
-        if (callData.isHighlight()) {
-            highlightBtn.setColorFilter(Color.YELLOW);
-            highlightBtnAnim.setBtnColor(Color.YELLOW);
-            Log.d("highlight", "yellow");
+
+        if (callData.getShare() == 1) {
+            highlightBtn.setBtnFillColor(Color.RED);
+            highlightBtn.setChecked(true);
+
+        } else if (callData.getHighlight() == 1) {
+
+            highlightBtn.setChecked(true);
         } else {
-            highlightBtn.setColorFilter(Color.BLACK);
-            Log.d("highlight", "blcak");
-            highlightBtnAnim.setBtnColor(Color.BLACK);
+            highlightBtn.setChecked(false);
+
         }
+
 
         highlightBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (callData.isHighlight()) {
-                    highlightBtn.setColorFilter(Color.BLACK);
-                } else {
-                    highlightBtn.setColorFilter(Color.YELLOW);
-                }
-                ItemInteractionUtil.getInstance(context).highlight(callData);
-            }
-        });
 
-        highlightBtnAnim.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (callData.isHighlight()) {
-                    highlightBtnAnim.setBtnColor(Color.BLACK);
-                } else {
-                    highlightBtnAnim.setBtnFillColor(Color.YELLOW);
-                }
                 ItemInteractionUtil.getInstance(context).highlight(callData);
             }
         });
@@ -210,40 +224,45 @@ public class VHCall extends DayViewHolder {
         rvTag.setHasFixedSize(true);
         rvTag.setLayoutManager(layoutManager);
         rvTag.setAdapter(adapter);
+//
+//        if (callData.getShare() == 1) {
+//
+//            RetrofitHelper.getInstance(context).getTaggedFriends(((CallDTO) item).get_id(), listener);
+//
+//        }
 
-        try {
-            JSONArray friends = new JSONArray(callData.getFriends());
-            for (int i = 0; i < friends.length(); i++) {
-                JSONObject friend = friends.getJSONObject(i);
-                String uid = friend.get("id").toString();
-                DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
-                fRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                        items.add(friend);
-                        adapter.updateItem(items);
-                        adapter.notifyDataSetChanged();
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            JSONArray friends = new JSONArray(callData.getFriends());
+//            for (int i = 0; i < friends.length(); i++) {
+//                JSONObject friend = friends.getJSONObject(i);
+//                String uid = friend.get("id").toString();
+//                DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
+//                fRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
+//                        items.add(friend);
+//                        adapter.updateItem(items);
+//                        adapter.notifyDataSetChanged();
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
     }
 
-    List<UserDTO> items = new ArrayList<>();
     @Override
-    public void bindTag(ArrayList<UserDTO> users) {
+    public void bindTag(ArrayList<FriendDTO> users) {
         this.items = users;
     }
 }

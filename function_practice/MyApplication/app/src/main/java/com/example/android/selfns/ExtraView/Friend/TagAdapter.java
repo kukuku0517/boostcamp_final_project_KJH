@@ -6,13 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
-import com.example.android.selfns.LoginView.UserDTO;
-import com.example.android.selfns.LoginView.VHFriend;
-import com.example.android.selfns.LoginView.VHFriendAdd;
-import com.example.android.selfns.LoginView.VHFriendBase;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +19,7 @@ import java.util.List;
 
 public class TagAdapter extends RecyclerView.Adapter<VHTag> {
 
-    private List<UserDTO> items;
+    private List<FriendDTO> items=new ArrayList<>();
     private Context context;
 
     public TagAdapter(Context context) {
@@ -43,7 +41,7 @@ public class TagAdapter extends RecyclerView.Adapter<VHTag> {
 
     @Override
     public void onBindViewHolder(VHTag holder, int position) {
-        UserDTO item = items.get(position);
+       FriendDTO item = items.get(position);
         holder.bindType(item);
     }
 
@@ -52,7 +50,7 @@ public class TagAdapter extends RecyclerView.Adapter<VHTag> {
         return items.size();
     }
 
-    public void updateItem(List<UserDTO> items){
+    public void updateItem(List<FriendDTO> items){
         this.items=items;
     }
 }

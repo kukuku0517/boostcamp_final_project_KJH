@@ -1,4 +1,4 @@
-package com.example.android.selfns.LoginView;
+package com.example.android.selfns.Data.DTO.Retrofit;
 
 import com.example.android.selfns.Helper.FirebaseHelper;
 

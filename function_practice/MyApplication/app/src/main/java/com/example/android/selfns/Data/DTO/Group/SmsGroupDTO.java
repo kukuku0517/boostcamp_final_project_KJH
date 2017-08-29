@@ -77,11 +77,13 @@ public class SmsGroupDTO implements BaseDTO {
         setEnd(end);
     }
 
+
     @Override
     public int getType() {
-        return RealmClassHelper.SMS_GROUP_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.SMS_GROUP_DATA;
     @Override
     public long getDate() {
         return getEnd();

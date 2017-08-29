@@ -33,7 +33,6 @@ public class RealmClassHelper {
     public static final int GPS_GROUP_DATA = 9;
     public static final int CUSTOM_DATA = 10;
     public static final int DATE_PIN_DATA = 11;
-
     public static final int SMS_DATA = 12;
     public static final int NOTIFY_DATA = 13;
 

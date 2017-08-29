@@ -1,9 +1,7 @@
 package com.example.android.selfns.Helper;
 
-import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
-import com.example.android.selfns.LoginView.UserDTO;
-import com.google.firebase.database.DatabaseReference;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 
 import org.json.JSONArray;
 import org.json.JSONException;

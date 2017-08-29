@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,17 +57,14 @@ import com.example.android.selfns.Helper.JsonUtil;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.Interface.CardItemClickListener;
 import com.example.android.selfns.Interface.PhotoItemClickListener;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,7 +79,7 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
     @BindView(R.id.search_text)
     SearchView searchView;
     @BindView(R.id.search_range_button)
-    Button rangeBtn;
+    ImageView rangeBtn;
     @BindView(R.id.search_start)
     TextView tvStart;
     @BindView(R.id.search_end)
@@ -105,6 +104,7 @@ public class SearchActivity extends AppCompatActivity implements DatePickerDialo
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
 
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         realm = Realm.getDefaultInstance();
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         adapter = new DayAdapter(this, realm);

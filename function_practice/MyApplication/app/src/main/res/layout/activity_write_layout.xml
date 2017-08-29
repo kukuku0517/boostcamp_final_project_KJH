@@ -12,6 +12,25 @@
 android:paddingBottom="16dp"
         android:background="@drawable/border_bottom">
 
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/write_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="제목 (20자 이내)"
+                app:met_floatingLabel="normal"
+                app:met_hideUnderline="true"
+                app:met_maxCharacters="20"
+                app:met_minCharacters="1" />
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,24 +44,6 @@ android:paddingBottom="16dp"
                 android:layout_height="wrap_content"
                 android:hint="내용"
 
-                app:met_floatingLabel="normal"
-                app:met_hideUnderline="true"
-                app:met_maxCharacters="20"
-                app:met_minCharacters="1" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp">
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/write_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="제목 (20자 이내)"
                 app:met_floatingLabel="normal"
                 app:met_hideUnderline="true"
                 app:met_maxCharacters="20"

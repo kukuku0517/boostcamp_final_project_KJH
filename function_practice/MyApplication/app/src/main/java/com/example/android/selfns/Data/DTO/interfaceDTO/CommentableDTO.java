@@ -7,9 +7,11 @@ public interface CommentableDTO extends BaseDTO {
 
     void setComment(String comment);
 
-    boolean isHighlight();
 
 
-    void setHighlight(boolean highlight);
+ int getHighlight();
+
+void setHighlight(int highlight);
+
 
 }

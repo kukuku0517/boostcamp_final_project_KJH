@@ -1,26 +1,34 @@
 package com.example.android.selfns.DailyView;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.icu.text.DecimalFormat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.android.selfns.Data.RealmData.UnitData.CallData;
 import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Data.RealmData.UnitData.NotifyData;
+import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmHelper;
 import com.example.android.selfns.R;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -30,6 +38,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.rackspira.kristiawan.rackmonthpicker.RackMonthPicker;
 import com.rackspira.kristiawan.rackmonthpicker.listener.DateMonthDialogListener;
@@ -56,6 +65,7 @@ import butterknife.ButterKnife;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
+import static android.R.attr.centerMedium;
 import static android.R.attr.data;
 import static android.R.attr.start;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
@@ -64,13 +74,25 @@ import static android.media.CamcorderProfile.get;
 public class StatsActivity extends AppCompatActivity {
 
     @BindView(R.id.stat_month)
-    Button monthBtn;
+    TextView monthBtn;
     Context context = this;
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.place_chart)
     BarChart placeChart;
     @BindView(R.id.people_chart)
     BarChart peopleChart;
+
+    @BindView(R.id.sms_stats)
+    TextView smsCount;
+    @BindView(R.id.call_stats_count)
+    TextView callCountTv;
+    @BindView(R.id.call_stats_duration)
+    TextView callDurationTv;
+    @BindView(R.id.photo_stats)
+    TextView photoCount;
+
 
     RealmResults<RealmObject> callResults;
     RealmResults<RealmObject> customResults;
@@ -85,18 +107,26 @@ public class StatsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
         ButterKnife.bind(this);
-
+        setSupportActionBar(toolbar);
+        //현재 달 기준
         long startOfMonth, endOfMonth;
         Calendar thisMonth = DateHelper.getInstance().getMonth(System.currentTimeMillis());
         startOfMonth = thisMonth.getTimeInMillis();
         thisMonth.add(Calendar.MONTH, 1);
         endOfMonth = thisMonth.getTimeInMillis();
-
+        monthBtn.setText(DateHelper.getInstance().getMonthNow(System.currentTimeMillis()) + 1 + "월의 통계");
+        //현재 달로 데이터 갱신
         loadMonthlyData(startOfMonth, endOfMonth);
 
+        //갱신된 데이터로 통계완성
         calGpsStatsData();
         calPeopleStatsData();
 
+        calCallStatsData();
+        calSmsStatsData();
+        calPhotoStatsData();
+
+        //월 바꾸면 데이터갱신 후 다시 통계
         monthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,16 +134,22 @@ public class StatsActivity extends AppCompatActivity {
                         .setPositiveButton(new DateMonthDialogListener() {
                             @Override
                             public void onDateMonth(int month, int startDate, int endDate, int year, String monthLabel) {
-                                monthBtn.setText(String.valueOf(month));
+                                monthBtn.setText(month + "월의 통계");
                                 Calendar c = new GregorianCalendar();
                                 c.set(Calendar.YEAR, year);
-                                c.set(Calendar.MONTH, year);
+                                c.set(Calendar.MONTH, month - 1);
                                 c.set(Calendar.DATE, startDate);
                                 long start = c.getTimeInMillis();
                                 c.add(Calendar.MONTH, 1);
                                 long end = c.getTimeInMillis();
-
+                                loadMonthlyData(start, end);
                                 calGpsStatsData();
+                                calPeopleStatsData();
+                                calCallStatsData();
+                                calSmsStatsData();
+                                calPhotoStatsData();
+//                                placeChart.notifyDataSetChanged();
+//                                peopleChart.notifyDataSetChanged();
                             }
                         })
                         .setNegativeButton(new OnCancelMonthDialogListener() {
@@ -136,11 +172,14 @@ public class StatsActivity extends AppCompatActivity {
         notifyResults = RealmHelper.getInstance().DataLoad(NotifyData.class, "date", startOfMonth, endOfMonth);
         smsResults = RealmHelper.getInstance().DataLoad(SmsData.class, "date", startOfMonth, endOfMonth);
         smsTradeResults = RealmHelper.getInstance().DataLoad(SmsTradeData.class, "date", startOfMonth, endOfMonth);
-        gpsResults = RealmHelper.getInstance().DataLoad(GpsData.class, "date", startOfMonth, endOfMonth);
+        photoResults = RealmHelper.getInstance().DataLoad(PhotoData.class, "date", startOfMonth, endOfMonth);
     }
 
+
     private void addToHash(HashMap<String, Integer> hashMap, String key, int point) {
-        if (hashMap.containsKey(key)) {
+        if (key == null) {
+            return;
+        } else if (hashMap.containsKey(key)) {
             hashMap.put(key, hashMap.get(key) + point);
         } else {
             hashMap.put(key, point);
@@ -148,7 +187,106 @@ public class StatsActivity extends AppCompatActivity {
     }
 
     private void calPhotoStatsData() {
+        int count = 0;
+        count = photoResults.size();
+        photoCount.setText(String.valueOf(count));
 
+    }
+
+    private void calCallStatsData() {
+        int callTime = 0;
+        int callCount = 0;
+        for (RealmObject data : callResults) {
+            CallData callData = (CallData) data;
+            callTime += callData.getDuration();
+        }
+        callCount = callResults.size();
+
+        callDurationTv.setText(DateHelper.getInstance().toDurationString(callTime));
+
+        callCountTv.setText(String.valueOf(callCount));
+
+    }
+
+    private void calSmsStatsData() {
+        int count = smsResults.size() + smsTradeResults.size();
+        smsCount.setText(String.valueOf(count));
+    }
+
+
+    private void calGpsStatsData() {
+        HashMap<String, Integer> gpsHash = new HashMap<>();
+        for (RealmObject d : gpsResults) {
+            GpsData data = (GpsData) d;
+            addToHash(gpsHash, data.getPlace(), 1);
+        }
+
+        List<String> sortedKeys = sortByValue(gpsHash);
+        List<BarEntry> entryList = new ArrayList<>();
+        String[] sortedTopKeys = getTopKeys(sortedKeys, 5);
+
+        for (int i = 0; i < sortedTopKeys.length; i++) {
+            entryList.add(new BarEntry(i, Float.parseFloat(String.valueOf(gpsHash.get(sortedTopKeys[i])))));
+        }
+
+        BarDataSet barDataSet = new BarDataSet(entryList, "횟수");
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+//        List<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+//        dataSets.add(barDataSet);
+        BarData data = new BarData(barDataSet);
+
+
+        String[] values = new String[sortedKeys.size()];
+        for (int i = 0; i < sortedTopKeys.length; i++) {
+            values[i] = sortedKeys.get(i);
+        }
+        Log.d("chart", String.valueOf(sortedTopKeys.length));
+//        data.setValueFormatter(new MyValueFormatter(values));
+        XAxis xAxis = placeChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawAxisLine(true);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(sortedTopKeys));
+
+        YAxis yl = placeChart.getAxisLeft();
+
+        yl.setDrawAxisLine(true);
+        yl.setDrawGridLines(true);
+        yl.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+//       yl.setValueFormatter(new MyYAxisValueFormatter(sortedTopKeys));
+
+//        yl.setInverted(true);
+
+        YAxis yr = placeChart.getAxisRight();
+
+        yr.setDrawAxisLine(true);
+        yr.setDrawGridLines(false);
+        yr.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+//        yr.setInverted(true);
+
+        placeChart.setData(data);
+        Description description = new Description();
+        description.setText("");
+
+        placeChart.setDescription(description);
+        placeChart.setDrawBorders(true);
+
+        placeChart.setPinchZoom(false);
+        placeChart.setDoubleTapToZoomEnabled(false);
+
+
+        placeChart.setMaxVisibleValueCount(5);
+        placeChart.setDrawValueAboveBar(true);
+
+
+        Legend l = placeChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+        l.setFormSize(8f);
+        l.setXEntrySpace(4f);
     }
 
     private void calPeopleStatsData() {
@@ -179,12 +317,53 @@ public class StatsActivity extends AppCompatActivity {
 
 
         BarDataSet barDataSet = new BarDataSet(entryList, "횟수");
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         BarData data = new BarData(barDataSet);
 
+
         XAxis xAxis = peopleChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawAxisLine(true);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f);
         xAxis.setValueFormatter(new MyXAxisValueFormatter(sortedTopKeys));
 
+        YAxis yl = peopleChart.getAxisLeft();
+
+        yl.setDrawAxisLine(true);
+        yl.setDrawGridLines(true);
+        yl.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+//       yl.setValueFormatter(new MyYAxisValueFormatter(sortedTopKeys));
+
+//        yl.setInverted(true);
+
+        YAxis yr = peopleChart.getAxisRight();
+
+        yr.setDrawAxisLine(true);
+        yr.setDrawGridLines(false);
+        yr.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+//        yr.setInverted(true);
+
+
         peopleChart.setData(data);
+        peopleChart.setDrawBorders(true);
+
+        peopleChart.setPinchZoom(false);
+        peopleChart.setDoubleTapToZoomEnabled(false);
+
+
+        peopleChart.setMaxVisibleValueCount(5);
+        peopleChart.setDrawValueAboveBar(true);
+        Description description = new Description();
+        description.setText("");
+        peopleChart.setDescription(description);
+        Legend l = peopleChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+        l.setFormSize(8f);
+        l.setXEntrySpace(4f);
 
 
     }
@@ -197,41 +376,6 @@ public class StatsActivity extends AppCompatActivity {
             values[i] = sortedKeys.get(i);
         }
         return values;
-    }
-
-    private void calGpsStatsData() {
-        HashMap<String, Integer> gpsHash = new HashMap<>();
-        for (RealmObject d : gpsResults) {
-            GpsData data = (GpsData) d;
-            addToHash(gpsHash, data.getPlace(), 1);
-        }
-
-
-        List<String> sortedKeys = sortByValue(gpsHash);
-
-        List<BarEntry> entryList = new ArrayList<>();
-
-
-        int count = 0;
-        while (count < 5) {
-            count++;
-            entryList.add(new BarEntry(count, Float.parseFloat(String.valueOf(gpsHash.get(sortedKeys.get(count))))));
-        }
-
-        BarDataSet barDataSet = new BarDataSet(entryList, "횟수");
-//        List<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-//        dataSets.add(barDataSet);
-        BarData data = new BarData(barDataSet);
-
-        String[] values = new String[5];
-        for (int i = 0; i < 5; i++) {
-            values[i] = sortedKeys.get(i);
-        }
-
-        XAxis xAxis = placeChart.getXAxis();
-        xAxis.setValueFormatter(new MyXAxisValueFormatter(values));
-
-        placeChart.setData(data);
     }
 
     public static List sortByValue(final Map map) {
@@ -257,6 +401,39 @@ public class StatsActivity extends AppCompatActivity {
         private String[] mValues;
 
         public MyXAxisValueFormatter(String[] values) {
+            this.mValues = values;
+        }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            // "value" represents the position of the label on the axis (x or y)
+            return mValues[(int) value];
+        }
+
+
+    }
+
+    public class MyValueFormatter implements IValueFormatter {
+
+        private String[] mValues;
+
+        public MyValueFormatter(String[] values) {
+            this.mValues = values;
+        }
+
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            // write your logic here
+            return mValues[(int) value];
+        }
+    }
+
+
+    public class MyYAxisValueFormatter implements IAxisValueFormatter {
+
+        private String[] mValues;
+
+        public MyYAxisValueFormatter(String[] values) {
             this.mValues = values;
         }
 

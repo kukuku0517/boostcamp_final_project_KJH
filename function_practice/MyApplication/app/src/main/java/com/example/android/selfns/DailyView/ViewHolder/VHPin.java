@@ -5,14 +5,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.android.selfns.Data.DTO.Detail.DatePinDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Interface.DatePinClickListener;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -26,6 +26,8 @@ public class VHPin extends DayViewHolder {
     TextView date;
     @BindView(R.id.pin_year)
     TextView year;
+    @BindView(R.id.pin_weekday)
+    TextView weekday;
 
     @BindView(R.id.pin_view)
     View view;
@@ -41,8 +43,9 @@ public class VHPin extends DayViewHolder {
     @Override
     public void bindType(final BaseDTO item) {
         final DatePinDTO datePinData = (DatePinDTO) item;
-        year.setText( DateHelper.getInstance().toDateString("yyyy", datePinData.getDate()));
-        date.setText( DateHelper.getInstance().toDateString("MM월 dd일", datePinData.getDate()));
+        year.setText( DateHelper.getInstance().toDateString("yyyy MM월", datePinData.getDate()));
+        date.setText( DateHelper.getInstance().toDateString("dd", datePinData.getDate()));
+        weekday.setText(DateHelper.getInstance().toWeekdayString(datePinData.getDate()));
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +56,6 @@ public class VHPin extends DayViewHolder {
         });
     }
     @Override
-    public void bindTag(ArrayList<UserDTO> users) {
+    public void bindTag(ArrayList<FriendDTO> users) {
 
     }}

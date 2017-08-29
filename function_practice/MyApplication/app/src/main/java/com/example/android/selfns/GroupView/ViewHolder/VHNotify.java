@@ -22,6 +22,7 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemVie
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by samsung on 2017-08-02.
@@ -53,6 +54,7 @@ public class VHNotify extends  MyExpandableItemViewHolder{
         ButterKnife.bind(this, itemView);
         mListener = listener;
         this.context = context;
+
     }
 
     public void bindType(final BaseDTO item) {

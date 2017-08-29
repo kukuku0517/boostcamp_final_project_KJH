@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -19,14 +18,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
-import com.example.android.selfns.Data.DTO.Group.GlideApp;
-import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
+import com.example.android.selfns.Data.RealmData.UnitData.PhotoData;
 import com.example.android.selfns.ExtraView.Friend.TagAdapter;
 import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.RealmClassHelper;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -60,7 +59,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.RealmResults;
+import io.realm.RealmChangeListener;
 
 public class DetailPhotoActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -76,14 +75,6 @@ public class DetailPhotoActivity extends AppCompatActivity implements OnMapReady
     @BindView(R.id.photo_detail_people)
     TextView tag;
 
-
-    //
-//    @BindView(R.id.photo_detail_place_button)
-//    Button placeBtn;
-//    @BindView(R.id.photo_detail_date_button)
-//    Button dateBtn;
-//    @BindView(R.id.photo_detail_comment_button)
-//    Button commentBtn;
     @BindView(R.id.photo_detail_delete)
     TextView deleteBtn;
 
@@ -131,6 +122,33 @@ public class DetailPhotoActivity extends AppCompatActivity implements OnMapReady
 //        final PhotoData photoData = (PhotoData) realm.where(c).equalTo("id", id).findFirst();
         photoData = Parcels.unwrap(getIntent().getParcelableExtra("item"));
 
+        initView();
+
+        initMap();
+        initBtnListener();
+
+        final List<FriendDTO> items = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        adapter = new TagAdapter(context);
+        adapter.updateItem(items);
+        rvTag.setHasFixedSize(true);
+        rvTag.setLayoutManager(layoutManager);
+        rvTag.setAdapter(adapter);
+
+        realm.addChangeListener(new RealmChangeListener<Realm>() {
+            @Override
+            public void onChange(Realm realm) {
+                initView();
+            }
+        });
+    }
+
+    private void initView() {
+        PhotoData pd = realm.where(PhotoData.class).equalTo("id",photoData.getId()).findFirst();
+        if(pd!=null){
+            photoData=new PhotoDTO(pd);
+        }
+
         if (photoData != null) {
             Glide.with(this).load(photoData.getPath()).into(iv);
             comment.setText(photoData.getComment());
@@ -139,45 +157,10 @@ public class DetailPhotoActivity extends AppCompatActivity implements OnMapReady
             place.setText(photoData.getPlace());
         }
 
-        initMap();
-        initBtnListener();
-
-        final List<UserDTO> items = new ArrayList<>();
-        layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        adapter = new TagAdapter(context);
-        adapter.updateItem(items);
-        rvTag.setHasFixedSize(true);
-        rvTag.setLayoutManager(layoutManager);
-        rvTag.setAdapter(adapter);
-
-        try {
-            JSONArray friends = new JSONArray(photoData.getFriends());
-            for (int i = 0; i < friends.length(); i++) {
-                JSONObject friend = friends.getJSONObject(i);
-                String uid=friend.get("id").toString();
-                DatabaseReference fRef =  FirebaseHelper.getInstance(context).getUserRef(uid);
-                fRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                        items.add(friend);
-                        adapter.updateItem(items);
-                        adapter.notifyDataSetChanged();
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
+        lat = photoData.getLat();
+        lng = photoData.getLng();
+        placename = photoData.getPlace();
+        place.setText(placename);
     }
 
     private void initMap() {
@@ -244,7 +227,7 @@ public class DetailPhotoActivity extends AppCompatActivity implements OnMapReady
         tag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemInteractionUtil.getInstance(context).tagFriend((AppCompatActivity) context,photoData);
+                ItemInteractionUtil.getInstance(context).tagFriend((AppCompatActivity) context, photoData);
             }
         });
     }
@@ -253,22 +236,12 @@ public class DetailPhotoActivity extends AppCompatActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
 
-                lat = photoData.getLat();
-                lng = photoData.getLng();
-                placename = photoData.getPlace();
-                place.setText(placename);
+        LatLng sydney = new LatLng(lat, lng);
+        mMap.addMarker(new MarkerOptions().position(sydney)
+                .title(placename));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14));
 
-                LatLng sydney = new LatLng(lat, lng);
-                mMap.addMarker(new MarkerOptions().position(sydney)
-                        .title(placename));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14));
-
-            }
-        });
 
     }
 

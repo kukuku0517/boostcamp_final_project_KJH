@@ -21,8 +21,18 @@ public class SmsUnitData extends RealmObject implements MyRealmCommentableObject
     private String name;
     private String content = "";
     private String comment;
-    private boolean highlight = false;
+
     private long smsGroupId;
+
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
 
     public long getSmsGroupId() {
         return smsGroupId;
@@ -31,15 +41,7 @@ public class SmsUnitData extends RealmObject implements MyRealmCommentableObject
     public void setSmsGroupId(long smsGroupId) {
         this.smsGroupId = smsGroupId;
     }
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
 
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     public SmsUnitData(){
 
@@ -67,11 +69,13 @@ public class SmsUnitData extends RealmObject implements MyRealmCommentableObject
         this.name = name;
     }
 
+
     @Override
     public int getType() {
-        return RealmClassHelper.SMS_UNIT_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.SMS_UNIT_DATA;
     @Override
     public long getDate() {
         return start;

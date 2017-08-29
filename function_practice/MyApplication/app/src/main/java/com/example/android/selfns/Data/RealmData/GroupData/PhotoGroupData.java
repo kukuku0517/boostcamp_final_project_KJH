@@ -1,5 +1,7 @@
 package com.example.android.selfns.Data.RealmData.GroupData;
 
+import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
+import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmCommentableObject;
 import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmGpsObject;
@@ -18,16 +20,84 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class PhotoGroupData extends RealmObject implements MyRealmCommentableObject, MyRealmShareableObject, MyRealmGpsObject {
+    public PhotoGroupData(PhotoGroupDTO data) {
+        this._id=data.get_id();   this.id = data.getId();
+        this.count = data.getCount();
+        this.start = data.getStart();
+        this.end = data.getEnd();
+        this.place = data.getPlace();
+        this.comment = data.getComment();
+
+        for (PhotoDTO d : data.getPhotoss()) {
+            this.photoss.add(new PhotoData(d));
+        }
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
+        this.friends=data.getFriends();
+    }
+
     @PrimaryKey
     private long id;
     private int count;
     private long start, end;
     private String place, comment;
-    private RealmList<PhotoData> photoss;
+    private RealmList<PhotoData> photoss=new RealmList<>();
     String originId;
-    private boolean highlight = false;
-    private boolean share;
+
     String friends="[]";
+    String fid;
+    long timestamp = 0;
+
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+    @Override
+    public int getShare() {
+        return share;
+    }
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    int  share = 0;
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
 
     @Override
     public String getFriends() {
@@ -53,25 +123,6 @@ public class PhotoGroupData extends RealmObject implements MyRealmCommentableObj
 
     }
 
-    @Override
-    public boolean isShare() {
-        return share;
-    }
-
-    @Override
-    public void setShare(boolean share) {
-        this.share = share;
-    }
-
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
 
     public int getCount() {
@@ -135,9 +186,10 @@ public class PhotoGroupData extends RealmObject implements MyRealmCommentableObj
 
     @Override
     public int getType() {
-        return RealmClassHelper.PHOTO_GROUP_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.PHOTO_GROUP_DATA;
     @Override
     public long getDate() {
         return start;

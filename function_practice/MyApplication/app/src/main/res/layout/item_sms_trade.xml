@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/trade_cv"
     android:layout_width="match_parent"
+    android:background="@drawable/border_bottom"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
+
         <include
             android:id="@+id/timeline_view"
             layout="@layout/item_base_timeline" />
@@ -28,21 +30,19 @@
 
             android:orientation="horizontal">
 
-            <ImageView
+
+            <com.makeramen.roundedimageview.RoundedImageView
+
                 android:id="@+id/trade_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/finance" />
 
-            <ImageView
-                android:id="@+id/tint"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#50000000"
+                android:tint="@color/colorEmerald"
+                app:riv_corner_radius="4dp"
+                app:riv_mutate_background="true"
+                app:riv_tile_mode="repeat" />
 
-                />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -53,7 +53,7 @@
 
                 <TextView
                     android:id="@+id/trade_place"
-                    style="@style/MyTheme.Textview.title"
+                    style="@style/MyTheme.Textview.title.black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -63,12 +63,11 @@
 
                 <TextView
                     android:id="@+id/trade_location"
-                    style="@style/MyTheme.Textview.caption"
+                    style="@style/MyTheme.Textview.caption.black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/trade_place"
-                    android:text="010-5069-9315"
-                    android:textColor="@android:color/white" />
+                    android:text="010-5069-9315" />
 
                 <TextView
                     android:id="@+id/trade_price"
@@ -76,12 +75,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/trade_location"
-                    android:text="\ 5,000"
-                    android:textColor="@android:color/white" />
+                    android:text="\ 5,000" />
 
                 <TextView
                     android:id="@+id/trade_comment"
-                    style="@style/MyTheme.Textview.body"
+                    style="@style/MyTheme.Textview.body.black"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/trade_price"
@@ -95,8 +93,9 @@
 
         </FrameLayout>
 
-        <include layout="@layout/item_base_people"
-            android:id="@+id/item_people"/>
+        <include
+            android:id="@+id/item_people"
+            layout="@layout/item_base_people" />
 
     </LinearLayout>
 

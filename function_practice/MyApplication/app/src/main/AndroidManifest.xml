@@ -15,9 +15,9 @@
     <application
         android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/facebook_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/facebook_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <meta-data
@@ -40,7 +40,6 @@
         </activity>
         <activity android:name=".DailyView.WriteActivity" />
         <activity android:name=".LoginView.LoginActivity" />
-        >
         <activity android:name=".LoginView.SignUpActivity" />
         <activity android:name=".DailyView.MainActivity" />
         <activity android:name=".DailyView.DayActivity" />
@@ -93,7 +92,9 @@
             android:exported="true" />
 
         <activity android:name=".DailyView.StatsActivity" />
-        <activity android:name=".DailyView.SearchActivity"></activity>
+        <activity android:name=".DailyView.SearchActivity" />
+        <activity android:name=".DetailView.CustomActivity" />
+        <activity android:name=".ExtraView.LicenseActivity"></activity>
     </application>
 
 </manifest>

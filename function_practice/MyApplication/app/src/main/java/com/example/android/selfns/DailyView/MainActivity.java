@@ -14,9 +14,11 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -46,54 +49,70 @@ import com.example.android.selfns.Data.DTO.Detail.SmsTradeDTO;
 import com.example.android.selfns.Data.DTO.Group.GlideApp;
 import com.example.android.selfns.Data.DTO.Group.GpsGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.NotifyGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.NotifyUnitDTO;
 import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
 import com.example.android.selfns.Data.DTO.Group.SmsGroupDTO;
+import com.example.android.selfns.Data.DTO.Group.SmsUnitDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.DTO.interfaceDTO.RetrofitShareableDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.ShareableDTO;
 import com.example.android.selfns.Data.RealmData.GroupData.GpsGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.NotifyUnitData;
 import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
+import com.example.android.selfns.Data.RealmData.GroupData.SmsUnitData;
 import com.example.android.selfns.Data.RealmData.UnitData.CustomData;
-import com.example.android.selfns.Data.RealmData.interfaceRealmData.MyRealmObject;
+import com.example.android.selfns.DetailView.CustomActivity;
 import com.example.android.selfns.DetailView.GpsGroupActivity;
 import com.example.android.selfns.DetailView.CallActivity;
 import com.example.android.selfns.Data.RealmData.UnitData.CallData;
 import com.example.android.selfns.Data.RealmData.UnitData.SmsTradeData;
 import com.example.android.selfns.DetailView.GpsStillActivity;
 import com.example.android.selfns.DetailView.SmsTradeActivity;
-import com.example.android.selfns.ExtraView.Comment.CommentBtnClickListener;
+import com.example.android.selfns.ExtraView.LicenseActivity;
 import com.example.android.selfns.GroupView.PhotoActivity;
 import com.example.android.selfns.GroupView.UnitActivity;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.FirebaseHelper;
+import com.example.android.selfns.Helper.FriendAddEvent;
+import com.example.android.selfns.Helper.FriendTagEvent;
 import com.example.android.selfns.Helper.ItemComparator;
 import com.example.android.selfns.Helper.PinnedHeaderItemDecoration;
 import com.example.android.selfns.Helper.RealmClassHelper;
 import com.example.android.selfns.Helper.RealmHelper;
+import com.example.android.selfns.Helper.RetrofitHelper;
 import com.example.android.selfns.Interface.CardItemClickListener;
+import com.example.android.selfns.Interface.DataReceiveListener;
 import com.example.android.selfns.Interface.DatePinClickListener;
 import com.example.android.selfns.LoginView.FriendActivity;
 import com.example.android.selfns.LoginView.LoginActivity;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.OnProgressListener;
 import com.mancj.slideup.SlideUp;
+import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
+import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,6 +128,8 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import static android.R.attr.name;
+
 
 public class MainActivity extends AppCompatActivity implements CardItemClickListener,
         DatePinClickListener, NavigationView.OnNavigationItemSelectedListener {
@@ -119,13 +140,20 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     MaterialCalendarView cv;
     @BindView(R.id.cv_cardview)
     CardView cardView;
-    @BindView(R.id.main_user_profile_pic)
-    CircleImageView profile;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.progressBar)
     ProgressBar pb;
+    @BindView(R.id.tv_progress)
+    TextView pbtv;
+    @BindView(R.id.logoview)
+    ImageView logo;
+
+    //    @BindView(R.id.swipe_layout)
+//    SwipyRefreshLayout sl;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout sl;
 
     private Realm realm;
     private Realm realmAsync;
@@ -142,7 +170,12 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     private FirebaseUser currentUser;
 
     private ArrayList<BaseDTO> items = new ArrayList<>();
-    HashMap<Integer, List<UserDTO>> usersHash = new HashMap<>();
+    HashMap<Integer, List<FriendDTO>> usersHash = new HashMap<>();
+
+    private int page = 0;
+
+//    DataReceiveListener listener;
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -168,12 +201,25 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         setContentView(R.layout.activity_main_drawer);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("SelfNS");
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
+
+        Glide.with(this).load(R.drawable.facebook_logo_text).into(logo);
+
         slideUp = new SlideUp.Builder(cardView)
                 .withStartState(SlideUp.State.HIDDEN)
                 .withStartGravity(Gravity.TOP)
                 .build();
         slideUp.hide();
+        sl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                page++;
+                updateItemsFromRealm(System.currentTimeMillis());
+                sl.setRefreshing(false);
+            }
+        });
+
 
         initService();
         initRealm();
@@ -185,6 +231,27 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("message");
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+//        listener = new DataReceiveListener<String>() {
+//            @Override
+//            public void onReceive(String response) {
+//                for (int i = 0; i < items.size(); i++) {
+//                    if (items.get(i) instanceof ShareableDTO && ((ShareableDTO)items.get(i)).getShare()==1) {
+//                        ShareableDTO sItem = (ShareableDTO) items.get(i);
+//                        final int finalI = i;
+//                        RetrofitHelper.getInstance(context).getTaggedFriends(sItem.get_id(), new DataReceiveListener<ArrayList<FriendDTO>>() {
+//                            @Override
+//                            public void onReceive(ArrayList<FriendDTO> response) {
+//                                usersHash.put(finalI,response);
+//                                adapter.updateItem(items,usersHash);
+//                                adapter.notifyItemChanged(finalI);
+//                            }
+//                        });
+//                    }
+//
+//                }
+//            }
+//        };
     }
 
     private void initNavBar() {
@@ -195,15 +262,22 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         navView.setNavigationItemSelectedListener(this);
+
+
+        View hView = navView.getHeaderView(0);
+
+        TextView email = (TextView) hView.findViewById(R.id.drawer_email);
+
+        TextView name = (TextView) hView.findViewById(R.id.drawer_name);
+
+        email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        name.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
     }
 
     private void initUserState() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null && user.getPhotoUrl() != null) {
-            GlideApp.with(this).load(user.getPhotoUrl()).transform(new RoundedCornersTransformation(this, 8, 8)).into(profile);
-        } else {
 
-        }
     }
 
     /**
@@ -271,7 +345,17 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
             case 3:
                 items.clear();
                 displayRecyclerView();
+                mPref = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+                long timestamp = mPref.getLong("lastTimestamp", 0);
+                try {
+                    RetrofitHelper.getInstance(context).getData(timestamp);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 updateItemsFromRealm(System.currentTimeMillis());
+
 
                 break;
         }
@@ -318,9 +402,22 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
                 Intent intent = new Intent(MainActivity.this, DayActivity.class);
                 intent.putExtra("date", date.getDate().getTime());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (cardView.getVisibility() == View.VISIBLE) {
+            slideUp.hide();
+        } else {
+            super.onBackPressed();
+
+            finish();
+        }
     }
 
 
@@ -331,23 +428,26 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
             case R.id.nav_search:
                 Intent intent4 = new Intent(MainActivity.this, SearchActivity.class);
-                Toast.makeText(context, "0", Toast.LENGTH_SHORT).show();
+
                 startActivity(intent4);
                 break;
 
             case R.id.nav_statistic:
                 Intent intent3 = new Intent(MainActivity.this, StatsActivity.class);
-                Toast.makeText(context, "0", Toast.LENGTH_SHORT).show();
+
                 startActivity(intent3);
                 break;
-            case R.id.nav_friend_list:
+            case R.id.nav_friend_add_list:
                 Intent intent = new Intent(MainActivity.this, FriendActivity.class);
-                Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
+
                 startActivity(intent);
                 break;
-            case R.id.nav_edit:
-                Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
+            case R.id.nav_license:
+                Intent intent5 = new Intent(MainActivity.this, LicenseActivity.class);
+
+                startActivity(intent5);
                 break;
+
             case R.id.nav_signout:
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
@@ -364,10 +464,62 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
 
     private void updateItemsFromRealm(long millis) {
-
         items.clear();
-        pb.setVisibility(View.VISIBLE);
-        getItemFromFB(millis);
+        adapter.updateItem(items, usersHash);
+        adapter.notifyDataSetChanged();
+//        getItemFromFB(millis);
+//        long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1 - 7 * page);
+//        long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2 - 7 * page);
+//        long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3 - 7 * page);
+//        long minusDay4 = DateHelper.getInstance().getDayAfter(millis, -4 - 7 * page);
+//        long minusDay5 = DateHelper.getInstance().getDayAfter(millis, -5 - 7 * page);
+//        long minusDay6 = DateHelper.getInstance().getDayAfter(millis, -6 - 7 * page);
+//
+//        items.addAll(getItemFromRealm(minusDay6));
+//        items.addAll(getItemFromRealm(minusDay5));
+//        items.addAll(getItemFromRealm(minusDay4));
+//
+//        items.addAll(getItemFromRealm(minusDay3));
+//        items.addAll(getItemFromRealm(minusDay2));
+//        items.addAll(getItemFromRealm(minusDay1));
+//        items.addAll(getItemFromRealm(millis));
+
+        for (int i = page; i >= 0; i--) {
+            for (int j = 7; j > 0; j--) {
+                long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -j + 1 - 7 * i);
+                items.addAll(getItemFromRealm(minusDay1));
+                Log.d("pagepage", String.valueOf(-j + 1 - 7 * i));
+            }
+        }
+
+
+        Collections.sort(items, new ItemComparator());
+
+        adapter.updateItem(items, usersHash);
+        adapter.notifyDataSetChanged();
+
+
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i) instanceof ShareableDTO && ((ShareableDTO) items.get(i)).getShare() == 1) {
+                ShareableDTO sItem = (ShareableDTO) items.get(i);
+                final int finalI = i;
+                RetrofitHelper.getInstance(context).getTaggedFriends(sItem.get_id(), new DataReceiveListener<ArrayList<FriendDTO>>() {
+                    @Override
+                    public void onReceive(ArrayList<FriendDTO> response) {
+                        if (response != null) {
+
+                            usersHash.put(finalI, response);
+                            adapter.updateItem(items, usersHash);
+                            adapter.notifyItemChanged(finalI);
+                        }
+                    }
+                });
+            }
+
+        }
+//        FirebaseHelper.getInstance(context).updateDataFromFirebase();
+
+
     }
 
     private ArrayList<BaseDTO> getItemFromRealm(long millis) {
@@ -378,15 +530,21 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         long endMillis = today[1];
 
         RealmResults<RealmObject> cData = RealmHelper.getInstance().DataHighlightLoad(CallData.class, "date", startMillis, endMillis);
-        RealmResults<RealmObject> ggData = RealmHelper.getInstance().DataHighlightLoad(GpsGroupData.class, "end", startMillis, endMillis);
-        RealmResults<RealmObject> smsTradeDatas = RealmHelper.getInstance().DataHighlightLoad(SmsTradeData.class, "date", startMillis, endMillis);
-        RealmResults<RealmObject> pgData = RealmHelper.getInstance().DataHighlightLoad(PhotoGroupData.class, "start", startMillis, endMillis - 1);
-        RealmResults<RealmObject> customData = RealmHelper.getInstance().DataLoad(CustomData.class, "date", startMillis, endMillis);
+        RealmResults<RealmObject> ggData = RealmHelper.getInstance().DataHighlightAndShareLoad(GpsGroupData.class, "end", startMillis, endMillis);
+        RealmResults<RealmObject> smsTradeDatas = RealmHelper.getInstance().DataHighlightAndShareLoad(SmsTradeData.class, "date", startMillis, endMillis);
+        RealmResults<RealmObject> pgData = RealmHelper.getInstance().DataHighlightAndShareLoad(PhotoGroupData.class, "start", startMillis, endMillis - 1);
+        RealmResults<RealmObject> customData = RealmHelper.getInstance().DataHighlightAndShareLoad(CustomData.class, "date", startMillis, endMillis);
 
+        RealmResults<RealmObject> nData = RealmHelper.getInstance().DataHighlightLoad(NotifyUnitData.class, "start", startMillis, endMillis);
+        RealmResults<RealmObject> sData = RealmHelper.getInstance().DataHighlightLoad(SmsUnitData.class, "start", startMillis, endMillis);
 
-        DatePinDTO datePinData = new DatePinDTO();
-        datePinData.setDate(startMillis);
-        items.add(datePinData);
+        for (RealmObject cd : nData) {
+            items.add(new NotifyUnitDTO((NotifyUnitData) cd));
+        }
+        for (RealmObject cd : sData) {
+            items.add(new SmsUnitDTO((SmsUnitData) cd));
+        }
+
 
         for (RealmObject cd : customData) {
             items.add(new CustomDTO((CustomData) cd));
@@ -403,154 +561,161 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         for (RealmObject std : smsTradeDatas) {
             items.add(new SmsTradeDTO((SmsTradeData) std));
         }
+
+        if (items.size() != 0) {
+            DatePinDTO datePinData = new DatePinDTO();
+            datePinData.setDate(startMillis);
+            items.add(datePinData);
+        }
         return items;
     }
-
-
-    private void getItemFromFB(final long millis) {
-        //공유한 posts의 id 가져오기
-        DatabaseReference myRef = FirebaseHelper.getInstance(context).getCurrentUserRef().child("posts");
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int size = 0;
-                final int[] count = {0};
-
-                //posts의 count
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    size++;
-                }
-                if (dataSnapshot.getValue() != null) {
-                    //post id로 posts에서 글 찾아오기
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        DatabaseReference postRef = FirebaseHelper.getInstance(context).getPostsRef().child(snapshot.getValue().toString());
-                        final int finalSize = size;
-
-                        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChildren()) {
-                                    int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
-                                    BaseDTO item;
-                                    switch (type) {
-                                        case RealmClassHelper.CALL_DATA:
-                                            item = dataSnapshot.child("item").getValue(CallDTO.class);
-                                            break;
-                                        case RealmClassHelper.CUSTOM_DATA:
-                                            item = dataSnapshot.child("item").getValue(CustomDTO.class);
-                                            break;
-                                        case RealmClassHelper.PHOTO_DATA:
-                                            item = dataSnapshot.child("item").getValue(PhotoDTO.class);
-                                            break;
-                                        case RealmClassHelper.PHOTO_GROUP_DATA:
-                                            item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
-                                            break;
-                                        case RealmClassHelper.SMS_TRADE_DATA:
-                                            item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
-                                            break;
-                                        default:
-                                            item = null;
-                                    }
-                                    items.add(item);
-                                    count[0]++;
-
-                                    //posts 갯수만큼 가져온 후 items에 저장
-                                    if (count[0] == finalSize) {
-                                        long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
-                                        long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
-                                        long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
-                                        items.addAll(getItemFromRealm(minusDay3));
-                                        items.addAll(getItemFromRealm(minusDay2));
-                                        items.addAll(getItemFromRealm(minusDay1));
-                                        items.addAll(getItemFromRealm(millis));
-                                        Collections.sort(items, new ItemComparator());
-
-                                        //--------------------------------------------------------------------------//
-
-                                        //friends값 있는 item의 친구리스트 index와 함께 저장하기
-
-                                        final int[] iCount = {0};
-                                        for (int i = 0; i < items.size(); i++) {
-                                            if (items.get(i) instanceof ShareableDTO) {
-                                                ShareableDTO sItem = (ShareableDTO) items.get(i);
-                                                try {
-                                                    JSONArray friends = new JSONArray(sItem.getFriends());
-                                                    final int fsize = friends.length();
-                                                    final int[] fcount = {0};
-
-                                                    for (int j = 0; j < fsize; j++) {
-                                                        final ArrayList<UserDTO> users = new ArrayList<>();
-                                                        JSONObject friend = friends.getJSONObject(j);
-                                                        String uid = friend.get("id").toString();
-                                                        DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
-                                                        final int finalI = i;
-                                                        fRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                                                                users.add(friend);
-                                                                fcount[0]++;
-                                                                Log.d("###Fire useradd", fcount[0] + " : " + fsize);
-                                                                if (fcount[0] == fsize) {
-                                                                    usersHash.put(finalI, users);
-                                                                    iCount[0]++;
-                                                                    Log.d("###Fire userhashadd", finalI + ":" + iCount[0] + "/" + items.size());
-
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onCancelled(DatabaseError databaseError) {
-                                                            }
-                                                        });
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            } else {
-                                                iCount[0]++;
-                                                Log.d("###Fire userhashadd", ":" + iCount[0] + "/" + items.size());
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-                    }
-                } else {
-                    long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
-                    long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
-                    long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
-                    items.addAll(getItemFromRealm(minusDay3));
-                    items.addAll(getItemFromRealm(minusDay2));
-                    items.addAll(getItemFromRealm(minusDay1));
-                    items.addAll(getItemFromRealm(millis));
-                    Collections.sort(items, new ItemComparator());
-                    pb.setVisibility(View.GONE);
-                    adapter.updateItem(items, usersHash);
-                    adapter.notifyDataSetChanged();
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+//
+//
+//    private void getItemFromFB(final long millis) {
+//        //공유한 posts의 id 가져오기
+//        DatabaseReference myRef = FirebaseHelper.getInstance(context).getCurrentUserRef().child("posts");
+//        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                int size = 0;
+//                final int[] count = {0};
+//
+//                //posts의 count
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    size++;
+//                }
+//                if (dataSnapshot.getValue() != null) {
+//                    //post id로 posts에서 글 찾아오기
+//                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                        DatabaseReference postRef = FirebaseHelper.getInstance(context).getPostsRef().child(snapshot.getValue().toString());
+//                        final int finalSize = size;
+//
+//                        postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(DataSnapshot dataSnapshot) {
+//                                if (dataSnapshot.hasChildren()) {
+//                                    int type = Integer.parseInt(dataSnapshot.child("class").getValue().toString());
+//                                    BaseDTO item;
+//                                    switch (type) {
+//                                        case RealmClassHelper.CALL_DATA:
+//                                            item = dataSnapshot.child("item").getValue(CallDTO.class);
+//                                            break;
+//                                        case RealmClassHelper.CUSTOM_DATA:
+//                                            item = dataSnapshot.child("item").getValue(CustomDTO.class);
+//                                            break;
+//                                        case RealmClassHelper.PHOTO_DATA:
+//                                            item = dataSnapshot.child("item").getValue(PhotoDTO.class);
+//                                            break;
+//                                        case RealmClassHelper.PHOTO_GROUP_DATA:
+//                                            item = dataSnapshot.child("item").getValue(PhotoGroupDTO.class);
+//                                            break;
+//                                        case RealmClassHelper.SMS_TRADE_DATA:
+//                                            item = dataSnapshot.child("item").getValue(SmsTradeDTO.class);
+//                                            break;
+//                                        default:
+//                                            item = null;
+//                                    }
+//                                    items.add(item);
+//                                    count[0]++;
+//
+//                                    //posts 갯수만큼 가져온 후 items에 저장
+//                                    if (count[0] == finalSize) {
+//                                        long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
+//                                        long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
+//                                        long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
+//                                        items.addAll(getItemFromRealm(minusDay3));
+//                                        items.addAll(getItemFromRealm(minusDay2));
+//                                        items.addAll(getItemFromRealm(minusDay1));
+//                                        items.addAll(getItemFromRealm(millis));
+//                                        Collections.sort(items, new ItemComparator());
+//
+//                                        //--------------------------------------------------------------------------//
+//
+//                                        //friends값 있는 item의 친구리스트 index와 함께 저장하기
+//
+//                                        final int[] iCount = {0};
+//                                        for (int i = 0; i < items.size(); i++) {
+//                                            if (items.get(i) instanceof ShareableDTO) {
+//                                                ShareableDTO sItem = (ShareableDTO) items.get(i);
+//                                                try {
+//                                                    JSONArray friends = new JSONArray(sItem.getFriends());
+//                                                    final int fsize = friends.length();
+//                                                    final int[] fcount = {0};
+//
+//                                                    for (int j = 0; j < fsize; j++) {
+//                                                        final ArrayList<UserDTO> users = new ArrayList<>();
+//                                                        JSONObject friend = friends.getJSONObject(j);
+//                                                        String uid = friend.get("id").toString();
+//                                                        DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
+//                                                        final int finalI = i;
+//                                                        fRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                            @Override
+//                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+//                                                                UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
+//                                                                users.add(friend);
+//                                                                fcount[0]++;
+//                                                                Log.d("###Fire useradd", fcount[0] + " : " + fsize);
+//                                                                if (fcount[0] == fsize) {
+//                                                                    usersHash.put(finalI, users);
+//                                                                    iCount[0]++;
+//                                                                    Log.d("###Fire userhashadd", finalI + ":" + iCount[0] + "/" + items.size());
+//
+//                                                                }
+//                                                            }
+//
+//                                                            @Override
+//                                                            public void onCancelled(DatabaseError databaseError) {
+//                                                            }
+//                                                        });
+//                                                    }
+//                                                } catch (JSONException e) {
+//                                                    e.printStackTrace();
+//                                                }
+//                                            } else {
+//                                                iCount[0]++;
+//                                                Log.d("###Fire userhashadd", ":" + iCount[0] + "/" + items.size());
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(DatabaseError databaseError) {
+//                            }
+//                        });
+//                    }
+//                } else {
+//                    long minusDay1 = DateHelper.getInstance().getDayAfter(millis, -1);
+//                    long minusDay2 = DateHelper.getInstance().getDayAfter(millis, -2);
+//                    long minusDay3 = DateHelper.getInstance().getDayAfter(millis, -3);
+//                    items.addAll(getItemFromRealm(minusDay3));
+//                    items.addAll(getItemFromRealm(minusDay2));
+//                    items.addAll(getItemFromRealm(minusDay1));
+//                    items.addAll(getItemFromRealm(millis));
+//                    Collections.sort(items, new ItemComparator());
+//                    pb.setVisibility(View.GONE);
+//                    adapter.updateItem(items, usersHash);
+//                    adapter.notifyDataSetChanged();
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
     private void displayRecyclerView() {
 
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         adapter = new CalendarPinAdapter(this, realm);
         adapter.updateItem(items, usersHash);
-        adapter.setHasStableIds(true);
+//        adapter.setHasStableIds(true);
+
         rv.addItemDecoration(new PinnedHeaderItemDecoration());
         rv.setHasFixedSize(true);
 
@@ -566,6 +731,24 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 //                adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(FriendTagEvent event) {
+        updateItemsFromRealm(System.currentTimeMillis());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+        slideUp.hide();
     }
 
     @Override
@@ -619,7 +802,7 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
     @Override
     public void onCustomItemClick(BaseDTO item) {
-        Intent intent = new Intent(this, CallActivity.class);
+        Intent intent = new Intent(this, CustomActivity.class);
         intent.putExtra("item", Parcels.wrap((CustomDTO) item));
         startActivity(intent);
     }
@@ -633,11 +816,6 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -662,12 +840,19 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
     }
 
 
-    private class RealmAsync extends AsyncTask<Integer, Void, Void> {
+    private class RealmAsync extends AsyncTask<Integer, String, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             pb.setVisibility(View.VISIBLE);
+            pbtv.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            pbtv.setText(values[0]);
         }
 
         @Override
@@ -676,9 +861,16 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
             realmAsync = Realm.getDefaultInstance();
             long today[] = DateHelper.getInstance().getStartEndDate(System.currentTimeMillis());
             ContentProviderData cp = new ContentProviderData(context, today[0], today[1], realmAsync);
-            cp.readSMSMessage();
-            cp.readCallLogs();
-            cp.readImages();
+
+            DataReceiveListener<String> listener = new DataReceiveListener<String>() {
+                @Override
+                public void onReceive(String response) {
+                    publishProgress(response);
+                }
+            };
+            cp.readSMSMessage(listener);
+            cp.readCallLogs(listener);
+            cp.readImages(listener);
             return null;
         }
 
@@ -686,7 +878,8 @@ public class MainActivity extends AppCompatActivity implements CardItemClickList
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             pb.setVisibility(View.GONE);
-            Toast.makeText(context,"데이터 로딩 성공",Toast.LENGTH_SHORT).show();
+            pbtv.setVisibility(View.GONE);
+            Toast.makeText(context, "데이터 로딩 성공", Toast.LENGTH_SHORT).show();
             SharedPreferences mPref = getSharedPreferences("setting", Activity.MODE_PRIVATE);
             SharedPreferences.Editor editor = mPref.edit();
             editor.putInt("init", 3);

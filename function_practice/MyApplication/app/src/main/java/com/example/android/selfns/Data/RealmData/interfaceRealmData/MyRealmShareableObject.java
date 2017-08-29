@@ -9,13 +9,26 @@ import java.util.List;
 
 public interface MyRealmShareableObject extends MyRealmObject {
 
-    boolean isShare();
+    int getShare();
 
-    void setShare(boolean share);
-
- String getFriends();
-
-void setFriends(String friends);
+    void setShare(int share);
 
 
+    String getFriends();
+
+    void setFriends(String friends);
+
+
+    String getFid();
+
+    void setFid(String fid);
+
+    long getTimestamp();
+
+    void setTimestamp(long timestamp);
+
+
+    long get_id();
+
+    void set_id(long _id);
 }

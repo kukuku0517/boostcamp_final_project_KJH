@@ -19,7 +19,7 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/photo_detail_comment"
+                android:id="@+id/call_detail_comment"
                 android:layout_width="match_parent"
 
                 android:layout_height="wrap_content"
@@ -44,14 +44,14 @@
             android:padding="16dp">
 
             <ImageView
-                android:id="@+id/write_date_icon"
+                android:id="@+id/call_icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:tint="@android:color/darker_gray"
                 app:srcCompat="@drawable/ic_date_range_black_24dp" />
 
             <TextView
-                android:id="@+id/photo_detail_date"
+                android:id="@+id/call_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -69,39 +69,6 @@
         android:orientation="vertical"
         android:background="@drawable/border_bottom">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <ImageView
-                android:id="@+id/write_people_icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:tint="@android:color/darker_gray"
-                app:srcCompat="@drawable/ic_person_black_24dp"
-                android:layout_alignParentLeft="true"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@id/write_people_icon"
-                android:layout_toLeftOf="@+id/photo_detail_people"/>
-
-            <TextView
-                android:layout_alignParentRight="true"
-                android:id="@+id/photo_detail_people"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="16dp"
-                android:hint="친구 태그" />
-
-
-        </RelativeLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -109,14 +76,14 @@
             android:padding="16dp">
 
             <ImageView
-                android:id="@+id/write_tag_icon"
+                android:id="@+id/call_tag_icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:tint="@android:color/darker_gray"
                 app:srcCompat="@drawable/ic_label_black_24dp" />
 
             <TextView
-                android:id="@+id/photo_detail_tag"
+                android:id="@+id/call_tag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -134,14 +101,14 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/write_delete_icon"
+            android:id="@+id/call_delete_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:tint="@android:color/darker_gray"
             app:srcCompat="@drawable/ic_delete_black_24dp" />
 
         <TextView
-            android:id="@+id/photo_detail_delete"
+            android:id="@+id/call_delete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

@@ -19,15 +19,19 @@ import android.widget.Toast;
 import com.example.android.selfns.DailyView.Adapter.DayAdapter;
 import com.example.android.selfns.Data.DTO.Detail.PhotoDTO;
 import com.example.android.selfns.Data.DTO.Group.PhotoGroupDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.FriendDTO;
 import com.example.android.selfns.Data.DTO.interfaceDTO.BaseDTO;
+import com.example.android.selfns.Data.RealmData.GroupData.PhotoGroupData;
 import com.example.android.selfns.DetailView.DetailPhotoActivity;
 import com.example.android.selfns.ExtraView.Friend.TagAdapter;
 import com.example.android.selfns.Helper.DateHelper;
 import com.example.android.selfns.Helper.FirebaseHelper;
 import com.example.android.selfns.Helper.ItemInteractionUtil;
 import com.example.android.selfns.Helper.RealmClassHelper;
+import com.example.android.selfns.Helper.RetrofitHelper;
+import com.example.android.selfns.Interface.DataReceiveListener;
 import com.example.android.selfns.Interface.PhotoItemClickListener;
-import com.example.android.selfns.LoginView.UserDTO;
+import com.example.android.selfns.Data.DTO.Retrofit.UserDTO;
 import com.example.android.selfns.R;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -40,10 +44,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.mancj.slideup.SlideUp;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -52,6 +58,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 public class PhotoActivity extends AppCompatActivity implements PhotoItemClickListener {
 
@@ -74,17 +81,17 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
     @BindView(R.id.photo_comment)
     TextView comment;
 
-    Context context=this;
-
+    Context context = this;
+    Realm realm;
     private RecyclerView.LayoutManager layoutManager;
     private DayAdapter adapter;
     private ArrayList<BaseDTO> items = new ArrayList<>();
 
-    HashMap<Integer, List<UserDTO>> usersHash = new HashMap<>();
+    HashMap<Integer, List<FriendDTO>> usersHash = new HashMap<>();
 
     private RecyclerView.LayoutManager friendlayoutManager;
     private TagAdapter friendadapter;
-    private ArrayList<UserDTO> frienditems = new ArrayList<>();
+    private ArrayList<FriendDTO> frienditems = new ArrayList<>();
     SlideUp slideUp;
     PhotoGroupDTO pgData;
 
@@ -95,19 +102,21 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
                 final Place place = PlacePicker.getPlace(data, this);
                 String toastMsg = String.format("Place: %s", place.getName());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-                            pgData.setPlace(place.getName().toString());
+                pgData.setPlace(place.getName().toString());
                 pgData.setOriginId(place.getId());
                 ItemInteractionUtil.getInstance(context).setPlace(pgData);
 
             }
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
         ButterKnife.bind(this);
-
+        realm = Realm.getDefaultInstance();
         slideUp = new SlideUp.Builder(view)
                 .withStartState(SlideUp.State.HIDDEN)
                 .withStartGravity(Gravity.BOTTOM)
@@ -124,21 +133,36 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
                 }
             }
         });
+        initView();
+        initPhotoRecylerview();
+        initFriendRecyclerview();
+
+        initBtnListener();
+        realm.addChangeListener(new RealmChangeListener<Realm>() {
+            @Override
+            public void onChange(Realm realm) {
+                initView();
+                initPhotoRecylerview();
+                initFriendRecyclerview();
+            }
+        });
+
+    }
+
+    private void initView() {
         pgData = Parcels.unwrap(getIntent().getParcelableExtra("item"));
         if (pgData != null) {
+
+            PhotoGroupData photoGroupData = realm.where(PhotoGroupData.class).equalTo("id", pgData.getId()).findFirst();
+            if (photoGroupData != null) {
+                pgData = new PhotoGroupDTO(photoGroupData);
+            }
 
             comment.setText(pgData.getComment());
             String dateString = DateHelper.getInstance().toDateString("HH : mm", pgData.getDate());
             date.setText(dateString);
             place.setText(pgData.getPlace());
         }
-
-
-        initPhotoRecylerview();
-        initFriendRecyclerview();
-
-        initBtnListener();
-
     }
 
     private void initFriendRecyclerview() {
@@ -149,31 +173,23 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
         rvTag.setLayoutManager(friendlayoutManager);
         rvTag.setAdapter(friendadapter);
 
-        try {
-            JSONArray friends = new JSONArray(pgData.getFriends());
-            for (int i = 0; i < friends.length(); i++) {
-                JSONObject friend = friends.getJSONObject(i);
-                String uid = friend.get("id").toString();
-                DatabaseReference fRef = FirebaseHelper.getInstance(context).getUserRef(uid);
-                fRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        UserDTO friend = dataSnapshot.child("userDTO").getValue(UserDTO.class);
-                        frienditems.add(friend);
-                        friendadapter.updateItem(frienditems);
-                        friendadapter.notifyDataSetChanged();
-
+        if (pgData.getShare() == 1) {
+            RetrofitHelper.getInstance(context).getTaggedFriends(pgData.get_id(), new DataReceiveListener<ArrayList<FriendDTO>>() {
+                @Override
+                public void onReceive(ArrayList<FriendDTO> response) {
+                    frienditems.clear();
+                    if(response.size()!=0){
+                        for (FriendDTO friend : response) {
+                            frienditems.add(friend);
+                            friendadapter.updateItem(frienditems);
+                            friendadapter.notifyDataSetChanged();
+                        }
                     }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+                }
+            });
         }
+
     }
 
     private void initPhotoRecylerview() {
@@ -230,7 +246,7 @@ public class PhotoActivity extends AppCompatActivity implements PhotoItemClickLi
         comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItemInteractionUtil.getInstance(context).show((AppCompatActivity) context, pgData.getId(), RealmClassHelper.PHOTO_DATA);
+                ItemInteractionUtil.getInstance(context).show((AppCompatActivity) context, pgData.getId(), RealmClassHelper.PHOTO_GROUP_DATA);
             }
         });
         delete.setOnClickListener(new View.OnClickListener() {

@@ -4,14 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sms_group_cv"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_bottom">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
+
         <include
             android:id="@+id/timeline_view"
-            layout="@layout/item_base_timeline" />
+            layout="@layout/item_base_timeline_group" />
     </LinearLayout>
 
 
@@ -20,47 +22,32 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/timeline_view"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="16dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+        <TextView
+            android:id="@+id/sms_group_title"
+            style="@style/MyTheme.Textview.title.black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
-            android:orientation="horizontal">
+            android:text="messages adfs" />
 
-            <ImageView
-                android:id="@+id/sms_group_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                app:srcCompat="@drawable/envelope" />
+        <TextView
+            android:id="@+id/sms_group_pcount"
+            style="@style/MyTheme.Textview.body.black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
+            android:text="26 people" />
 
-            <TextView
-                android:id="@+id/sms_group_pcount"
-                style="@style/MyTheme.Textview.body.black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/sms_group_iv"
-                android:layout_marginRight="4dp"
-                android:layout_marginTop="30dp"
-                android:text="26 people" />
-            <TextView
-                android:id="@+id/sms_group_mcount"
-                style="@style/MyTheme.Textview.caption.black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/sms_group_iv"
-                android:layout_below="@id/sms_group_pcount"
-                android:layout_marginRight="4dp"
-                android:text="134 messages" />
+        <TextView
+            android:id="@+id/sms_group_mcount"
+            style="@style/MyTheme.Textview.caption.black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
+            android:text="134 messages" />
 
-        </RelativeLayout>
-
-        <include layout="@layout/item_base_people"
-            android:id="@+id/item_people"/>
 
     </LinearLayout>
 

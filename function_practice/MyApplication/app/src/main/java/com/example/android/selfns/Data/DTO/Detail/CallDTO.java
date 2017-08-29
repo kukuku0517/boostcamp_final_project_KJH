@@ -20,9 +20,59 @@ public class CallDTO implements CommentableDTO, ShareableDTO {
     int callState;
     long date, duration;
     String person, number, comment;
-    boolean highlight = false;
-    boolean share = false;
-    String friends="[]";
+    int highlight = 0;
+
+    public int getHighlight() {
+        return highlight;
+    }
+
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+
+    public int getShare() {
+        return share;
+    }
+
+    public void setShare(int share) {
+        this.share = share;
+    }
+
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+    int share = 0;
+    String friends = "[]";
+    String fid;
+    long timestamp = 0;
+
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
 
     @Override
     public String getFriends() {
@@ -44,6 +94,7 @@ public class CallDTO implements CommentableDTO, ShareableDTO {
     }
 
     public CallDTO(CallData data) {
+        this._id=data.get_id();
         this.id = data.getId();
         this.callState = data.getCallState();
         this.date = data.getDate();
@@ -51,26 +102,13 @@ public class CallDTO implements CommentableDTO, ShareableDTO {
         this.person = data.getPerson();
         this.number = data.getNumber();
         this.comment = data.getComment();
-        this.highlight = data.isHighlight();
-        this.share = data.isShare();
-        this.friends=data.getFriends();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
+        this.friends = data.getFriends();
+        this.fid = data.getFid();
+        this.timestamp = data.getTimestamp();
     }
 
-    public boolean isHighlight() {
-        return highlight;
-    }
-
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
-
-    public boolean isShare() {
-        return share;
-    }
-
-    public void setShare(boolean share) {
-        this.share = share;
-    }
 
     public String getComment() {
         return comment;
@@ -128,6 +166,8 @@ public class CallDTO implements CommentableDTO, ShareableDTO {
 
     @Override
     public int getType() {
-        return RealmClassHelper.CALL_DATA;
+        return type;
     }
+
+    int type=RealmClassHelper.CALL_DATA;
 }

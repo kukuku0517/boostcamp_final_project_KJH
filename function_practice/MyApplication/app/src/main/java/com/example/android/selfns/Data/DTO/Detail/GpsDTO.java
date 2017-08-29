@@ -1,4 +1,5 @@
 package com.example.android.selfns.Data.DTO.Detail;
+
 import com.example.android.selfns.Data.DTO.interfaceDTO.GpsableDTO;
 import com.example.android.selfns.Data.RealmData.UnitData.GpsData;
 import com.example.android.selfns.Helper.RealmClassHelper;
@@ -18,21 +19,42 @@ public class GpsDTO implements GpsableDTO {
         this.date = data.getDate();
         this.place = data.getPlace();
         this.originId = data.getOriginId();
-        this.change = data.getChange();
-        this.moveState = data.getMoveState();
+        this._change = data.getChange();
+        this.moveState = data.getMoveState();   this._groupId=data.get_groupId();
     }
 
-long id;
+    long id;
 
     public void setId(long id) {
         this.id = id;
     }
 
     double lat, lng;
-  long date;
-   String place, originId;
- int change, moveState;
+    long date;
+    String place, originId;
+    int _change, moveState;
 
+    long _groupId;
+
+    public int get_change() {
+        return _change;
+    }
+
+    public void set_change(int _change) {
+        this._change = _change;
+    }
+
+    public long get_groupId() {
+        return _groupId;
+    }
+
+    public void set_groupId(long _groupId) {
+        this._groupId = _groupId;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public GpsDTO() {
 
@@ -77,11 +99,11 @@ long id;
     }
 
     public int getChange() {
-        return change;
+        return _change;
     }
 
     public void setChange(int change) {
-        this.change = change;
+        this._change = change;
     }
 
     public String getPlace() {
@@ -92,10 +114,13 @@ long id;
         this.place = place;
     }
 
+
+    @Override
     public int getType() {
-        return RealmClassHelper.GPS_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.GPS_DATA;
     public long getDate() {
         return date;
     }

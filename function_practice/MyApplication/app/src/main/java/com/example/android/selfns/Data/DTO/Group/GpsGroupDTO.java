@@ -24,11 +24,42 @@ public class GpsGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
 
     long start = -1, end = -1;
     String comment, place;
-    boolean highlight = false;
+
     long endId = -1, startId = -1;
     String originId;
     String friends="[]";
+    String fid;
+    long timestamp = 0;
 
+    long _id;
+
+    @Override
+    public long get_id() {
+        return _id;
+    }
+
+    @Override
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    @Override
+    public String getFid() {
+        return fid;
+    }
+
+    @Override
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
     @Override
     public String getFriends() {
         return friends;
@@ -50,40 +81,50 @@ public class GpsGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
 
 
     public GpsGroupDTO(GpsGroupData data) {
-        this.id = data.getId();
+        this._id=data.get_id(); this.id = data.getId();
         this.start = data.getStart();
         this.end = data.getEnd();
         this.comment = data.getComment();
         this.place = data.getPlace();
-        this.highlight = data.isHighlight();
+        this.highlight = data.getHighlight();
+        this.share = data.getShare();
         this.endId = data.getEndId();
         this.startId = data.getStartId();
         this.lat = data.getLat();
         this.lng = data.getLng();
-        this.share = data.isShare();
-        this.friends = data.getFriends();
+
+        this.friends = data.getFriends();   this.fid=data.getFid();
+        this.timestamp=data.getTimestamp();
         for (GpsData d : data.getGpsDatas()) {
             this.gpsDatas.add(new GpsDTO(d));
         }
     }
 
-    double lat, lng;
+    int highlight = 0;
+    @Override
+    public int getHighlight() {
+        return highlight;
+    }
+    @Override
+    public void setHighlight(int highlight) {
+        this.highlight = highlight;
+    }
+    @Override
+    public int getShare() {
+        return share;
+    }
+    @Override
+    public void setShare(int share) {
+        this.share = share;
+    }
 
-    boolean share;
+    int  share = 0;
+    double lat, lng;
 
     public GpsGroupDTO() {
 
     }
 
-    @Override
-    public boolean isShare() {
-        return share;
-    }
-
-    @Override
-    public void setShare(boolean share) {
-        this.share = share;
-    }
 
     List<GpsDTO> gpsDatas = new ArrayList<>();
 
@@ -112,21 +153,14 @@ public class GpsGroupDTO implements CommentableDTO, ShareableDTO, GpsableDTO {
         this.comment = comment;
     }
 
-    @Override
-    public boolean isHighlight() {
-        return highlight;
-    }
 
-    @Override
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
-    }
 
     @Override
     public int getType() {
-        return RealmClassHelper.GPS_GROUP_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.GPS_GROUP_DATA;
     @Override
     public long getDate() {
         if (isStart()) {

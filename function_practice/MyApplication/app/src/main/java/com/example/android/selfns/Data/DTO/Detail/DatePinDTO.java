@@ -14,11 +14,13 @@ public class DatePinDTO implements BaseDTO {
         this.date = date;
     }
 
+
     @Override
     public int getType() {
-        return RealmClassHelper.DATE_PIN_DATA;
+        return type;
     }
 
+    int type=RealmClassHelper.DATE_PIN_DATA;
     @Override
     public long getDate() {
         return date;
